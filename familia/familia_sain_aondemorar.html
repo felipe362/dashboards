@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAMÍLIA SAIN · Onde Morar no Mundo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E14; --bg2:#0F1620; --bg3:#141D2A; --panel:#101824;
+  --ink:#EAF0F7; --ink2:#A8B8C8; --ink3:#5E7185;
+  --line:#1E2A3A; --line2:#2A3A4E;
+  --teal:#3DD6C4; --teal-dim:#0E3B38;
+  --gold:#E8B339; --coral:#FF6B6B; --grass:#5BD66A; --sky:#54A3F0; --plum:#B57BE8; --amber:#F0944A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px;}
+.mono{font-family:'Space Mono',monospace;}
+.serif{font-family:'Fraunces',serif;}
+.lbl{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.14em;text-transform:uppercase;}
+
+/* ===== BRAND HEADER ===== */
+#brand{background:linear-gradient(165deg,#0F1620 0%,#0A0E14 70%);border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+#brand::before{content:"";position:absolute;top:-50%;right:-10%;width:480px;height:480px;background:radial-gradient(circle,rgba(61,214,196,.08) 0%,transparent 70%);pointer-events:none;}
+.brandbar{display:flex;align-items:center;gap:14px;padding:20px 0 0;}
+.logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--teal) 0%,#2BA99A 100%);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:#06201D;box-shadow:0 4px 20px rgba(61,214,196,.3);}
+.brandname{font-family:'Fraunces',serif;font-weight:700;font-size:22px;letter-spacing:.02em;color:var(--ink);}
+.brandname span{color:var(--teal);}
+.brandtag{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.2em;margin-top:1px;}
+
+/* ===== HERO ===== */
+.hero{padding:22px 0 18px;position:relative;z-index:1;}
+.hero h1{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:1.1;color:var(--ink);margin-bottom:8px;letter-spacing:-.01em;}
+.hero p{color:var(--ink2);font-size:14px;max-width:680px;line-height:1.5;}
+
+/* ===== CONTROL DECK ===== */
+.deck{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap;margin-top:18px;padding:16px 18px;background:var(--bg2);border:1px solid var(--line);border-radius:14px;}
+.ctrl{display:flex;flex-direction:column;gap:5px;}
+.ctrl label{font-family:'Space Mono',monospace;font-size:9px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;}
+.numwrap{display:flex;align-items:center;gap:0;background:var(--bg3);border:1px solid var(--line2);border-radius:9px;overflow:hidden;}
+.numwrap button{width:30px;height:34px;border:none;background:transparent;color:var(--teal);font-size:17px;cursor:pointer;transition:background .15s;font-family:'Space Mono',monospace;}
+.numwrap button:hover{background:rgba(61,214,196,.12);}
+.numwrap input{width:42px;height:34px;border:none;background:transparent;color:var(--ink);text-align:center;font-family:'Space Mono',monospace;font-size:15px;font-weight:700;}
+.numwrap input:focus{outline:none;}
+.numwrap input::-webkit-outer-spin-button,.numwrap input::-webkit-inner-spin-button{-webkit-appearance:none;}
+#incwrap input{width:96px;text-align:left;padding-left:10px;font-size:14px;}
+.currtog{display:flex;gap:3px;}
+.currtog button{width:36px;height:34px;border:1px solid var(--line2);background:var(--bg3);color:var(--ink3);border-radius:8px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;transition:all .15s;}
+.currtog button.on{background:var(--teal);color:#06201D;border-color:var(--teal);font-weight:700;}
+.deckinfo{margin-left:auto;text-align:right;}
+.deckinfo .big{font-family:'Fraunces',serif;font-size:15px;color:var(--ink2);}
+
+/* ===== TOGGLE PILLS (extended/goals) ===== */
+.pillrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+.bigpill{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:30px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink2);cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;}
+.bigpill:hover{border-color:var(--teal);}
+.bigpill.on{background:var(--teal-dim);border-color:var(--teal);color:var(--teal);}
+.bigpill .dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);transition:background .2s;}
+.bigpill.on .dot{background:var(--teal);box-shadow:0 0 8px var(--teal);}
+
+.goalbox{margin-top:12px;padding:14px 16px;background:var(--bg2);border:1px dashed var(--line2);border-radius:12px;display:none;}
+.goalbox.show{display:block;}
+.goalgrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.goal{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--bg3);color:var(--ink2);cursor:pointer;transition:all .18s;font-size:12.5px;}
+.goal:hover{border-color:var(--ink2);}
+.goal.on{border-color:var(--goalc,var(--teal));background:color-mix(in srgb,var(--goalc,var(--teal)) 14%,transparent);color:var(--goalc,var(--teal));}
+.goal .gi{font-size:15px;}
+.goalcount{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink3);margin-left:6px;}
+
+/* ===== RECOMMENDATION ===== */
+#rec{margin:20px 0;border-radius:18px;padding:22px 26px;position:relative;overflow:hidden;}
+#rec .glow{position:absolute;inset:0;opacity:.5;pointer-events:none;}
+
+/* ===== CARDS ===== */
+#cards{display:grid;gap:11px;margin-bottom:18px;}
+.cc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;position:relative;transition:transform .15s,border-color .15s;}
+.cc:hover{transform:translateY(-2px);}
+.cc .crown{position:absolute;top:-9px;left:14px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;padding:2px 9px;border-radius:8px;letter-spacing:.05em;}
+.cc.sel{box-shadow:0 0 0 2px var(--teal);}
+.flagbox{font-size:20px;}
+
+/* ===== TABS ===== */
+#tabs{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:0;}
+.tb{padding:9px 16px;background:transparent;color:var(--ink3);border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;transition:all .2s;margin-bottom:-1px;}
+.tb:hover{color:var(--ink2);}
+.tb.on{color:var(--teal);border-bottom-color:var(--teal);}
+.pane{display:none;animation:fade .3s ease;}
+.pane.on{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;}
+.phd{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* chart */
+.chartbox{padding:18px;}
+.chartcanvas{position:relative;height:340px;}
+
+/* ranking */
+.rr{display:grid;grid-template-columns:30px 1fr 90px 96px 78px 56px;padding:11px 18px;border-bottom:1px solid var(--line);align-items:center;gap:10px;cursor:pointer;transition:background .12s;}
+.rr:hover{background:rgba(255,255,255,.02);}
+.rr.sel{background:rgba(61,214,196,.06);}
+.rnk-num{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;}
+.rnk-bar{height:5px;border-radius:3px;background:var(--line2);overflow:hidden;margin-top:4px;}
+.rnk-bar i{display:block;height:100%;border-radius:3px;}
+
+/* insights */
+.ins{border-radius:12px;padding:14px 16px;margin-bottom:11px;border:1px solid var(--line);border-left-width:3px;display:flex;gap:12px;align-items:flex-start;}
+.ins .ico{font-size:19px;line-height:1;margin-top:1px;}
+.ins-t{font-size:13.5px;font-weight:700;margin-bottom:4px;}
+.ins-b{font-size:12.5px;color:var(--ink2);line-height:1.55;}
+
+/* tables */
+.dt{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:11px;}
+.dt th{padding:10px 8px;text-align:right;font-size:10px;font-weight:700;border-bottom:1px solid var(--line2);white-space:nowrap;}
+.dt th:first-child{text-align:left;padding-left:18px;}
+.dt td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;color:var(--ink2);}
+.dt td:first-child{text-align:left;padding-left:18px;color:var(--ink);}
+.dt tr:hover td{background:rgba(255,255,255,.02);}
+.dt tfoot td{font-weight:700;font-size:13px;border-top:1px solid var(--line2);padding:12px 8px;}
+.cheap{color:var(--grass)!important;font-weight:700!important;}
+
+/* country selector grid */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding:18px;}
+.cell{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;transition:all .15s;}
+.cell:hover{border-color:var(--teal);transform:translateY(-1px);}
+.cell.sel{border-color:var(--teal);background:var(--teal-dim);}
+.cell .nm{font-size:13px;font-weight:500;color:var(--ink);}
+.cell .sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--ink3);}
+
+/* optimizer levers */
+.lever{border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .15s;border:1px solid var(--line2);background:var(--bg3);}
+.lever.on{border-color:var(--teal);background:var(--teal-dim);}
+.sw{width:34px;height:19px;border-radius:10px;position:relative;flex-shrink:0;transition:background .2s;background:var(--line2);}
+.sw.on{background:var(--teal);}
+.sw .knob{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2.5px;left:2.5px;transition:left .2s;}
+.sw.on .knob{left:17px;}
+
+/* qol cards */
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px;}
+
+::-webkit-scrollbar{width:5px;height:7px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px;}
+#foot{padding:18px 0 26px;border-top:1px solid var(--line);margin-top:24px;font-family:'Space Mono',monospace;font-size:9px;color:var(--ink3);line-height:1.7;}
+
+@media(max-width:720px){
+  .hero h1{font-size:23px;}
+  .rr{grid-template-columns:24px 1fr 70px 56px;}
+  .rr .hide-m{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="brand"><div class="wrap">
+  <div class="brandbar">
+    <div class="logo">S</div>
+    <div>
+      <div class="brandname">FAMÍLIA <span>SAIN</span></div>
+      <div class="brandtag">ONDE NO MUNDO VIVER MELHOR · 2026</div>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>Onde sua família deve morar?</h1>
+    <p>Ajuste o tamanho da família e a renda. Ative <b>Locais estendidos</b> para abrir o mundo inteiro, defina seus <b>Objetivos</b>, e veja a recomendação se reorganizar em tempo real — da Europa litorânea ao interior do Paraguai, do Cáucaso ao sudeste asiático.</p>
+
+    <div class="deck">
+      <div class="ctrl"><label>Adultos</label>
+        <div class="numwrap"><button onclick="bump('adults',-1)">−</button><input id="ia" type="number" min="1" max="10" value="3"><button onclick="bump('adults',1)">+</button></div>
+      </div>
+      <div class="ctrl"><label>Crianças</label>
+        <div class="numwrap"><button onclick="bump('kids',-1)">−</button><input id="ic" type="number" min="0" max="10" value="3"><button onclick="bump('kids',1)">+</button></div>
+      </div>
+      <div class="ctrl"><label id="inclbl">Renda / mês (€)</label>
+        <div class="numwrap" id="incwrap"><input id="ir" type="number" min="0" step="500" value="8000"></div>
+      </div>
+      <div class="ctrl"><label>Moeda</label>
+        <div class="currtog">
+          <button class="on" id="b-eur" onclick="setCurr('€')">€</button>
+          <button id="b-brl" onclick="setCurr('R$')">R$</button>
+          <button id="b-usd" onclick="setCurr('$')">$</button>
+        </div>
+      </div>
+      <div class="deckinfo">
+        <div class="lbl">FAMÍLIA</div>
+        <div class="big mono" id="finfo">6 pessoas · 120m²</div>
+      </div>
+    </div>
+
+    <div class="pillrow">
+      <div class="bigpill" id="pill-ext" onclick="toggleExt()"><span class="dot"></span>🌍 Locais estendidos</div>
+      <div class="bigpill" id="pill-goal" onclick="toggleGoalBox()"><span class="dot"></span>🎯 Objetivos <span class="goalcount" id="gcount"></span></div>
+    </div>
+
+    <div class="goalbox" id="goalbox">
+      <span class="lbl">Selecione até 5 objetivos — a recomendação reequilibra conforme você marca. Marcar todos = melhor lugar equilibrado considerando imposto.</span>
+      <div class="goalgrid" id="goalgrid"></div>
+    </div>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div id="rec"></div>
+  <div id="cards"></div>
+
+  <div id="tabs">
+    <button class="tb on" onclick="setTab('ov')">Visão Geral</button>
+    <button class="tb" onclick="setTab('in')">Insights da IA</button>
+    <button class="tb" onclick="setTab('bk')">Detalhamento</button>
+    <button class="tb" onclick="setTab('op')">Otimizador</button>
+    <button class="tb" onclick="setTab('ql')">Qualidade de Vida</button>
+    <button class="tb" onclick="setTab('pick')">Escolher Local</button>
+  </div>
+
+  <div id="ov" class="pane on">
+    <div class="panel chartbox" style="margin-bottom:14px;">
+      <div class="lbl" style="margin-bottom:14px;">CUSTO MENSAL POR LOCAL vs SUA RENDA</div>
+      <div class="chartcanvas"><canvas id="chart" role="img" aria-label="Custo por local comparado à renda"></canvas></div>
+    </div>
+    <div class="panel" style="overflow:hidden;">
+      <div class="phd"><span class="lbl">RANKING DE RECOMENDAÇÃO</span><span class="mono" style="font-size:9px;color:var(--ink3);">clique num local para fixá-lo →</span></div>
+      <div id="rnk"></div>
+    </div>
+  </div>
+
+  <div id="in" class="pane">
+    <p class="mono" id="insub" style="font-size:11px;color:var(--ink3);margin-bottom:14px;"></p>
+    <div id="inslist"></div>
+  </div>
+
+  <div id="bk" class="pane">
+    <div class="panel" style="overflow:hidden;">
+      <div class="phd"><span class="lbl" id="bkhd">BREAKDOWN POR CATEGORIA</span><span class="mono" style="font-size:9px;color:var(--ink3);">menor valor por linha em verde ▼</span></div>
+      <div style="overflow-x:auto;"><div id="bktbl"></div></div>
+      <div id="bksrc" style="padding:12px 18px;background:var(--bg2);font-family:'Space Mono',monospace;font-size:9px;color:var(--ink3);line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <div id="op" class="pane">
+    <div class="panel" style="margin-bottom:14px;padding:16px 18px;">
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+        <span class="lbl">Otimizar:</span>
+        <div id="optcitybtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        <span class="mono" id="opylbl" style="font-size:10px;color:var(--ink3);margin-left:6px;"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div style="background:var(--bg3);border-radius:10px;padding:11px 15px;"><div class="lbl">base</div><div class="mono" id="ob" style="font-size:21px;font-weight:700;margin-top:2px;"></div></div>
+        <div style="background:var(--bg3);border-radius:10px;padding:11px 15px;"><div class="lbl">otimizado</div><div class="mono" id="oo" style="font-size:21px;font-weight:700;margin-top:2px;"></div></div>
+        <div style="background:var(--bg3);border-radius:10px;padding:11px 15px;"><div class="lbl">vs Assunção (PY)</div><div class="mono" id="ovp" style="font-size:21px;font-weight:700;margin-top:2px;"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="lvrs"></div>
+    </div>
+    <div class="panel" style="padding:16px 18px;">
+      <div class="lbl" style="margin-bottom:12px;">IMPACTO POR CATEGORIA</div>
+      <div id="obk"></div>
+    </div>
+  </div>
+
+  <div id="ql" class="pane">
+    <div id="qlcards" style="display:grid;gap:11px;margin-bottom:14px;"></div>
+    <div class="panel" style="overflow:hidden;">
+      <div class="phd"><span class="lbl">VARIÁVEIS-CHAVE</span></div>
+      <div style="overflow-x:auto;"><table class="dt" id="qltbl" style="font-size:11px;"></table></div>
+    </div>
+  </div>
+
+  <div id="pick" class="pane">
+    <div class="panel" style="overflow:hidden;margin-bottom:14px;">
+      <div class="phd"><span class="lbl">ESCOLHA UM LOCAL — RECÁLCULO REVERSO</span><span class="mono" id="pickinfo" style="font-size:9px;color:var(--ink3);"></span></div>
+      <div class="cgrid" id="cgrid"></div>
+    </div>
+    <div id="pickresult"></div>
+  </div>
+
+  <div id="foot">
+    Câmbio mai/2026: 1€ = R$6,45 = US$1,13 · Todos os custos normalizados em EUR/mês para família configurável.<br>
+    Fontes: Idealista, Fotocasa, FipeZAP, Numbeo, Expatistan, LivingCost, Wise, pbservices.ge, hungarygoldenvisa.io, CostLiving, paraguaiguia.com (mai/2026).<br>
+    ● dado real coletado &nbsp; ○ estimativa fundamentada por escala paramétrica · FAMÍLIA SAIN é uma ferramenta de orientação, não aconselhamento financeiro/fiscal.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const EBR=6.45, EUD=1.13;
+
+// ===== LOCAIS (valores em EUR/mes, escala parametrica) =====
+const LOCS={
+ br_sp:{name:"São Paulo",country:"Brasil",flag:"🇧🇷",tier:"core",color:"#5BD66A",rateLbl:"R$",
+  rentSqm:12.92,foodA:200,foodK:110,car:349,eduK:388,healA:137,healK:96,util:170,utilP:23,leisA:130,leisK:77,maidB:260,maidP:60,clA:61,clK:43,
+  qol:55,tax:40,safety:35,climate:65,community:100,
+  taxRate:"IRPF até 27,5% + alta carga indireta (~33% PIB)",
+  src:"FipeZAP mar/26 (bairro nobre ~R$83/m²) · Escola priv R$2.500 · Plano R$750/p · Gasolina R$6,27/L",
+  pros:["Língua nativa — zero adaptação","Rede familiar e social","Cultura e gastronomia familiar"],
+  cons:["⚠ Segurança grave em SP","SUS precário — plano obrigatório","Alta carga tributária","Sem passaporte EU"]},
+ pt_ave:{name:"Aveiro",country:"Portugal",flag:"🇵🇹",tier:"core",color:"#E8B339",rateLbl:"€",
+  rentSqm:11.50,foodA:224,foodK:123,car:420,eduK:450,healA:55,healK:39,util:200,utilP:20,leisA:88,leisK:52,maidB:210,maidP:40,clA:41,clK:29,
+  qol:85,tax:45,safety:98,climate:70,community:60,
+  taxRate:"IRS 14,5-53% (regime para novos residentes)",
+  src:"Idealista dez/25 11,5€/m² distrito · Escola priv €450 · SNS gratuito · Gasolina €1,85/L",
+  pros:["🏆 Top 1 segurança mundial (GPI)","SNS universal gratuito","Escola pública excelente €0","Praia atlântica 10min","Passaporte EU em 5a"],
+  cons:["Inverno atlântico chuvoso","Mercado emprego menor","Aluguel subindo ~12%/a"]},
+ es_val:{name:"Valencia",country:"Espanha",flag:"🇪🇸",tier:"core",color:"#F0944A",rateLbl:"€",
+  rentSqm:13.58,foodA:237,foodK:130,car:380,eduK:533,healA:71,healK:49,util:260,utilP:20,leisA:115,leisK:69,maidB:270,maidP:50,clA:41,clK:29,
+  qol:88,tax:40,safety:80,climate:92,community:55,
+  taxRate:"IRPF 19-47% (regime Beckham p/ expat)",
+  src:"Fotocasa jan/26 €1.629 T4+ · Escola priv €6.900/ano · Saúde pública top 5 · Gasolina €1,62/L",
+  pros:["🏆 Saúde pública top 5 mundial","Mediterrâneo 300 dias sol","Praia urbana","3ª maior cidade ES","Passaporte EU em 5a"],
+  cons:["Aluguel +15% jan/26","Mais cara que Alicante","Verão muito quente"]},
+ es_ali:{name:"Alicante",country:"Espanha",flag:"🇪🇸",tier:"core",color:"#FF6B6B",rateLbl:"€",
+  rentSqm:9.60,foodA:220,foodK:121,car:380,eduK:533,healA:69,healK:48,util:230,utilP:20,leisA:104,leisK:63,maidB:220,maidP:50,clA:41,clK:29,
+  qol:83,tax:40,safety:80,climate:90,community:55,
+  taxRate:"IRPF 19-47%",
+  src:"Idealista ~9,6€/m² Costa Blanca · Escola priv €6.900/ano · Saúde pública top 5 · Gasolina €1,62/L",
+  pros:["Costa Blanca — praia urbana","320 dias de sol","Mais barata que Valencia","Muitos expats","Saúde pública top 5"],
+  cons:["Cidade menor","Verão muito quente","IRPF até 47%"]},
+ py_asu:{name:"Assunção",country:"Paraguai",flag:"🇵🇾",tier:"core",color:"#3DD6C4",rateLbl:"$",
+  rentSqm:8.85,foodA:114,foodK:63,car:159,eduK:354,healA:66,healK:46,util:89,utilP:13,leisA:56,leisK:34,maidB:124,maidP:18,clA:33,clK:23,
+  qol:65,tax:92,safety:60,climate:60,community:75,
+  taxRate:"IR 10% flat territorial",
+  src:"Villa Morra USD 10/m² · Escola SEK USD 470 · Asismed USD 75/adulto · ANDE hidro · Gasolina USD 1,10/L",
+  pros:["40% mais barato que litoral EU","Empregada fração do custo EU","Energia/combustível baratos","IR 10% flat","Carne top barata"],
+  cons:["Sem praia oceânica","Saúde pública precária","Verão subtropical intenso","Passaporte sem EU"]},
+ ge_tbi:{name:"Tbilisi",country:"Geórgia",flag:"🇬🇪",tier:"ext",color:"#B57BE8",rateLbl:"$",
+  rentSqm:7.5,foodA:150,foodK:83,car:160,eduK:300,healA:50,healK:35,util:70,utilP:12,leisA:70,leisK:42,maidB:110,maidP:16,clA:35,clK:25,
+  qol:62,tax:95,safety:78,climate:58,community:15,
+  taxRate:"1% small biz / 20% flat — territorial p/ estrangeiro",
+  src:"LivingCost: família 4 ~USD 3.100 c/ rent · pbservices.ge jan/26 · Vake/Saburtalo USD 250-700",
+  pros:["Um dos menores custos da Europa","Imposto 1% p/ autônomo","Crescimento PIB 6-7%/a","Vistos fáceis"],
+  cons:["Idioma/alfabeto barreira","Infra inferior","Tensão geopolítica regional","Inverno frio"]},
+ hu_bud:{name:"Budapest",country:"Hungria",flag:"🇭🇺",tier:"ext",color:"#54A3F0",rateLbl:"€",
+  rentSqm:9.5,foodA:175,foodK:96,car:280,eduK:380,healA:60,healK:42,util:180,utilP:18,leisA:85,leisK:51,maidB:160,maidP:28,clA:38,clK:27,
+  qol:78,tax:80,safety:82,climate:62,community:20,
+  taxRate:"15% flat IRPF (menor da UE)",
+  src:"hungarygoldenvisa.io: família 4 ~€3.000 · rent 50-60% < Berlim · transporte €23/mês",
+  pros:["IRPF 15% flat — menor da UE","Membro da UE (Schengen)","Termas e qualidade alta","Seguro e limpo"],
+  cons:["Idioma húngaro difícil","Inverno frio","Política instável","Pouca comunidade BR"]},
+ us_aus:{name:"Austin TX",country:"EUA",flag:"🇺🇸",tier:"ext",color:"#8896A6",rateLbl:"$",
+  rentSqm:22,foodA:340,foodK:187,car:520,eduK:900,healA:380,healK:250,util:260,utilP:30,leisA:200,leisK:120,maidB:480,maidP:90,clA:75,clK:53,
+  qol:80,tax:75,safety:68,climate:72,community:40,
+  taxRate:"0% estadual no TX (federal 10-37%)",
+  src:"CostLiving: TX família ~$4.656/mês base+ · Numbeo família 4 ~$8-9k c/ rent · childcare $1.2-2.5k/filho",
+  pros:["0% imposto estadual (TX)","Maior mercado de trabalho/salário","Hub de tecnologia","Sem barreira de idioma p/ inglês"],
+  cons:["⚠ Saúde privada cara ($380/adulto)","Childcare/escola caríssimos","Carro essencial e caro","Visto complexo"]},
+ us_mia:{name:"Miami FL",country:"EUA",flag:"🇺🇸",tier:"ext",color:"#6FA8C7",rateLbl:"$",
+  rentSqm:28,foodA:360,foodK:198,car:540,eduK:1100,healA:400,healK:260,util:270,utilP:32,leisA:230,leisK:138,maidB:520,maidP:95,clA:78,clK:55,
+  qol:78,tax:72,safety:62,climate:85,community:80,
+  taxRate:"0% estadual na FL (federal 10-37%)",
+  src:"CostLiving FL rank 20 · seguros e aluguel altos pós-2020 · grande comunidade latina/BR",
+  pros:["0% imposto estadual (FL)","Maior comunidade brasileira dos EUA","Clima tropical/praia","Hub de negócios LatAm"],
+  cons:["⚠ Muito caro (15k/mês família)","Saúde privada cara","Seguro habitação alto (furacões)","Escola privada cara"]},
+ mx_cdmx:{name:"Cidade do México",country:"México",flag:"🇲🇽",tier:"ext",color:"#C77B5B",rateLbl:"$",
+  rentSqm:11,foodA:150,foodK:83,car:250,eduK:420,healA:90,healK:63,util:90,utilP:14,leisA:90,leisK:54,maidB:150,maidP:22,clA:40,clK:28,
+  qol:68,tax:50,safety:48,climate:78,community:50,
+  taxRate:"ISR 1,9-35%",
+  src:"pacificprime jan/26: família 4 ~$2.387 · rent 3BR centro ~$1.070 · idioma próximo ao PT",
+  pros:["Idioma espanhol acessível","Cultura latina familiar","Custo moderado","Boa gastronomia/clima"],
+  cons:["⚠ Segurança variável","Trânsito e poluição CDMX","Burocracia","Saúde pública limitada"]},
+ th_cnx:{name:"Chiang Mai",country:"Tailândia",flag:"🇹🇭",tier:"ext",color:"#E0A04A",rateLbl:"$",
+  rentSqm:7,foodA:130,foodK:72,car:180,eduK:450,healA:70,healK:49,util:75,utilP:13,leisA:75,leisK:45,maidB:120,maidP:18,clA:32,clK:23,
+  qol:72,tax:70,safety:75,climate:68,community:12,
+  taxRate:"PIT 0-35% (remessa = territorial)",
+  src:"Wise: família 4 ~$2.060 s/ rent · casa 3BR condomínio $600-890 · saúde privada ótima/barata",
+  pros:["Custo muito baixo","Hub de nômades digitais","Saúde privada ótima e barata","Comida e natureza"],
+  cons:["⚠ Queimadas 2 meses/ano (ar)","Vistos exigem renovação","Idioma tailandês","Longe do Brasil"]},
+ br_int:{name:"Interior (GO/MG)",country:"Brasil",flag:"🇧🇷",tier:"low",color:"#7FC47F",rateLbl:"R$",
+  rentSqm:6.5,foodA:150,foodK:83,car:280,eduK:230,healA:110,healK:77,util:120,utilP:18,leisA:80,leisK:48,maidB:180,maidP:35,clA:48,clK:34,
+  qol:58,tax:40,safety:62,climate:70,community:95,
+  taxRate:"IRPF até 27,5% (idem BR)",
+  src:"FipeZAP cidades médias R$40-45/m² · custo ~35% < SP · escola priv interior R$1.500",
+  pros:["Mais barato que capital BR","Língua e família","Mais seguro que SP","Qualidade de vida tranquila"],
+  cons:["Menos serviços/escolas top","Saúde especializada distante","Sem passaporte EU","Mercado de trabalho menor"]},
+ py_int:{name:"Interior (Encarnación)",country:"Paraguai",flag:"🇵🇾",tier:"low",color:"#5BC4B0",rateLbl:"$",
+  rentSqm:5.5,foodA:90,foodK:50,car:140,eduK:230,healA:55,healK:38,util:65,utilP:10,leisA:42,leisK:25,maidB:95,maidP:14,clA:28,clK:20,
+  qol:60,tax:92,safety:68,climate:62,community:70,
+  taxRate:"IR 10% flat territorial",
+  src:"Encarnación/CDE custo ~30% < Assunção · IR 10% · fronteira com BR/AR",
+  pros:["O mais barato de todos","IR 10% flat","Fronteira com Brasil","Tranquilo e seguro"],
+  cons:["Cidade pequena","Serviços limitados","Sem praia oceânica","Calor intenso"]},
+ ge_bat:{name:"Batumi",country:"Geórgia",flag:"🇬🇪",tier:"low",color:"#A06BD8",rateLbl:"$",
+  rentSqm:6,foodA:130,foodK:72,car:150,eduK:260,healA:45,healK:32,util:62,utilP:11,leisA:60,leisK:36,maidB:95,maidP:14,clA:32,clK:23,
+  qol:60,tax:95,safety:76,climate:64,community:10,
+  taxRate:"1% small biz / territorial",
+  src:"pbservices.ge: indivíduo USD 900, família 4 ~USD 2.030 · praia no Mar Negro",
+  pros:["Custo baixíssimo","Imposto 1% autônomo","Praia (Mar Negro)","Vistos fáceis"],
+  cons:["Cidade sazonal (turismo)","Idioma/alfabeto","Infra inferior","Longe do Brasil"]},
+ vn_dad:{name:"Da Nang",country:"Vietnã",flag:"🇻🇳",tier:"low",color:"#5BB0C4",rateLbl:"$",
+  rentSqm:7,foodA:120,foodK:66,car:150,eduK:400,healA:60,healK:42,util:70,utilP:12,leisA:65,leisK:39,maidB:100,maidP:15,clA:30,clK:21,
+  qol:68,tax:68,safety:76,climate:70,community:8,
+  taxRate:"PIT 5-35% (territorial p/ remessa)",
+  src:"Numbeo: custo muito baixo · praia · hub nômade emergente, mais fácil que Tailândia p/ visto",
+  pros:["Custo muito baixo","Praia + cidade","Seguro e amigável","Internet rápida"],
+  cons:["Idioma vietnamita","Longe do Brasil","Serviços ocidentais limitados","Visto exige planejamento"]},
+ in_goa:{name:"Goa",country:"Índia",flag:"🇮🇳",tier:"low",color:"#D88B6B",rateLbl:"$",
+  rentSqm:5,foodA:85,foodK:47,car:120,eduK:300,healA:40,healK:28,util:55,utilP:9,leisA:45,leisK:27,maidB:70,maidP:10,clA:25,clK:18,
+  qol:62,tax:75,safety:68,climate:72,community:8,
+  taxRate:"IT 0-30% (territorial p/ NRI)",
+  src:"Numbeo: um dos mais baratos · praia · comunidade expat/nômade · empregada baratíssima",
+  pros:["O mais barato (com praia)","Empregada baratíssima","Praia tropical","Comunidade nômade"],
+  cons:["Infra muito variável","Choque cultural alto","Idioma/burocracia","Muito longe do Brasil"]},
+ ph_ceb:{name:"Cebu",country:"Filipinas",flag:"🇵🇭",tier:"low",color:"#6BB8D8",rateLbl:"$",
+  rentSqm:6,foodA:100,foodK:55,car:140,eduK:320,healA:50,healK:35,util:65,utilP:11,leisA:55,leisK:33,maidB:85,maidP:12,clA:28,clK:20,
+  qol:60,tax:72,safety:58,climate:70,community:8,
+  taxRate:"0-35% (territorial p/ estrangeiro)",
+  src:"Numbeo: custo baixo · inglês amplamente falado · praias · empregada acessível",
+  pros:["Inglês amplamente falado","Custo baixo","Praias tropicais","Empregada acessível"],
+  cons:["⚠ Segurança variável","Infra/trânsito","Tufões sazonais","Longe do Brasil"]},
+};
+const LL=Object.keys(LOCS);
+const CATS=["Moradia","Alimentação","Carros","Escola","Saúde","Contas","Lazer","Empregada","Vestuário","Imprevistos"];
+
+// ===== GOALS =====
+const GOALS={
+ economia:{label:"Economia de vida",icon:"💰",color:"#5BD66A",axis:"afford"},
+ imposto:{label:"Economizar em imposto",icon:"🏦",color:"#E8B339",axis:"tax"},
+ qualidade:{label:"Qualidade de vida",icon:"✨",color:"#B57BE8",axis:"qol"},
+ seguranca:{label:"Segurança",icon:"🛡️",color:"#54A3F0",axis:"safety"},
+ clima:{label:"Clima e praia",icon:"🌴",color:"#3DD6C4",axis:"climate"},
+};
+
+// ===== STATE =====
+const S={adults:3,kids:3,income:8000,curr:"€",tab:"ov",
+  ext:false,goals:[],optCity:"es_ali",sel:null,picked:null,
+  opts:{cars:2,publicSchool:false,publicHealth:false,maidLevel:"full"}};
+
+// ===== ENGINE =====
+function getSqm(n){return n<=2?65:n<=3?80:n<=4?100:n<=5?110:n<=6?120:n<=8?140:160+(n-9)*10;}
+function convert(eur,c){return c==="€"?eur:c==="R$"?eur*EBR:eur*EUD;}
+function fmt(eur,c){c=c||S.curr;return c+Math.round(convert(eur,c)).toLocaleString("pt-BR");}
+
+function calc(lid,a,k,o){
+  o=o||{};const c=LOCS[lid],n=a+k;
+  const housing=Math.round(getSqm(n)*c.rentSqm);
+  const food=a*c.foodA+k*c.foodK;
+  const cars=Math.round(c.car*(o.cars==null?2:o.cars));
+  const edu=o.publicSchool?0:k*c.eduK;
+  const hb=a*c.healA+k*c.healK;
+  const heal=o.publicHealth?Math.round(hb*0.2):hb;
+  const util=c.util+n*c.utilP;
+  const leis=a*c.leisA+k*c.leisK;
+  const ml=o.maidLevel||"full";
+  const mb=ml==="none"?0:ml==="part"?c.maidB*0.5:c.maidB;
+  const mp=ml==="none"?0:ml==="part"?c.maidP*0.5:c.maidP;
+  const maid=Math.round(mb+n*mp);
+  const cloth=a*c.clA+k*c.clK;
+  const sub=housing+food+cars+edu+heal+util+leis+maid+cloth;
+  const misc=Math.round(sub*0.04);
+  return{items:{Moradia:housing,Alimentação:food,Carros:cars,Escola:edu,Saúde:heal,Contas:util,Lazer:leis,Empregada:maid,Vestuário:cloth,Imprevistos:misc},total:sub+misc};
+}
+
+function activeLocs(){
+  return LL.filter(id=>{
+    const t=LOCS[id].tier;
+    if(t==="core")return true;
+    return S.ext; // ext + low only when extended
+  });
+}
+
+function affordScore(ratio){
+  if(ratio>=1)return 0;
+  return ratio<0.3?100:ratio<0.5?90:ratio<0.7?75:ratio<0.85?55:30;
+}
+
+function scoreLoc(lid){
+  const c=LOCS[lid];
+  const cost=calc(lid,S.adults,S.kids).total;
+  const ratio=cost/S.income;
+  const afford=affordScore(ratio);
+  const axes={afford:afford,tax:c.tax,qol:c.qol,safety:c.safety,climate:c.climate};
+  let score;
+  if(S.goals.length===0){
+    score=afford*0.5+c.qol*0.5;
+  }else{
+    const sel=S.goals.map(g=>axes[GOALS[g].axis]);
+    const goalScore=sel.reduce((x,y)=>x+y,0)/sel.length;
+    if(ratio>=1){score=0;}
+    else{
+      const gate=ratio>0.85?0.6:ratio>0.7?0.85:1.0;
+      // if economia is a goal, affordability is already inside; else blend 40%
+      score=S.goals.includes("economia")? goalScore*gate : goalScore*gate*0.6+afford*0.4;
+    }
+  }
+  return{cityId:lid,cost,ratio,afford,score:+score.toFixed(1),surplus:S.income-cost};
+}
+
+function getRanked(){
+  const arr=activeLocs().map(scoreLoc);
+  // primary: fits income first; among fitting sort by score desc; among non-fitting sort by ratio asc (least bad)
+  arr.sort((a,b)=>{
+    const af=a.ratio<1?0:1, bf=b.ratio<1?0:1;
+    if(af!==bf)return af-bf;
+    if(af===0)return b.score-a.score;
+    return a.ratio-b.ratio;
+  });
+  return arr;
+}
+
+// ===== INSIGHTS =====
+function genInsights(ranked){
+  const out=[],top=ranked[0];
+  const fitting=ranked.filter(r=>r.ratio<1);
+  const cheapest=[...ranked].sort((a,b)=>a.cost-b.cost)[0];
+  const byId=id=>ranked.find(r=>r.cityId===id);
+  const py=byId("py_asu"),pt=byId("pt_ave"),br=byId("br_sp");
+
+  if(fitting.length===0){
+    out.push({t:"danger",i:"⚠",ti:"Nenhum local cabe na renda atual",
+      b:`Mesmo ${LOCS[cheapest.cityId].name} (${fmt(cheapest.cost)}, mais acessível) excede sua renda. ${S.ext?"":"Ative <b>Locais estendidos</b> para abrir opções mais baratas, ou a"}${S.ext?"A":""}umente a renda em pelo menos ${fmt(cheapest.cost-S.income)}.`});
+  }else if(cheapest.ratio>0.85){
+    out.push({t:"warn",i:"⚡",ti:"Margem apertada em toda parte",
+      b:`A opção mais acessível (${LOCS[cheapest.cityId].name}) já consome ${Math.round(cheapest.ratio*100)}% da renda. Considere ${S.ext?"":"ativar Locais estendidos ou "}rever objetivos/tamanho da família.`});
+  }
+
+  // Goals-driven insight
+  if(S.goals.length===5){
+    out.push({t:"ok",i:"🎯",ti:"Modo equilíbrio total (5 objetivos)",
+      b:`Com economia + imposto + qualidade + segurança + clima ativos, ${LOCS[top.cityId].name} (${LOCS[top.cityId].country}) é o ponto de equilíbrio ótimo — bom em todos os eixos, com peso especial à carga fiscal.`});
+  }else if(S.goals.includes("imposto")){
+    const lowTax=[...ranked].filter(r=>r.ratio<1).sort((a,b)=>LOCS[b.cityId].tax-LOCS[a.cityId].tax)[0];
+    if(lowTax)out.push({t:"info",i:"🏦",ti:"Vantagem fiscal",
+      b:`${LOCS[lowTax.cityId].name}: ${LOCS[lowTax.cityId].taxRate}. Países como Geórgia (1% autônomo), Paraguai (10% flat) e Hungria (15% flat) batem qualquer regime europeu ocidental.`});
+  }
+
+  // Extended-mode discovery
+  if(S.ext&&top.tier!=="core"){
+    out.push({t:"info",i:"🌍",ti:`Local estendido lidera: ${LOCS[top.cityId].name}`,
+      b:`Ao abrir o mundo, ${LOCS[top.cityId].name} (${LOCS[top.cityId].country}) supera as opções litorâneas tradicionais para seus critérios. Custo ${fmt(top.cost)}/mês · ${LOCS[top.cityId].taxRate}.`});
+  }
+
+  // Income-tier shift
+  if(top.tier==="low"){
+    out.push({t:"info",i:"📉",ti:"Sua renda aponta para destinos de baixo custo",
+      b:`Com a renda atual, locais como interior do Paraguai, Cáucaso ou sudeste asiático maximizam seu padrão de vida. Conforme a renda sobe, a recomendação migra de volta para capitais e litoral europeu.`});
+  }
+
+  // Brazil vs Portugal classic
+  if(br&&pt&&br.cost>pt.cost){
+    out.push({t:"info",i:"💡",ti:"Brasil (SP) custa mais que Portugal (Aveiro)",
+      b:`São Paulo: ${fmt(br.cost-pt.cost)}/mês A MAIS que Aveiro — perdendo em segurança, saúde pública gratuita, escola pública e passaporte EU.`});
+  }
+
+  // Paraguay trade-off (when both visible)
+  if(py&&pt&&py.ratio<1){
+    out.push({t:"info",i:"🇵🇾",ti:"Paraguai: o equilíbrio fiscal das Américas",
+      b:`Assunção dá ${fmt(Math.max(0,pt.cost-py.cost))}/mês de folga vs Aveiro, com IR 10% flat. Troca: sem praia oceânica e saúde privada obrigatória, mas mantém proximidade cultural e idioma acessível.`});
+  }
+
+  // EUA warning
+  const us=byId("us_mia")||byId("us_aus");
+  if(S.ext&&us&&us.ratio>0.85){
+    out.push({t:"warn",i:"🇺🇸",ti:"EUA exige renda muito alta",
+      b:`Miami/Austin custam 2-3× a Europa litorânea por causa de saúde privada e escola. Só fazem sentido com renda acima de ${fmt((byId("us_mia")||us).cost*1.4)}/mês — mas oferecem 0% imposto estadual (TX/FL) e a maior comunidade brasileira.`});
+  }
+
+  // Big family
+  if(S.adults+S.kids>=7){
+    out.push({t:"info",i:"👨‍👩‍👧‍👦",ti:`Família de ${S.adults+S.kids} pessoas`,
+      b:`Casa de ${getSqm(S.adults+S.kids)}m² necessária. Locais de baixo custo (interior, Cáucaso, Ásia) tornam famílias grandes muito mais viáveis que capitais europeias.`});
+  }
+
+  // Comfort surplus
+  if(top.ratio<1&&top.surplus>top.cost*0.6){
+    out.push({t:"ok",i:"✓",ti:"Folga financeira confortável",
+      b:`Em ${LOCS[top.cityId].name} sobram ${fmt(top.surplus)}/mês — espaço para poupança, viagens e segurança. Você pode priorizar qualidade sobre puro custo.`});
+  }
+
+  return out.slice(0,5);
+}
+
+// ===== CHART =====
+let chart=null;
+function renderChart(ranked){
+  const cv=document.getElementById("chart");if(!cv)return;
+  const data=ranked.slice(0,12);
+  const labels=data.map(r=>LOCS[r.cityId].flag+" "+LOCS[r.cityId].name);
+  const vals=data.map(r=>Math.round(convert(r.cost,S.curr)));
+  const cols=data.map(r=>LOCS[r.cityId].color);
+  const inc=Math.round(convert(S.income,S.curr));
+  const incLine={id:"il",afterDraw(ch){const{ctx,scales:{y},chartArea:{left,right}}=ch;if(!y)return;const v=inc;if(v>y.max)return;const yp=y.getPixelForValue(v);ctx.save();ctx.beginPath();ctx.moveTo(left,yp);ctx.lineTo(right,yp);ctx.strokeStyle="#3DD6C4";ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();ctx.fillStyle="#3DD6C4";ctx.font="11px 'Space Mono',monospace";ctx.fillText("Renda "+S.curr+inc.toLocaleString("pt-BR"),right-150,yp-6);ctx.restore();}};
+  if(chart){chart.data.labels=labels;chart.data.datasets[0].data=vals;chart.data.datasets[0].backgroundColor=cols.map(c=>c+"D0");chart.data.datasets[0].borderColor=cols;chart.update();return;}
+  chart=new Chart(cv,{type:"bar",data:{labels,datasets:[{data:vals,backgroundColor:cols.map(c=>c+"D0"),borderColor:cols,borderWidth:1.5,borderRadius:6}]},plugins:[incLine],
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:"#141D2A",borderColor:"#2A3A4E",borderWidth:1,titleFont:{family:"Space Mono",size:11},bodyFont:{family:"Space Mono",size:11},callbacks:{label:i=>S.curr+i.raw.toLocaleString("pt-BR")+"/mês"}}},
+      scales:{x:{grid:{display:false},ticks:{color:"#A8B8C8",font:{family:"Space Grotesk",size:10},maxRotation:45,minRotation:35}},
+        y:{grid:{color:"#1E2A3A"},ticks:{color:"#5E7185",font:{family:"Space Mono",size:10},callback:v=>S.curr+(v/1000).toFixed(0)+"k"}}}}});
+}
+
+// ===== RENDER: REC + CARDS =====
+function tierLabel(t){return t==="core"?"Litoral/Capital":t==="ext"?"Estendido":"Baixo custo";}
+
+function renderRec(ranked){
+  const top=ranked[0],c=LOCS[top.cityId];
+  const div=document.getElementById("rec");
+  const fits=top.ratio<1;
+  if(!fits){
+    div.style.background="linear-gradient(135deg,#2A1418 0%,#0F1620 100%)";
+    div.style.border="1px solid #5A2530";
+    div.innerHTML=`<div style="display:flex;gap:14px;align-items:center;"><span style="font-size:28px;">⚠</span><div><div class="serif" style="font-size:20px;color:#FF9999;">Nenhum local cabe nessa renda</div><div class="mono" style="font-size:12px;color:var(--ink2);margin-top:4px;">Mais acessível: ${c.flag} ${c.name} (${fmt(top.cost)}/mês, ${Math.round(top.ratio*100)}% da renda). ${S.ext?"":"Ative Locais estendidos →"}</div></div></div>`;
+    return;
+  }
+  div.style.background=`linear-gradient(135deg,${c.color}1F 0%,#0F1620 65%)`;
+  div.style.border=`2px solid ${c.color}`;
+  div.innerHTML=`
+    <div class="glow" style="background:radial-gradient(circle at 85% 20%,${c.color}22,transparent 60%);"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;position:relative;">
+      <div style="flex:1;min-width:260px;">
+        <span class="mono" style="font-size:10px;color:${c.color};letter-spacing:.16em;">★ RECOMENDADO PARA SUA FAMÍLIA, RENDA E OBJETIVOS</span>
+        <div class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:7px 0 5px;">${c.flag} ${c.name}</div>
+        <div class="mono" style="font-size:12px;color:var(--ink2);">${c.country} · ${tierLabel(c.tier)} &nbsp;·&nbsp; ${fmt(top.cost)}/mês &nbsp;·&nbsp; sobra ${fmt(top.surplus)} &nbsp;·&nbsp; ${Math.round(top.ratio*100)}% da renda</div>
+        <div class="mono" style="font-size:11px;color:var(--ink3);margin-top:6px;">🏦 ${c.taxRate}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="lbl">SCORE</div>
+        <div class="serif" style="font-size:42px;font-weight:700;color:${c.color};line-height:1;">${top.score}<span style="font-size:15px;color:var(--ink3);">/100</span></div>
+        <div class="mono" style="font-size:10px;color:var(--ink3);margin-top:4px;">QoL ${c.qol} · Fisc ${c.tax} · Seg ${c.safety}</div>
+      </div>
+    </div>`;
+}
+
+function renderCards(ranked){
+  const div=document.getElementById("cards");
+  const show=ranked.slice(0,S.ext?10:5);
+  div.style.gridTemplateColumns=`repeat(${Math.min(show.length,5)},1fr)`;
+  div.innerHTML=show.map((r,i)=>{
+    const c=LOCS[r.cityId],isTop=i===0,fits=r.ratio<1;
+    const crown=isTop&&fits?`<span class="crown" style="background:${c.color};color:#06201D;">★ TOP</span>`:!fits?`<span class="crown" style="background:#5A2530;color:#FF9999;">EXCEDE</span>`:"";
+    return `<div class="cc ${S.sel===r.cityId?'sel':''}" style="border-color:${isTop?c.color:'var(--line)'};" onclick="selectCity('${r.cityId}')">
+      ${crown}
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+        <span class="flagbox">${c.flag}</span>
+        <div style="min-width:0;"><div class="serif" style="font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
+        <div class="mono" style="font-size:8px;color:var(--ink3);">${c.country} · ${tierLabel(c.tier)}</div></div>
+      </div>
+      <div class="serif" style="font-size:21px;font-weight:700;color:${c.color};">${fmt(r.cost)}</div>
+      <div class="mono" style="font-size:9px;color:var(--ink3);margin-top:1px;">/mês · ${Math.round(r.ratio*100)}% renda</div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);">
+        <div class="mono" style="font-size:10px;color:${r.surplus>0?'var(--grass)':'var(--coral)'};">${r.surplus>=0?'+':''}${fmt(r.surplus)}</div>
+        <div class="rnk-bar"><i style="width:${Math.min(100,r.score)}%;background:${c.color};"></i></div>
+        <div class="mono" style="font-size:9px;color:var(--ink3);margin-top:3px;">score ${r.score}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderRanking(ranked){
+  document.getElementById("rnk").innerHTML=ranked.map((r,i)=>{
+    const c=LOCS[r.cityId],fits=r.ratio<1;
+    const rc=r.ratio>0.85?'var(--coral)':r.ratio>0.7?'var(--amber)':'var(--grass)';
+    return `<div class="rr ${S.sel===r.cityId?'sel':''}" onclick="selectCity('${r.cityId}')">
+      <span class="rnk-num" style="color:${i===0&&fits?c.color:'var(--ink3)'};">${i+1}</span>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">${c.flag}</span>
+        <div><div style="font-size:13px;color:var(--ink);">${c.name}</div><div class="mono" style="font-size:9px;color:var(--ink3);">${c.country} · ${tierLabel(c.tier)}</div></div></div>
+      <span class="mono" style="font-size:13px;color:${c.color};">${fmt(r.cost)}</span>
+      <span class="mono hide-m" style="font-size:12px;color:${r.surplus>0?'var(--grass)':'var(--coral)'};">${r.surplus>=0?'+':''}${fmt(r.surplus)}</span>
+      <span class="mono hide-m" style="font-size:11px;color:${rc};">${Math.round(r.ratio*100)}%</span>
+      <span class="mono" style="font-size:14px;font-weight:700;color:${i===0&&fits?c.color:'var(--ink2)'};text-align:right;">${fits?r.score:'—'}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderInsights(ranked){
+  const ins=genInsights(ranked);
+  document.getElementById("insub").textContent=`${S.adults} adulto${S.adults!==1?'s':''} + ${S.kids} criança${S.kids!==1?'s':''} · renda ${fmt(S.income)}/mês · ${S.goals.length} objetivo${S.goals.length!==1?'s':''} · ${activeLocs().length} locais analisados`;
+  const cm={danger:{b:"#2A1418",l:"#5A2530",a:"#FF9999"},warn:{b:"#241E12",l:"#5A4A20",a:"#F0C040"},info:{b:"#0E1C2A",l:"#1E4060",a:"#54A3F0"},ok:{b:"#0E2A20",l:"#1E5040",a:"#5BD66A"}};
+  document.getElementById("inslist").innerHTML=ins.map(x=>{const k=cm[x.t];return `<div class="ins" style="background:${k.b};border-color:${k.l};border-left-color:${k.a};"><span class="ico">${x.i}</span><div><div class="ins-t" style="color:${k.a};">${x.ti}</div><div class="ins-b">${x.b}</div></div></div>`;}).join("");
+}
+
+function renderBreakdown(){
+  const locs=activeLocs();
+  document.getElementById("bkhd").textContent=`BREAKDOWN · ${S.adults}A + ${S.kids}C · ${locs.length} LOCAIS`;
+  const data=locs.map(id=>({id,...calc(id,S.adults,S.kids)}));
+  const mins={};CATS.forEach(cat=>{mins[cat]=Math.min(...data.map(d=>d.items[cat]));});
+  let h=`<table class="dt"><thead><tr><th>Categoria</th>${data.map(d=>`<th style="color:${LOCS[d.id].color};">${LOCS[d.id].flag} ${LOCS[d.id].name}</th>`).join("")}</tr></thead><tbody>`;
+  CATS.forEach(cat=>{h+=`<tr><td>${cat}</td>${data.map(d=>{const v=d.items[cat],ch=v===mins[cat]&&v>0;return `<td class="${ch?'cheap':''}">${fmt(v)}${ch?' ▼':''}</td>`;}).join("")}</tr>`;});
+  h+=`</tbody><tfoot><tr><td>TOTAL/MÊS</td>${data.map(d=>`<td style="color:${LOCS[d.id].color};">${fmt(d.total)}</td>`).join("")}</tr></tfoot></table>`;
+  document.getElementById("bktbl").innerHTML=h;
+  document.getElementById("bksrc").innerHTML=data.map(d=>`<span style="color:${LOCS[d.id].color};">${LOCS[d.id].flag} ${LOCS[d.id].name}:</span> ${LOCS[d.id].src}<br>`).join("");
+}
+
+function renderOptimizer(){
+  const locs=activeLocs().filter(id=>id!=="py_asu");
+  const btns=document.getElementById("optcitybtns");
+  if(!locs.includes(S.optCity))S.optCity=locs[0];
+  btns.innerHTML=locs.map(id=>`<button class="tb ${S.optCity===id?'on':''}" style="padding:5px 11px;font-size:11px;border:1px solid ${S.optCity===id?LOCS[id].color:'var(--line2)'};border-radius:7px;${S.optCity===id?'color:'+LOCS[id].color:''}" onclick="setOptCity('${id}')">${LOCS[id].flag} ${LOCS[id].name}</button>`).join("");
+  const id=S.optCity,c=LOCS[id];
+  const base=calc(id,S.adults,S.kids),res=calc(id,S.adults,S.kids,S.opts);
+  const pyTot=calc("py_asu",S.adults,S.kids).total;
+  document.getElementById("opylbl").textContent=`Meta Assunção: ${fmt(pyTot)}`;
+  document.getElementById("ob").innerHTML=`<span style="color:${c.color};">${fmt(base.total)}</span>`;
+  document.getElementById("oo").innerHTML=`<span style="color:${res.total<=pyTot?'var(--grass)':c.color};">${fmt(res.total)}</span>`;
+  document.getElementById("ovp").innerHTML=`<span style="color:${res.total<=pyTot?'var(--grass)':'var(--amber)'};">${res.total<=pyTot?'✓ abaixo':'+'+fmt(res.total-pyTot)}</span>`;
+  const eu=["pt_ave","es_val","es_ali","hu_bud"].includes(id);
+  const levers=[
+    {k:"publicSchool",l:"Escola pública",d:S.kids>0?(eu?`${S.kids} filho(s) → pública gratuita de qualidade`:`pública local — qualidade variável`):"sem filhos",q:eu?"↑ melhor":"→ varia",dis:S.kids===0},
+    {k:"publicHealth",l:"Saúde pública",d:eu?"sistema público + complementar":"cobertura pública local",q:eu?"↑ melhor":"→ varia"},
+    {k:"cars1",l:"Reduzir p/ 1 carro",d:`economiza ${fmt(c.car)} — bike/transporte`,q:"→ neutro"},
+    {k:"maidPart",l:"Empregada 2× semana",d:"de integral p/ meio período",q:"↓ menor"},
+  ];
+  document.getElementById("lvrs").innerHTML=levers.map(lv=>{
+    const on=lv.k==="publicSchool"?S.opts.publicSchool:lv.k==="publicHealth"?S.opts.publicHealth:lv.k==="cars1"?S.opts.cars===1:S.opts.maidLevel==="part";
+    const qc=lv.q.includes("↑")?"var(--grass)":lv.q.includes("↓")?"var(--amber)":"var(--ink3)";
+    return `<div class="lever ${on?'on':''}" style="opacity:${lv.dis?.45:1};" onclick="${lv.dis?'':"toggleOpt('"+lv.k+"')"}">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div class="sw ${on?'on':''}"><div class="knob"></div></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--ink);">${lv.l}</div>
+        <div class="mono" style="font-size:9px;color:var(--ink3);margin:2px 0;">${lv.d}</div>
+        <span class="mono" style="font-size:9px;color:${qc};">QdV: ${lv.q}</span></div>
+      </div></div>`;
+  }).join("");
+  document.getElementById("obk").innerHTML=CATS.map(cat=>{
+    const b=base.items[cat],a=res.items[cat],d=b-a,pct=b>0?Math.round(a/b*100):100;
+    return `<div style="display:grid;grid-template-columns:130px 1fr 84px 84px 70px;padding:7px 0;border-bottom:1px solid var(--line);align-items:center;font-family:'Space Mono',monospace;font-size:11px;">
+      <span style="color:var(--ink3);">${cat}</span>
+      <div style="padding:0 8px;"><div style="background:var(--line2);height:5px;border-radius:3px;overflow:hidden;"><i style="display:block;height:100%;width:${pct}%;background:${c.color};opacity:.7;"></i></div></div>
+      <span style="text-align:right;color:var(--ink3);">${fmt(b)}</span>
+      <span style="text-align:right;color:${a<b?'var(--grass)':'var(--ink2)'};">${fmt(a)}</span>
+      <span style="text-align:right;color:${d>0?'var(--grass)':'var(--ink3)'};">${d>0?'−'+fmt(d):''}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderQoL(){
+  const locs=activeLocs();
+  const g=document.getElementById("qlcards");
+  g.style.gridTemplateColumns=`repeat(${Math.min(locs.length,5)<=3?locs.length:locs.length<=10?5:5},1fr)`;
+  g.innerHTML=locs.map(id=>{const c=LOCS[id];return `<div class="qcard">
+    <div class="serif" style="font-size:14px;font-weight:600;color:var(--ink);">${c.flag} ${c.name}</div>
+    <div class="mono" style="font-size:9px;color:var(--ink3);margin-bottom:9px;">${c.country} · QoL <b style="color:${c.color};">${c.qol}</b> · Fisc <b style="color:${c.color};">${c.tax}</b></div>
+    <div class="mono" style="font-size:9px;color:var(--grass);margin-bottom:4px;">▲ PRÓS</div>
+    ${c.pros.map(p=>`<div style="font-size:10px;color:var(--ink2);margin-bottom:3px;line-height:1.3;">· ${p}</div>`).join("")}
+    <div class="mono" style="font-size:9px;color:var(--amber);margin:8px 0 4px;">▼ ATENÇÃO</div>
+    ${c.cons.map(p=>`<div style="font-size:10px;color:var(--ink3);margin-bottom:3px;line-height:1.3;">· ${p}</div>`).join("")}
+  </div>`;}).join("");
+
+  const locs2=activeLocs();
+  const vars=[["QoL Score","qol"],["Vantagem fiscal","tax"],["Segurança","safety"],["Clima/praia","climate"],["Comunidade BR","community"]];
+  let h=`<thead><tr><th>Variável</th>${locs2.map(id=>`<th style="color:${LOCS[id].color};">${LOCS[id].flag}</th>`).join("")}</tr></thead><tbody>`;
+  vars.forEach(([lbl,key])=>{const mx=Math.max(...locs2.map(id=>LOCS[id][key]));h+=`<tr><td>${lbl}</td>${locs2.map(id=>{const v=LOCS[id][key],top=v===mx;return `<td class="${top?'cheap':''}">${v}${top?' ▲':''}</td>`;}).join("")}</tr>`;});
+  h+=`<tr><td>Regime fiscal</td>${locs2.map(id=>`<td style="font-size:8px;text-align:left;color:var(--ink3);">${LOCS[id].taxRate}</td>`).join("")}</tr>`;
+  h+=`</tbody>`;
+  document.getElementById("qltbl").innerHTML=h;
+}
+
+function renderPicker(){
+  const locs=activeLocs();
+  document.getElementById("pickinfo").textContent=S.picked?`fixado: ${LOCS[S.picked].name} — recálculo reverso ativo`:`${locs.length} locais disponíveis`;
+  document.getElementById("cgrid").innerHTML=locs.map(id=>{const c=LOCS[id],cost=calc(id,S.adults,S.kids).total;
+    return `<div class="cell ${S.picked===id?'sel':''}" onclick="pickCity('${id}')">
+      <span style="font-size:20px;">${c.flag}</span>
+      <div style="min-width:0;"><div class="nm">${c.name}</div><div class="sub">${c.country} · ${fmt(cost)}/mês</div></div>
+    </div>`;}).join("");
+  const pr=document.getElementById("pickresult");
+  if(!S.picked){pr.innerHTML="";return;}
+  const c=LOCS[S.picked];const r=scoreLoc(S.picked);
+  const ranked=getRanked();const rank=ranked.findIndex(x=>x.cityId===S.picked)+1;
+  const fits=r.ratio<1;
+  const minIncome=Math.round(calc(S.picked,S.adults,S.kids).total/0.7);
+  const cheaperAlts=ranked.filter(x=>x.cost<r.cost&&x.ratio<1).slice(0,3);
+  pr.innerHTML=`<div class="panel" style="padding:18px;border-color:${c.color};">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+      <div><div class="serif" style="font-size:24px;font-weight:700;color:var(--ink);">${c.flag} ${c.name}, ${c.country}</div>
+        <div class="mono" style="font-size:12px;color:var(--ink2);margin-top:5px;">${fmt(r.cost)}/mês · ${Math.round(r.ratio*100)}% da renda · ${fits?'sobra '+fmt(r.surplus):'EXCEDE em '+fmt(-r.surplus)}</div>
+        <div class="mono" style="font-size:11px;color:var(--ink3);margin-top:4px;">🏦 ${c.taxRate}</div></div>
+      <div style="text-align:right;"><div class="lbl">RANKING ATUAL</div><div class="serif" style="font-size:32px;font-weight:700;color:${c.color};">#${rank}<span style="font-size:13px;color:var(--ink3);"> de ${ranked.length}</span></div></div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
+      <div><div class="lbl">RENDA IDEAL (custo ≤70%)</div><div class="mono" style="font-size:17px;color:var(--ink);margin-top:3px;">${fmt(minIncome)}/mês</div><div class="mono" style="font-size:9px;color:${S.income>=minIncome?'var(--grass)':'var(--amber)'};margin-top:2px;">${S.income>=minIncome?'✓ sua renda atende':'sua renda está '+fmt(minIncome-S.income)+' abaixo'}</div></div>
+      <div><div class="lbl">QUALIDADE DE VIDA</div><div class="mono" style="font-size:17px;color:var(--ink);margin-top:3px;">${c.qol}/100</div></div>
+      <div><div class="lbl">VANTAGEM FISCAL</div><div class="mono" style="font-size:17px;color:var(--ink);margin-top:3px;">${c.tax}/100</div></div>
+    </div>
+    ${cheaperAlts.length?`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);"><div class="lbl" style="margin-bottom:8px;">MAIS BARATAS QUE ${c.name.toUpperCase()} (mesmos critérios)</div>${cheaperAlts.map(a=>`<div style="display:inline-flex;align-items:center;gap:6px;margin:0 14px 6px 0;font-size:12px;color:var(--ink2);"><span>${LOCS[a.cityId].flag}</span> ${LOCS[a.cityId].name} <span class="mono" style="color:var(--grass);font-size:11px;">−${fmt(r.cost-a.cost)}</span></div>`).join("")}</div>`:`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);"><div class="mono" style="font-size:11px;color:var(--grass);">✓ Esta é uma das opções mais econômicas que cabem na sua renda.</div></div>`}
+  </div>`;
+}
+
+// ===== MASTER RENDER =====
+function render(){
+  const ranked=getRanked();
+  // header
+  document.getElementById("finfo").textContent=`${S.adults+S.kids} pessoa${S.adults+S.kids!==1?'s':''} · ${getSqm(S.adults+S.kids)}m²`;
+  document.getElementById("inclbl").textContent=`Renda / mês (${S.curr})`;
+  document.getElementById("ir").value=Math.round(convert(S.income,S.curr));
+  document.getElementById("gcount").textContent=S.goals.length?`(${S.goals.length}/5)`:"";
+  ["eur","brl","usd"].forEach(k=>{const cc=k==="eur"?"€":k==="brl"?"R$":"$";document.getElementById("b-"+k).classList.toggle("on",S.curr===cc);});
+  document.getElementById("pill-ext").classList.toggle("on",S.ext);
+  document.getElementById("pill-goal").classList.toggle("on",S.goals.length>0);
+
+  renderRec(ranked);
+  renderCards(ranked);
+  if(S.tab==="ov"){renderChart(ranked);renderRanking(ranked);}
+  else if(S.tab==="in")renderInsights(ranked);
+  else if(S.tab==="bk")renderBreakdown();
+  else if(S.tab==="op")renderOptimizer();
+  else if(S.tab==="ql")renderQoL();
+  else if(S.tab==="pick")renderPicker();
+}
+
+// ===== GOAL GRID =====
+function renderGoalGrid(){
+  document.getElementById("goalgrid").innerHTML=Object.entries(GOALS).map(([k,g])=>{
+    const on=S.goals.includes(k);
+    return `<div class="goal ${on?'on':''}" style="--goalc:${g.color};" onclick="toggleGoal('${k}')"><span class="gi">${g.icon}</span> ${g.label}</div>`;
+  }).join("");
+}
+
+// ===== EVENTS =====
+function bump(field,d){
+  if(field==="adults")S.adults=Math.max(1,Math.min(10,S.adults+d));
+  else S.kids=Math.max(0,Math.min(10,S.kids+d));
+  document.getElementById(field==="adults"?"ia":"ic").value=field==="adults"?S.adults:S.kids;
+  render();
+}
+function setTab(id){
+  S.tab=id;
+  document.querySelectorAll(".pane").forEach(p=>p.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  const tabs=["ov","in","bk","op","ql","pick"];
+  document.querySelectorAll(".tb").forEach((b,i)=>b.classList.toggle("on",tabs[i]===id));
+  render();
+}
+function setCurr(c){S.curr=c;render();}
+function toggleExt(){S.ext=!S.ext;if(!S.ext&&S.picked&&LOCS[S.picked].tier!=="core")S.picked=null;render();}
+function toggleGoalBox(){document.getElementById("goalbox").classList.toggle("show");}
+function toggleGoal(k){
+  const i=S.goals.indexOf(k);
+  if(i>=0)S.goals.splice(i,1);
+  else if(S.goals.length<5)S.goals.push(k);
+  renderGoalGrid();render();
+}
+function selectCity(id){S.sel=S.sel===id?null:id;render();}
+function setOptCity(id){S.optCity=id;S.opts={cars:2,publicSchool:false,publicHealth:false,maidLevel:"full"};render();}
+function toggleOpt(k){
+  if(k==="publicSchool")S.opts.publicSchool=!S.opts.publicSchool;
+  else if(k==="publicHealth")S.opts.publicHealth=!S.opts.publicHealth;
+  else if(k==="cars1")S.opts.cars=S.opts.cars===1?2:1;
+  else if(k==="maidPart")S.opts.maidLevel=S.opts.maidLevel==="part"?"full":"part";
+  render();
+}
+function pickCity(id){S.picked=S.picked===id?null:id;render();}
+
+// ===== INIT =====
+window.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("ia").addEventListener("input",e=>{S.adults=Math.max(1,Math.min(10,+e.target.value||1));render();});
+  document.getElementById("ic").addEventListener("input",e=>{S.kids=Math.max(0,Math.min(10,+e.target.value||0));render();});
+  document.getElementById("ir").addEventListener("input",e=>{const v=+e.target.value||0;S.income=S.curr==="€"?v:S.curr==="R$"?v/EBR:v/EUD;render();});
+  renderGoalGrid();
+  render();
+});
+</script>
+</body>
+</html>
