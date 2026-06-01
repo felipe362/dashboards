@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Financeiro Familiar — Maio 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;
+  --yellow:#e3b341;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:var(--blue)}
+/* NAV */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;position:sticky;top:0;z-index:100}
+.header h1{font-size:1.1rem;font-weight:700;color:var(--green)}
+.header p{font-size:.75rem;color:var(--muted);margin-top:2px}
+.tabs{display:flex;gap:2px;overflow-x:auto;padding:10px 20px 0;background:var(--surface);border-bottom:1px solid var(--border);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:.78rem;font-weight:500;white-space:nowrap;color:var(--muted);border:1px solid transparent;border-bottom:none;transition:.15s}
+.tab.active{background:var(--bg);color:var(--text);border-color:var(--border)}
+.tab:hover:not(.active){color:var(--text)}
+/* CONTENT */
+.content{display:none;padding:20px;max-width:1100px;margin:0 auto}
+.content.active{display:block}
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.card .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.card .value{font-size:1.4rem;font-weight:700;margin-top:4px}
+.card .sub{font-size:.75rem;color:var(--muted);margin-top:2px}
+.card.green .value{color:var(--green)}
+.card.red .value{color:var(--red)}
+.card.blue .value{color:var(--blue)}
+.card.yellow .value{color:var(--yellow)}
+.card.purple .value{color:var(--purple)}
+.card.orange .value{color:var(--orange)}
+/* SECTIONS */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+.section h2{font-size:.9rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section h2 span{color:var(--muted);font-weight:400;font-size:.8rem}
+/* TABLES */
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:8px 10px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:500;font-size:.72rem;text-transform:uppercase}
+td{padding:7px 10px;border-bottom:1px solid #21262d;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:600}
+.badge.valid{background:#1a3a1a;color:var(--green)}
+.badge.recusado{background:#3a1a1a;color:var(--red);text-decoration:line-through}
+.badge.reembolso{background:#1a2a3a;color:var(--blue)}
+.badge.pendente{background:#3a2a0a;color:var(--yellow)}
+/* CHART WRAPPER */
+.chart-wrap{position:relative;height:260px;margin-top:10px}
+/* ALERT BOX */
+.alert{background:#21262d;border-left:3px solid var(--yellow);border-radius:6px;padding:12px 16px;font-size:.8rem;margin-bottom:14px;line-height:1.5}
+.alert.red{border-left-color:var(--red)}
+.alert.green{border-left-color:var(--green)}
+/* RANKING */
+.rank-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #21262d}
+.rank-item:last-child{border:none}
+.rank-num{width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+.rank-bar{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.rank-bar-fill{height:100%;border-radius:3px;background:var(--green)}
+.rank-label{font-size:.78rem;flex:1}
+.rank-value{font-size:.8rem;font-weight:600;white-space:nowrap}
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid-2{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}
+/* WHATSAPP */
+.wpp-box{background:#0a1a0a;border:1px solid #2a4a2a;border-radius:10px;padding:18px;font-size:.82rem;line-height:1.7;white-space:pre-wrap;font-family:monospace}
+.copy-btn{margin-top:10px;background:var(--green);color:#000;border:none;border-radius:6px;padding:8px 16px;font-size:.8rem;font-weight:600;cursor:pointer}
+.copy-btn:hover{opacity:.85}
+/* PILLS */
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;margin:2px;background:var(--surface2);color:var(--muted)}
+/* NOTA */
+.nota{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:8px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 Relatório Financeiro Familiar — Maio 2026</h1>
+  <p>Período analisado: 25/04/2026 – 31/05/2026 · Gerado em 01/06/2026</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('resumo')">Resumo Geral</div>
+  <div class="tab" onclick="showTab('alexia')">👩 Alexia</div>
+  <div class="tab" onclick="showTab('felipe')">👨 Felipe</div>
+  <div class="tab" onclick="showTab('consolidado')">🏠 Consolidado</div>
+  <div class="tab" onclick="showTab('categorias')">📂 Categorias</div>
+  <div class="tab" onclick="showTab('datas')">📅 Por Data</div>
+  <div class="tab" onclick="showTab('mercado')">🛒 Mercado</div>
+  <div class="tab" onclick="showTab('ocultos')">🔒 Custos Ocultos</div>
+  <div class="tab" onclick="showTab('recusados')">❌ Cancelados</div>
+  <div class="tab" onclick="showTab('conclusoes')">💡 Conclusões</div>
+</div>
+
+<!-- ===== RESUMO ===== -->
+<div id="tab-resumo" class="content active">
+  <div class="cards">
+    <div class="card red"><div class="label">Total Familiar</div><div class="value">R$ 21.292</div><div class="sub">~ US$ 4.230</div></div>
+    <div class="card green"><div class="label">Cartão Alexia</div><div class="value">R$ 8.294</div><div class="sub">US$ 1.655,56</div></div>
+    <div class="card blue"><div class="label">Cartão Felipe</div><div class="value">R$ 4.822</div><div class="sub">US$ 960,53</div></div>
+    <div class="card yellow"><div class="label">Custos Ocultos</div><div class="value">R$ 8.160</div><div class="sub">Aluguel + Romário</div></div>
+    <div class="card purple"><div class="label">Maior Gasto Único</div><div class="value">R$ 2.654</div><div class="sub">DNM Imigração (Alexia 04/05)</div></div>
+    <div class="card orange"><div class="label">Mercado Total</div><div class="value">R$ 5.215</div><div class="sub">Alexia + Felipe</div></div>
+  </div>
+
+  <div class="alert">
+    ⚠️ <strong>Atenção:</strong> O período analisado inclui um gasto excepcional de documentação/imigração (DNM – Caja Central) no valor de <strong>US$ 530,71 (R$ 2.654)</strong> no cartão da Alexia em 04/05. Esse gasto pontual distorce os totais mensais e <strong>não deve ser projetado para os próximos meses.</strong>
+  </div>
+
+  <div class="grid-2">
+    <div class="section">
+      <h2>🥧 Divisão por Pessoa</h2>
+      <div class="chart-wrap"><canvas id="chartPessoas"></canvas></div>
+    </div>
+    <div class="section">
+      <h2>📂 Top Categorias Familiares</h2>
+      <div class="chart-wrap"><canvas id="chartCatResumo"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📋 Resumo Rápido por Pessoa</h2>
+    <table>
+      <tr><th>Pessoa</th><th>USD</th><th>BRL (aprox.)</th><th>Maior Gasto</th><th>Categoria Principal</th></tr>
+      <tr><td><strong>Alexia</strong></td><td>US$ 1.655,56</td><td>R$ 8.294</td><td>DNM US$ 530,71</td><td>Mercado (48%)</td></tr>
+      <tr><td><strong>Felipe</strong></td><td>US$ 960,53</td><td>R$ 4.822</td><td>Amazon US$ 414,00</td><td>Compras Online (51%)</td></tr>
+      <tr><td><strong>Custos Ocultos</strong></td><td>US$ 1.614</td><td>R$ 8.160</td><td>Aluguel Apto R$ 5.800</td><td>Moradia</td></tr>
+      <tr style="background:#161b22"><td><strong>TOTAL FAMILIAR</strong></td><td><strong>US$ 4.230</strong></td><td><strong>R$ 21.292</strong></td><td>—</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>💱 Cotações utilizadas <span>(derivadas dos depósitos PIX no app)</span></h2>
+    <p style="font-size:.78rem;line-height:1.8;color:var(--muted)">
+      USD/BRL: início Mai = 4,99 · meados Mai = 5,04–5,08 · fim Mai = 5,08–5,09<br>
+      PYG/USD: ~6.020–6.174 ₲ por dólar (derivado das transações em guarani com USD mostrado no app)<br>
+      <em>Para conversão das transações em PYG, foram usados os valores em USD mostrados diretamente no app. Para custos ocultos em PYG, foi usada a taxa de ~6.050 ₲/USD.</em>
+    </p>
+  </div>
+</div>
+
+<!-- ===== ALEXIA ===== -->
+<div id="tab-alexia" class="content">
+  <div class="cards">
+    <div class="card green"><div class="label">Total Válido</div><div class="value">R$ 8.294</div><div class="sub">US$ 1.655,56</div></div>
+    <div class="card red"><div class="label">Maior Gasto</div><div class="value">R$ 2.654</div><div class="sub">DNM 04/05</div></div>
+    <div class="card blue"><div class="label">Transações Válidas</div><div class="value">48</div><div class="sub">+ 1 reembolso</div></div>
+    <div class="card orange"><div class="label">Mercado</div><div class="value">R$ 3.957</div><div class="sub">48% do total</div></div>
+    <div class="card yellow"><div class="label">Farmácia</div><div class="value">R$ 590</div><div class="sub">7% do total</div></div>
+    <div class="card purple"><div class="label">Recusadas</div><div class="value">9</div><div class="sub">Não entram no total</div></div>
+  </div>
+
+  <div class="section">
+    <h2>📂 Por Categoria</h2>
+    <div class="chart-wrap"><canvas id="chartAlexiaCat"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>📅 Gastos por Dia (US$)</h2>
+    <div class="chart-wrap"><canvas id="chartAlexiaData"></canvas></div>
+    <p class="nota">Pico: 04/05 (US$ 594,15) inclui pagamento DNM de US$ 530,71. Segundo pico: 22/05 (US$ 180,78) hipermercado.</p>
+  </div>
+
+  <div class="section">
+    <h2>📋 Todas as Transações Válidas</h2>
+    <table>
+      <tr><th>Data</th><th>Dia</th><th>Estabelecimento</th><th>Categoria</th><th>USD</th><th>BRL</th><th>Status</th></tr>
+      <tr><td>04/05</td><td>Seg</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$45,64</td><td>R$ 228</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>04/05</td><td>Seg</td><td>LA VIENESA-MCAL LOPE</td><td>Alimentação fora</td><td>$8,20</td><td>R$ 41</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>04/05</td><td>Seg</td><td>DLOCAL *BOLT</td><td>Transporte</td><td>$5,18</td><td>R$ 26</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>04/05</td><td>Seg</td><td>DNM – CAJA CENTRAL</td><td>Documentação/Imigração</td><td>$530,71</td><td>R$ 2.654</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>04/05</td><td>Seg</td><td>DLOCAL *BOLT</td><td>Transporte</td><td>$4,42</td><td>R$ 22</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>05/05</td><td>Ter</td><td>FARMA OLIVA-VILLA MORRA</td><td>Farmácia/Saúde</td><td>$21,49</td><td>R$ 108</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>05/05</td><td>Ter</td><td>GRANJA TIERRA VIVA PY</td><td>Mercado</td><td>$3,34</td><td>R$ 17</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>05/05</td><td>Ter</td><td>AMANDAU – VILLAMORRA</td><td>Alimentação fora</td><td>$3,34</td><td>R$ 17</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>FCIA PUNTO FARMA-P 700</td><td>Farmácia/Saúde</td><td>$17,81</td><td>R$ 89</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>PRINTOS</td><td>Documentação/Serviços</td><td>$1,13</td><td>R$ 6</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>BOLT.EU (2605062254)</td><td>Transporte</td><td>$3,07</td><td>R$ 15</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>Bolt</td><td>Transporte</td><td>$3,23</td><td>R$ 16</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>DONCA</td><td>Alimentação fora</td><td>$6,53</td><td>R$ 33</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>08/05</td><td>Sex</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$38,12</td><td>R$ 191</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>08/05</td><td>Sex</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$65,72</td><td>R$ 330</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>11/05</td><td>Seg</td><td>FARMACENTER-MCAL LOPEZ 1</td><td>Farmácia/Saúde</td><td>$25,09</td><td>R$ 126</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>13/05</td><td>Qua</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$155,49</td><td>R$ 781</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>14/05</td><td>Qui</td><td>FCIA PUNTO FARMA-P 700</td><td>Farmácia/Saúde</td><td>$23,03</td><td>R$ 116</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>15/05</td><td>Sex</td><td>PURA FRUTA CAMION</td><td>Alimentação fora</td><td>$2,48</td><td>R$ 13</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>16/05</td><td>Sáb</td><td>KIWIFY US, Inc</td><td>Serviços digitais</td><td>$46,67</td><td>R$ 235</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>16/05</td><td>Sáb</td><td>LUISITO-AV E AYALA</td><td>Mercado</td><td>$38,98</td><td>R$ 196</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>16/05</td><td>Sáb</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$16,49</td><td>R$ 83</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$43,39</td><td>R$ 219</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>BERRY SWEET</td><td>Alimentação/Lanche</td><td>$5,81</td><td>R$ 29</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>BERRY SWEET</td><td>Alimentação/Lanche</td><td>$5,65</td><td>R$ 28</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>BERRY SWEET</td><td>Alimentação/Lanche</td><td>$5,81</td><td>R$ 29</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>ESQUINA LIBANO</td><td>Alimentação fora</td><td>$5,47</td><td>R$ 28</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>DON VITO-MULTIPLAZA</td><td>Alimentação fora</td><td>$0,83</td><td>R$ 4</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>JA VIRA-MULTIPLAZA 2</td><td>Alimentação fora</td><td>$31,36</td><td>R$ 158</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>17/05</td><td>Dom</td><td>SKY GAMES</td><td>Lazer/Jogos</td><td>$11,62</td><td>R$ 59</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>18/05</td><td>Seg</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$10,30</td><td>R$ 52</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>18/05</td><td>Seg</td><td>GARAFFA MARIELA ALEJANDRA</td><td>Serviços pessoais</td><td>$19,91</td><td>R$ 100</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>19/05</td><td>Ter</td><td>SUP REAL-VPOS</td><td>Mercado</td><td>$58,78</td><td>R$ 296</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>19/05</td><td>Ter</td><td>SUP REAL-VPOS</td><td>Mercado — REEMBOLSO</td><td>-$1,63</td><td>-R$ 8</td><td><span class="badge reembolso">reembolso</span></td></tr>
+      <tr><td>19/05</td><td>Ter</td><td>CLAUDE.AI SUBSCRIPTION</td><td>Serviços digitais</td><td>$20,00</td><td>R$ 101</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>19/05</td><td>Ter</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$20,43</td><td>R$ 103</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>19/05</td><td>Ter</td><td>SASPY EXPRESS-VM</td><td>Transporte/Entrega</td><td>$5,83</td><td>R$ 29</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>20/05</td><td>Qua</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$21,70</td><td>R$ 109</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>20/05</td><td>Qua</td><td>FIXO CARGO VM II</td><td>Transporte/Entrega</td><td>$3,65</td><td>R$ 18</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>20/05</td><td>Qua</td><td>NISSEI-ASU</td><td>Mercado</td><td>$24,92</td><td>R$ 126</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>22/05</td><td>Sex</td><td>HIPERMERCADO LUISITO AV.</td><td>Mercado</td><td>$180,78</td><td>R$ 918</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>23/05</td><td>Sáb</td><td>FARMACENTER BOGGIANI 2</td><td>Farmácia/Saúde</td><td>$5,06</td><td>R$ 26</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>25/05</td><td>Seg</td><td>ESTOY-C VEGA</td><td>Mercado</td><td>$20,69</td><td>R$ 105</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>25/05</td><td>Seg</td><td>SURCOS TEXTIL RCA ARGENTI</td><td>Roupas/Têxtil</td><td>$14,61</td><td>R$ 74</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>27/05</td><td>Qua</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$46,73</td><td>R$ 238</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>27/05</td><td>Qua</td><td>AMANDAU – VILLAMORRA</td><td>Alimentação fora</td><td>$1,66</td><td>R$ 8</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>29/05</td><td>Sex</td><td>FARMACENTER-VM DELIVERY</td><td>Farmácia/Saúde</td><td>$25,14</td><td>R$ 128</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>30/05</td><td>Sáb</td><td>DL*GOOGLE Google (BR)</td><td>Serviços digitais</td><td>$0,90</td><td>R$ 5</td><td><span class="badge valid">válida</span></td></tr>
+    </table>
+    <p class="nota">⚠️ abr.25 AMANDAU ₲30.000 visível mas cortado na base do print — não incluído nos totais.<br>Duplicata identificada e removida: DNM CAJA CENTRAL ₲3.143.018 aparecia em dois prints consecutivos (13.11.58(1) e 13.11.58(5)).</p>
+  </div>
+
+  <div class="section">
+    <h2>📊 Totais por Categoria — Alexia</h2>
+    <table>
+      <tr><th>Categoria</th><th>USD</th><th>BRL</th><th>% do total</th></tr>
+      <tr><td>🛒 Mercado / Supermercado</td><td>$789,87</td><td>R$ 3.957</td><td>47,7%</td></tr>
+      <tr><td>📋 Documentação / Imigração</td><td>$531,84</td><td>R$ 2.660</td><td>32,1%</td></tr>
+      <tr><td>💊 Farmácia / Saúde</td><td>$117,62</td><td>R$ 590</td><td>7,1%</td></tr>
+      <tr><td>🍽️ Alimentação fora / Lanche</td><td>$77,14</td><td>R$ 387</td><td>4,7%</td></tr>
+      <tr><td>💻 Serviços digitais</td><td>$67,57</td><td>R$ 340</td><td>4,1%</td></tr>
+      <tr><td>🚗 Transporte / Bolt</td><td>$25,38</td><td>R$ 127</td><td>1,5%</td></tr>
+      <tr><td>👤 Serviços pessoais</td><td>$19,91</td><td>R$ 100</td><td>1,2%</td></tr>
+      <tr><td>👗 Roupas / Têxtil</td><td>$14,61</td><td>R$ 74</td><td>0,9%</td></tr>
+      <tr><td>🎮 Lazer / Jogos</td><td>$11,62</td><td>R$ 59</td><td>0,7%</td></tr>
+      <tr style="background:#1a1f26"><td><strong>TOTAL</strong></td><td><strong>$1.655,56</strong></td><td><strong>R$ 8.294</strong></td><td>100%</td></tr>
+    </table>
+    <p class="nota">Reembolso SUP REAL-VPOS de $1,63 já descontado. Sem contar DNM, o total seria US$ 1.123,72 / R$ 5.634.</p>
+  </div>
+
+  <div class="section">
+    <h2>🔥 Maiores Gastos Individuais — Alexia</h2>
+    <div class="rank-item"><div class="rank-num">1</div><div class="rank-label">DNM – CAJA CENTRAL (04/05)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:100%;background:var(--red)"></div></div><div class="rank-value">$530,71 · R$2.654</div></div>
+    <div class="rank-item"><div class="rank-num">2</div><div class="rank-label">HIPERMERCADO LUISITO (22/05)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:34%"></div></div><div class="rank-value">$180,78 · R$918</div></div>
+    <div class="rank-item"><div class="rank-num">3</div><div class="rank-label">SUP REAL-V MORRA (13/05)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:29%"></div></div><div class="rank-value">$155,49 · R$781</div></div>
+    <div class="rank-item"><div class="rank-num">4</div><div class="rank-label">KIWIFY US, Inc (16/05)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:9%"></div></div><div class="rank-value">$46,67 · R$235</div></div>
+    <div class="rank-item"><div class="rank-num">5</div><div class="rank-label">SUP REAL-V MORRA (04/05)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:9%"></div></div><div class="rank-value">$45,64 · R$228</div></div>
+  </div>
+
+  <div class="section">
+    <h2>💡 Conclusão — Alexia</h2>
+    <p style="font-size:.83rem;line-height:1.7">
+      O mês foi marcado pelo <strong>pagamento DNM (imigração)</strong> que sozinho representa 32% do total. Sem ele, Alexia gastou US$ 1.124 no período. A categoria <strong>mercado</strong> é a mais recorrente e concentrada nas semanas de 04/05, 08/05, 13/05 e 22/05. Há gastos de farmácia frequentes em múltiplos estabelecimentos, sugerindo uma rotina de saúde regular. A <strong>Kiwify US$ 46,67</strong> (16/05) deve ser monitorada — confirmar se é assinatura recorrente. Recomenda-se consolidar as compras de mercado em menos datas para melhor controle.
+    </p>
+  </div>
+</div>
+
+<!-- ===== FELIPE ===== -->
+<div id="tab-felipe" class="content">
+  <div class="cards">
+    <div class="card blue"><div class="label">Total Válido</div><div class="value">R$ 4.822</div><div class="sub">US$ 960,53</div></div>
+    <div class="card red"><div class="label">Maior Gasto</div><div class="value">R$ 2.079</div><div class="sub">Amazon US$414 (16/05)</div></div>
+    <div class="card green"><div class="label">Transações Válidas</div><div class="value">16</div><div class="sub">datas distintas</div></div>
+    <div class="card orange"><div class="label">Compras Online</div><div class="value">R$ 2.464</div><div class="sub">51% do total</div></div>
+    <div class="card yellow"><div class="label">Mercado</div><div class="value">R$ 1.258</div><div class="sub">26% do total</div></div>
+    <div class="card purple"><div class="label">Serv. Digitais</div><div class="value">R$ 473</div><div class="sub">ANTHROPIC+OPENAI+CLAUDE</div></div>
+  </div>
+
+  <div class="section">
+    <h2>📂 Por Categoria</h2>
+    <div class="chart-wrap"><canvas id="chartFelipeCat"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>📅 Gastos por Dia (US$)</h2>
+    <div class="chart-wrap"><canvas id="chartFelipeData"></canvas></div>
+    <p class="nota">Pico: 16/05 (US$414) Amazon compra avulsa. Segundo pico: 28/05 (US$98,38) TIO IPHONERO (celular/eletrônicos).</p>
+  </div>
+
+  <div class="section">
+    <h2>📋 Todas as Transações</h2>
+    <table>
+      <tr><th>Data</th><th>Dia</th><th>Estabelecimento</th><th>Categoria</th><th>USD</th><th>BRL</th><th>Status</th></tr>
+      <tr><td>30/04</td><td>Qui</td><td>FARMACENTER BOGGIANI 2</td><td>Farmácia/Saúde</td><td>$2,77</td><td>R$ 14</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>01/05</td><td>Sex</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$73,84</td><td>R$ 366</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>02/05</td><td>Sáb</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$2,73</td><td>R$ 14</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>03/05</td><td>Dom</td><td>DELIMARKET</td><td>Mercado/Alimentação</td><td>$9,12</td><td>R$ 45</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>03/05</td><td>Dom</td><td>SKY GAMES</td><td>Lazer/Jogos</td><td>$8,44</td><td>R$ 42</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>03/05</td><td>Dom</td><td>SKY GAMES</td><td>Lazer/Jogos</td><td>$8,44</td><td>R$ 42</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>04/05</td><td>Seg</td><td>PUNTO CARNE 2</td><td>Mercado (açougue)</td><td>$92,36</td><td>R$ 458</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>05/05</td><td>Ter</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$1,93</td><td>R$ 10</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>BOLT.EU (2605061448)</td><td>Transporte</td><td>$3,57</td><td>R$ 18</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>06/05</td><td>Qua</td><td>BOLT.EU (2605061323)</td><td>Transporte</td><td>$3,09</td><td>R$ 15</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>07/05</td><td>Qui</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$8,59</td><td>R$ 43</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>11/05</td><td>Seg</td><td>AMAZON MKTPLACE PMTS</td><td>Compras online</td><td>$23,98</td><td>R$ 120</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>15/05</td><td>Sex</td><td>eBay O*03-14652-50584</td><td>Compras online</td><td>$52,99</td><td>R$ 267</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>16/05</td><td>Sáb</td><td>AMAZON MKTPLACE PMTS</td><td>Compras online</td><td>$414,00</td><td>R$ 2.079</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>26/05</td><td>Ter</td><td>ANTHROPIC</td><td>Serviços digitais</td><td>$5,00</td><td>R$ 25</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>26/05</td><td>Ter</td><td>OPENAI</td><td>Serviços digitais</td><td>$5,00</td><td>R$ 25</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>26/05</td><td>Ter</td><td>CLAUDE.AI SUBSCRIPTION</td><td>Serviços digitais</td><td>$84,36</td><td>R$ 424</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>28/05</td><td>Qui</td><td>TIO IPHONERO</td><td>Eletrônicos/Celular</td><td>$6,67</td><td>R$ 34</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>28/05</td><td>Qui</td><td>TIO IPHONERO</td><td>Eletrônicos/Celular</td><td>$91,71</td><td>R$ 463</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>29/05</td><td>Sex</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$11,58</td><td>R$ 59</td><td><span class="badge valid">válida</span></td></tr>
+      <tr><td>30/05</td><td>Sáb</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$8,86</td><td>R$ 45</td><td><span class="badge pendente">pendente</span></td></tr>
+      <tr><td>30/05</td><td>Sáb</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$12,64</td><td>R$ 64</td><td><span class="badge pendente">pendente</span></td></tr>
+      <tr><td>31/05</td><td>Dom</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$9,81</td><td>R$ 50</td><td><span class="badge pendente">pendente</span></td></tr>
+      <tr><td>31/05</td><td>Dom</td><td>SUP REAL-V MORRA</td><td>Mercado</td><td>$19,05</td><td>R$ 97</td><td><span class="badge pendente">pendente</span></td></tr>
+    </table>
+    <p class="nota">⚠️ Transações PENDENTE (30-31/05) incluídas no total pois representam gastos reais já realizados.<br>Data de 03/05 inferida por contexto de scroll (header [mai.3] visível no print anterior). PUNTO CARNE 2 aparecia em dois prints consecutivos — contado uma vez.</p>
+  </div>
+
+  <div class="section">
+    <h2>📊 Totais por Categoria — Felipe</h2>
+    <table>
+      <tr><th>Categoria</th><th>USD</th><th>BRL</th><th>%</th></tr>
+      <tr><td>🛍️ Compras online (Amazon/eBay)</td><td>$490,97</td><td>R$ 2.464</td><td>51,1%</td></tr>
+      <tr><td>🛒 Mercado</td><td>$250,51</td><td>R$ 1.258</td><td>26,1%</td></tr>
+      <tr><td>📱 Eletrônicos / Celular</td><td>$98,38</td><td>R$ 494</td><td>10,2%</td></tr>
+      <tr><td>💻 Serviços digitais</td><td>$94,36</td><td>R$ 474</td><td>9,8%</td></tr>
+      <tr><td>🎮 Lazer / Jogos</td><td>$16,88</td><td>R$ 85</td><td>1,8%</td></tr>
+      <tr><td>🚗 Transporte / Bolt</td><td>$6,66</td><td>R$ 33</td><td>0,7%</td></tr>
+      <tr><td>💊 Farmácia</td><td>$2,77</td><td>R$ 14</td><td>0,3%</td></tr>
+      <tr style="background:#1a1f26"><td><strong>TOTAL</strong></td><td><strong>$960,53</strong></td><td><strong>R$ 4.822</strong></td><td>100%</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>💡 Conclusão — Felipe</h2>
+    <p style="font-size:.83rem;line-height:1.7">
+      O gasto de Felipe é fortemente concentrado em <strong>compras online (Amazon/eBay: US$ 490,97)</strong>, que juntas representam 51% do total. A compra na Amazon de US$ 414 em 16/05 é pontual e deve ser esclarecida. Os gastos com <strong>serviços digitais (US$ 94,36)</strong> incluem CLAUDE.AI US$ 84,36 + ANTHROPIC US$ 5 + OPENAI US$ 5 — todos no mesmo dia 26/05, provavelmente renovações mensais. O <strong>TIO IPHONERO</strong> (US$ 98,38 em 28/05) parece ser reparo ou acessório de celular — verificar se recorrente. O mercado (US$ 250,51) é regular e distribuído ao longo do mês.
+    </p>
+  </div>
+</div>
+
+<!-- ===== CONSOLIDADO ===== -->
+<div id="tab-consolidado" class="content">
+  <div class="cards">
+    <div class="card red"><div class="label">Total Familiar</div><div class="value">R$ 21.292</div><div class="sub">US$ 4.230</div></div>
+    <div class="card green"><div class="label">Cartões (Alexia+Felipe)</div><div class="value">R$ 13.116</div><div class="sub">US$ 2.616,09</div></div>
+    <div class="card yellow"><div class="label">Custos Ocultos</div><div class="value">R$ 8.160</div><div class="sub">Aluguel + Espécie</div></div>
+    <div class="card blue"><div class="label">Gastos Recorrentes</div><div class="value">R$ 8.870</div><div class="sub">Estimativa mensal</div></div>
+    <div class="card orange"><div class="label">Gastos Pontuais</div><div class="value">R$ 12.422</div><div class="sub">DNM + Amazon + Aluguel móveis</div></div>
+    <div class="card purple"><div class="label">Mercado Familiar</div><div class="value">R$ 5.215</div><div class="sub">Alexia R$3.957 + Felipe R$1.258</div></div>
+  </div>
+
+  <div class="section">
+    <h2>⚖️ Comparativo Alexia × Felipe × Custos Ocultos</h2>
+    <div class="chart-wrap"><canvas id="chartComparativo"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>📅 Gastos por Data — Família Completa</h2>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartFamiliaData"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>📊 Total por Categoria — Consolidado Familiar</h2>
+    <table>
+      <tr><th>Categoria</th><th>Alexia USD</th><th>Felipe USD</th><th>Custos Ocultos</th><th>Total BRL</th><th>%</th></tr>
+      <tr><td>🛒 Mercado/Supermercado</td><td>$789,87</td><td>$250,51</td><td>—</td><td>R$ 5.215</td><td>24,5%</td></tr>
+      <tr><td>🏠 Moradia/Aluguel</td><td>—</td><td>—</td><td>R$ 5.800</td><td>R$ 5.800</td><td>27,2%</td></tr>
+      <tr><td>📋 Documentação/Imigração</td><td>$531,84</td><td>—</td><td>—</td><td>R$ 2.660</td><td>12,5%</td></tr>
+      <tr><td>🛍️ Compras online</td><td>—</td><td>$490,97</td><td>—</td><td>R$ 2.464</td><td>11,6%</td></tr>
+      <tr><td>🪑 Casa/Móveis/Manutenção</td><td>—</td><td>—</td><td>R$ 1.533+R$827</td><td>R$ 2.360</td><td>11,1%</td></tr>
+      <tr><td>💊 Farmácia/Saúde</td><td>$117,62</td><td>$2,77</td><td>—</td><td>R$ 604</td><td>2,8%</td></tr>
+      <tr><td>💻 Serviços digitais</td><td>$67,57</td><td>$94,36</td><td>—</td><td>R$ 814</td><td>3,8%</td></tr>
+      <tr><td>📱 Eletrônicos/Celular</td><td>—</td><td>$98,38</td><td>—</td><td>R$ 494</td><td>2,3%</td></tr>
+      <tr><td>🍽️ Alimentação fora</td><td>$77,14</td><td>$9,12</td><td>—</td><td>R$ 432</td><td>2,0%</td></tr>
+      <tr><td>🚗 Transporte/Bolt</td><td>$25,38</td><td>$6,66</td><td>R$ 167</td><td>R$ 326</td><td>1,5%</td></tr>
+      <tr><td>🎮 Lazer/Jogos</td><td>$11,62</td><td>$16,88</td><td>—</td><td>R$ 143</td><td>0,7%</td></tr>
+      <tr><td>👤 Serviços pessoais</td><td>$19,91</td><td>—</td><td>—</td><td>R$ 100</td><td>0,5%</td></tr>
+      <tr><td>👗 Roupas/Têxtil</td><td>$14,61</td><td>—</td><td>—</td><td>R$ 74</td><td>0,3%</td></tr>
+      <tr><td>🔧 Manutenção (termotanque)</td><td>—</td><td>—</td><td>R$ 334</td><td>R$ 334</td><td>1,6%</td></tr>
+      <tr><td>📦 Diversos s/ comprovante</td><td>—</td><td>—</td><td>R$ 335</td><td>R$ 335</td><td>1,6%</td></tr>
+      <tr style="background:#1a1f26"><td><strong>TOTAL</strong></td><td><strong>$1.655,56</strong></td><td><strong>$960,53</strong></td><td><strong>R$8.160</strong></td><td><strong>R$ 21.292</strong></td><td>100%</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>🔁 Recorrentes × Pontuais</h2>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:.78rem;font-weight:600;color:var(--green);margin-bottom:8px">✅ RECORRENTES (estimativa mensal)</p>
+        <table>
+          <tr><th>Item</th><th>BRL/mês</th></tr>
+          <tr><td>Mercado/Supermercado</td><td>R$ 5.215</td></tr>
+          <tr><td>Moradia (aluguel apto)</td><td>R$ 5.800</td></tr>
+          <tr><td>Farmácia/Saúde</td><td>R$ 604</td></tr>
+          <tr><td>Serviços digitais</td><td>R$ 814</td></tr>
+          <tr><td>Transporte/Bolt</td><td>R$ 326</td></tr>
+          <tr><td>Alimentação fora</td><td>R$ 432</td></tr>
+          <tr><td><strong>Subtotal</strong></td><td><strong>R$ 13.191</strong></td></tr>
+        </table>
+      </div>
+      <div>
+        <p style="font-size:.78rem;font-weight:600;color:var(--red);margin-bottom:8px">⚡ PONTUAIS (não projetar)</p>
+        <table>
+          <tr><th>Item</th><th>BRL</th></tr>
+          <tr><td>DNM – Documentação</td><td>R$ 2.660</td></tr>
+          <tr><td>Amazon (compra avulsa)</td><td>R$ 2.079</td></tr>
+          <tr><td>Aluguel de móveis</td><td>R$ 1.533</td></tr>
+          <tr><td>TIO IPHONERO (celular)</td><td>R$ 494</td></tr>
+          <tr><td>eBay</td><td>R$ 267</td></tr>
+          <tr><td>Termotanque + Diversas</td><td>R$ 669</td></tr>
+          <tr><td><strong>Subtotal</strong></td><td><strong>R$ 7.702</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CATEGORIAS ===== -->
+<div id="tab-categorias" class="content">
+  <div class="section">
+    <h2>📊 Ranking de Categorias — Total Familiar</h2>
+    <div class="rank-item"><div class="rank-num">1</div><div class="rank-label">🏠 Moradia/Aluguel</div><div class="rank-bar"><div class="rank-bar-fill" style="width:100%;background:var(--blue)"></div></div><div class="rank-value">R$ 5.800 (27,2%)</div></div>
+    <div class="rank-item"><div class="rank-num">2</div><div class="rank-label">🛒 Mercado/Supermercado</div><div class="rank-bar"><div class="rank-bar-fill" style="width:90%;background:var(--green)"></div></div><div class="rank-value">R$ 5.215 (24,5%)</div></div>
+    <div class="rank-item"><div class="rank-num">3</div><div class="rank-label">📋 Documentação/Imigração</div><div class="rank-bar"><div class="rank-bar-fill" style="width:46%;background:var(--red)"></div></div><div class="rank-value">R$ 2.660 (12,5%)</div></div>
+    <div class="rank-item"><div class="rank-num">4</div><div class="rank-label">🛍️ Compras online</div><div class="rank-bar"><div class="rank-bar-fill" style="width:42%;background:var(--purple)"></div></div><div class="rank-value">R$ 2.464 (11,6%)</div></div>
+    <div class="rank-item"><div class="rank-num">5</div><div class="rank-label">🪑 Casa/Móveis/Manutenção</div><div class="rank-bar"><div class="rank-bar-fill" style="width:41%;background:var(--orange)"></div></div><div class="rank-value">R$ 2.360 (11,1%)</div></div>
+    <div class="rank-item"><div class="rank-num">6</div><div class="rank-label">💻 Serviços digitais</div><div class="rank-bar"><div class="rank-bar-fill" style="width:14%;background:var(--yellow)"></div></div><div class="rank-value">R$ 814 (3,8%)</div></div>
+    <div class="rank-item"><div class="rank-num">7</div><div class="rank-label">💊 Farmácia/Saúde</div><div class="rank-bar"><div class="rank-bar-fill" style="width:10%;background:#7ee8a2"></div></div><div class="rank-value">R$ 604 (2,8%)</div></div>
+    <div class="rank-item"><div class="rank-num">8</div><div class="rank-label">📱 Eletrônicos/Celular</div><div class="rank-bar"><div class="rank-bar-fill" style="width:9%;background:var(--blue)"></div></div><div class="rank-value">R$ 494 (2,3%)</div></div>
+    <div class="rank-item"><div class="rank-num">9</div><div class="rank-label">🍽️ Alimentação fora</div><div class="rank-bar"><div class="rank-bar-fill" style="width:7%;background:var(--orange)"></div></div><div class="rank-value">R$ 432 (2,0%)</div></div>
+    <div class="rank-item"><div class="rank-num">10</div><div class="rank-label">🚗 Transporte/Bolt</div><div class="rank-bar"><div class="rank-bar-fill" style="width:6%"></div></div><div class="rank-value">R$ 326 (1,5%)</div></div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ Categorias que Precisam de Atenção</h2>
+    <div class="alert red">🔴 <strong>Compras online (Felipe):</strong> US$ 490,97 em apenas 3 transações (Amazon+eBay). Verificar se a Amazon US$ 414 é parcelado ou recorrente.</div>
+    <div class="alert" style="margin-top:8px">🟡 <strong>Serviços digitais:</strong> R$ 814 familares — 3 assinaturas de IA (Claude, Anthropic, OpenAI) em um único dia no Felipe + Claude e Kiwify na Alexia. Consolidar e revisar necessidade.</div>
+    <div class="alert" style="margin-top:8px;border-left-color:var(--blue)">🔵 <strong>Mercado:</strong> R$ 5.215 total. Distribuído ao longo do mês, mas com picos altos (Hipermercado Luisito R$ 918 em um único dia). Considerando 28 dias, a média diária de mercado é R$ 186/dia — acima do ideal para uma família de 2 adultos.</div>
+  </div>
+</div>
+
+<!-- ===== DATAS ===== -->
+<div id="tab-datas" class="content">
+  <div class="section">
+    <h2>🏆 Dias com Maior Gasto — Ranking Familiar</h2>
+    <div class="rank-item"><div class="rank-num">1</div><div class="rank-label">04/05 (Seg) — Alexia: DNM+Mercado+Bolt</div><div class="rank-bar"><div class="rank-bar-fill" style="width:100%;background:var(--red)"></div></div><div class="rank-value">US$ 594,15</div></div>
+    <div class="rank-item"><div class="rank-num">2</div><div class="rank-label">16/05 (Sáb) — Felipe: Amazon $414 + Alexia Mercado</div><div class="rank-bar"><div class="rank-bar-fill" style="width:86%"></div></div><div class="rank-value">US$ 516,14</div></div>
+    <div class="rank-item"><div class="rank-num">3</div><div class="rank-label">22/05 (Sex) — Alexia: Hipermercado Luisito</div><div class="rank-bar"><div class="rank-bar-fill" style="width:30%;background:var(--orange)"></div></div><div class="rank-value">US$ 180,78</div></div>
+    <div class="rank-item"><div class="rank-num">4</div><div class="rank-label">13/05 (Qua) — Alexia: Sup Real grande</div><div class="rank-bar"><div class="rank-bar-fill" style="width:26%;background:var(--green)"></div></div><div class="rank-value">US$ 155,49</div></div>
+    <div class="rank-item"><div class="rank-num">5</div><div class="rank-label">26/05 (Ter) — Felipe: Digitais (Claude+AI)</div><div class="rank-bar"><div class="rank-bar-fill" style="width:16%;background:var(--purple)"></div></div><div class="rank-value">US$ 94,36</div></div>
+    <div class="rank-item"><div class="rank-num">6</div><div class="rank-label">28/05 (Qui) — Felipe: TIO IPHONERO</div><div class="rank-bar"><div class="rank-bar-fill" style="width:17%;background:var(--blue)"></div></div><div class="rank-value">US$ 98,38</div></div>
+    <div class="rank-item"><div class="rank-num">7</div><div class="rank-label">17/05 (Dom) — Alexia: Mercado+Saídas Multiplaza</div><div class="rank-bar"><div class="rank-bar-fill" style="width:18%;background:var(--yellow)"></div></div><div class="rank-value">US$ 109,94</div></div>
+    <div class="rank-item"><div class="rank-num">8</div><div class="rank-label">04/05 (Seg) — Felipe: PUNTO CARNE 2</div><div class="rank-bar"><div class="rank-bar-fill" style="width:16%;background:var(--orange)"></div></div><div class="rank-value">US$ 92,36</div></div>
+  </div>
+
+  <div class="section">
+    <h2>📅 Gastos por Semana</h2>
+    <table>
+      <tr><th>Semana</th><th>Alexia</th><th>Felipe</th><th>Total</th><th>Destaque</th></tr>
+      <tr><td>Sem 1 (04–10/05)</td><td>$757,93</td><td>$113,67</td><td>$871,60</td><td>DNM + Punto Carne</td></tr>
+      <tr><td>Sem 2 (11–17/05)</td><td>$376,53</td><td>$476,99</td><td>$853,52</td><td>Amazon $414 + Kiwify</td></tr>
+      <tr><td>Sem 3 (18–24/05)</td><td>$400,28</td><td>$0,00</td><td>$400,28</td><td>Hipermercado Luisito</td></tr>
+      <tr><td>Sem 4 (25–31/05)</td><td>$109,73</td><td>$256,30</td><td>$366,03</td><td>TIO IPHONERO + Digitais</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== MERCADO ===== -->
+<div id="tab-mercado" class="content">
+  <div class="cards">
+    <div class="card green"><div class="label">Total Mercado</div><div class="value">R$ 5.215</div><div class="sub">US$ 1.040,38</div></div>
+    <div class="card orange"><div class="label">Alexia Mercado</div><div class="value">R$ 3.957</div><div class="sub">US$ 789,87 (76%)</div></div>
+    <div class="card blue"><div class="label">Felipe Mercado</div><div class="value">R$ 1.258</div><div class="sub">US$ 250,51 (24%)</div></div>
+    <div class="card yellow"><div class="label">Maior Compra Única</div><div class="value">R$ 918</div><div class="sub">Hipermercado Luisito 22/05</div></div>
+    <div class="card purple"><div class="label">Sup Real visits</div><div class="value">15x</div><div class="sub">Alexia 12x · Felipe 8x</div></div>
+    <div class="card red"><div class="label">Média Semanal</div><div class="value">R$ 1.304</div><div class="sub">28 dias analisados</div></div>
+  </div>
+
+  <div class="section">
+    <h2>🛒 Compras de Mercado — Alexia (cronológico)</h2>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>USD</th><th>BRL</th></tr>
+      <tr><td>04/05</td><td>SUP REAL-V MORRA</td><td>$45,64</td><td>R$ 228</td></tr>
+      <tr><td>05/05</td><td>GRANJA TIERRA VIVA PY</td><td>$3,34</td><td>R$ 17</td></tr>
+      <tr><td>08/05</td><td>SUP REAL-V MORRA</td><td>$38,12</td><td>R$ 191</td></tr>
+      <tr><td>08/05</td><td>SUP REAL-V MORRA</td><td>$65,72</td><td>R$ 330</td></tr>
+      <tr><td>13/05</td><td>SUP REAL-V MORRA</td><td>$155,49</td><td>R$ 781</td></tr>
+      <tr><td>16/05</td><td>LUISITO-AV E AYALA</td><td>$38,98</td><td>R$ 196</td></tr>
+      <tr><td>16/05</td><td>SUP REAL-V MORRA</td><td>$16,49</td><td>R$ 83</td></tr>
+      <tr><td>17/05</td><td>SUP REAL-V MORRA</td><td>$43,39</td><td>R$ 219</td></tr>
+      <tr><td>18/05</td><td>SUP REAL-V MORRA</td><td>$10,30</td><td>R$ 52</td></tr>
+      <tr><td>19/05</td><td>SUP REAL-VPOS (−reembolso)</td><td>$57,15</td><td>R$ 288</td></tr>
+      <tr><td>19/05</td><td>SUP REAL-V MORRA</td><td>$20,43</td><td>R$ 103</td></tr>
+      <tr><td>20/05</td><td>SUP REAL-V MORRA</td><td>$21,70</td><td>R$ 109</td></tr>
+      <tr><td>20/05</td><td>NISSEI-ASU</td><td>$24,92</td><td>R$ 126</td></tr>
+      <tr><td>22/05</td><td>HIPERMERCADO LUISITO AV.</td><td>$180,78</td><td>R$ 918</td></tr>
+      <tr><td>25/05</td><td>ESTOY-C VEGA</td><td>$20,69</td><td>R$ 105</td></tr>
+      <tr><td>27/05</td><td>SUP REAL-V MORRA</td><td>$46,73</td><td>R$ 238</td></tr>
+      <tr style="background:#1a1f26"><td colspan="2"><strong>Total Mercado Alexia</strong></td><td><strong>$789,87</strong></td><td><strong>R$ 3.957</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>🛒 Compras de Mercado — Felipe (cronológico)</h2>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>USD</th><th>BRL</th></tr>
+      <tr><td>01/05</td><td>SUP REAL-V MORRA</td><td>$73,84</td><td>R$ 366</td></tr>
+      <tr><td>02/05</td><td>SUP REAL-V MORRA</td><td>$2,73</td><td>R$ 14</td></tr>
+      <tr><td>03/05</td><td>DELIMARKET</td><td>$9,12</td><td>R$ 45</td></tr>
+      <tr><td>04/05</td><td>PUNTO CARNE 2</td><td>$92,36</td><td>R$ 458</td></tr>
+      <tr><td>05/05</td><td>SUP REAL-V MORRA</td><td>$1,93</td><td>R$ 10</td></tr>
+      <tr><td>07/05</td><td>SUP REAL-V MORRA</td><td>$8,59</td><td>R$ 43</td></tr>
+      <tr><td>29/05</td><td>SUP REAL-V MORRA</td><td>$11,58</td><td>R$ 59</td></tr>
+      <tr><td>30/05</td><td>SUP REAL-V MORRA (pendente)</td><td>$21,50</td><td>R$ 109</td></tr>
+      <tr><td>31/05</td><td>SUP REAL-V MORRA (pendente)</td><td>$28,86</td><td>R$ 147</td></tr>
+      <tr style="background:#1a1f26"><td colspan="2"><strong>Total Mercado Felipe</strong></td><td><strong>$250,51</strong></td><td><strong>R$ 1.258</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>📈 Projeção Mercado (base: 28 dias)</h2>
+    <table>
+      <tr><th>Pessoa</th><th>Total 28 dias</th><th>Média/dia</th><th>Projeção 30 dias</th><th>Projeção 31 dias</th></tr>
+      <tr><td>Alexia</td><td>$789,87</td><td>$28,21/dia</td><td>$846,36</td><td>$874,57</td></tr>
+      <tr><td>Felipe</td><td>$250,51</td><td>$8,95/dia</td><td>$268,50</td><td>$277,45</td></tr>
+      <tr><td><strong>Família</strong></td><td><strong>$1.040,38</strong></td><td><strong>$37,16/dia</strong></td><td><strong>$1.114,86</strong></td><td><strong>$1.152,02</strong></td></tr>
+    </table>
+    <p class="nota">Projeção baseada nos 28 dias cobertos (04/05 a 31/05). Excluído: Hipermercado Luisito foi uma compra mensal grande pontual (R$ 918) — se recorrente, eleva bastante a média.</p>
+  </div>
+</div>
+
+<!-- ===== OCULTOS ===== -->
+<div id="tab-ocultos" class="content">
+  <div class="cards">
+    <div class="card yellow"><div class="label">Total Ocultos</div><div class="value">R$ 8.160</div><div class="sub">US$ ~1.614</div></div>
+    <div class="card blue"><div class="label">Aluguel Apto</div><div class="value">R$ 5.800</div><div class="sub">29/05/2026</div></div>
+    <div class="card orange"><div class="label">Aluguel Móveis</div><div class="value">R$ 1.533</div><div class="sub">₲1.900.000 / 07/05</div></div>
+    <div class="card red"><div class="label">Dinheiro Romário</div><div class="value">R$ 827</div><div class="sub">₲1.000.000 em espécie</div></div>
+  </div>
+
+  <div class="section">
+    <h2>📋 Detalhamento dos Custos Ocultos</h2>
+    <table>
+      <tr><th>Data</th><th>Item</th><th>Valor Original</th><th>USD (aprox.)</th><th>BRL (aprox.)</th><th>Categoria</th></tr>
+      <tr><td>07/05/2026</td><td>Aluguel de móveis</td><td>₲1.900.000</td><td>$307,79</td><td>R$ 1.533</td><td>Casa / móveis</td></tr>
+      <tr><td>29/05/2026</td><td>Aluguel do apartamento</td><td>R$ 5.800,00</td><td>$1.139,49</td><td>R$ 5.800</td><td>Moradia</td></tr>
+      <tr><td>s/data</td><td>Conserto termotanque (Romário)</td><td>₲400.000</td><td>$66,12</td><td>R$ 331</td><td>Casa / manutenção</td></tr>
+      <tr><td>s/data</td><td>Gasolina / transporte (Romário)</td><td>₲200.000</td><td>$33,06</td><td>R$ 165</td><td>Transporte</td></tr>
+      <tr><td>s/data</td><td>Diversos sem comprovante (Romário)</td><td>₲400.000</td><td>$66,12</td><td>R$ 331</td><td>Diversos s/ comprov.</td></tr>
+      <tr style="background:#1a1f26"><td colspan="2"><strong>TOTAL CUSTOS OCULTOS</strong></td><td>—</td><td><strong>$1.612,58</strong></td><td><strong>R$ 8.160</strong></td><td>—</td></tr>
+    </table>
+    <p class="nota">
+      Conversão PYG/USD: ₲6.174/USD (taxa de 07/05 derivada das transações no app) para aluguel de móveis.<br>
+      Dinheiro Romário: ₲6.050/USD (média do período).<br>
+      BRL/USD: 4,98 para mai.7 e 5,00 para Romário (sem data específica).<br>
+      Aluguel do apto já em BRL — convertido a USD usando taxa de mai.29 (5,09).
+    </p>
+  </div>
+</div>
+
+<!-- ===== RECUSADOS ===== -->
+<div id="tab-recusados" class="content">
+  <div class="section">
+    <h2>❌ Transações Recusadas — Alexia (não entram no total)</h2>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>Valor PYG</th><th>Valor USD</th><th>Motivo visível</th></tr>
+      <tr><td>04/05</td><td>DNM – CAJA CENTRAL</td><td>₲3.143.018</td><td>$530,71</td><td>RECUSADO</td></tr>
+      <tr><td>04/05</td><td>DNM – CAJA CENTRAL</td><td>₲6.286.036</td><td>$1.061,43</td><td>RECUSADO</td></tr>
+      <tr><td>04/05</td><td>DNM – CAJA CENTRAL</td><td>₲6.286.096</td><td>$1.061,44</td><td>RECUSADO</td></tr>
+      <tr><td>05/05</td><td>FARMA OLIVA-VILLA MORRA</td><td>₲128.700</td><td>$21,49</td><td>RECUSADO</td></tr>
+      <tr><td>08/05</td><td>SUP REAL-V MORRA</td><td>₲232.044</td><td>$38,12</td><td>RECUSADO</td></tr>
+      <tr><td>17/05</td><td>KFC MULTIPLAZA</td><td>₲72.000</td><td>$11,95</td><td>RECUSADO</td></tr>
+      <tr><td>17/05</td><td>KFC MULTIPLAZA</td><td>₲72.000</td><td>$11,95</td><td>RECUSADO</td></tr>
+      <tr><td>19/05</td><td>SUP REAL-VPOS</td><td>₲350.520</td><td>$57,86</td><td>RECUSADO</td></tr>
+      <tr><td>20/05</td><td>FARMACENTER-VILLA MORRA</td><td>₲137.600</td><td>$22,55</td><td>RECUSADO</td></tr>
+      <tr style="background:#1a1f26"><td colspan="3"><strong>Total recusado Alexia</strong></td><td><strong>$2.817,50</strong></td><td></td></tr>
+    </table>
+    <p class="nota">⚠️ Os três DNM recusados sugerem múltiplas tentativas de pagamento de documentação, possivelmente falhas de sistema ou saldo insuficiente — apenas a quarta tentativa (₲3.143.018) foi aprovada.</p>
+  </div>
+
+  <div class="section">
+    <h2>❌ Transações Recusadas — Felipe</h2>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>Valor</th><th>USD</th></tr>
+      <tr><td>03/05</td><td>MC DONALDS-AUTOPISTA</td><td>₲166.500</td><td>$28,12</td></tr>
+      <tr><td>16/05</td><td>Kiwify US, Inc</td><td>₲281.251</td><td>$46,67</td></tr>
+      <tr><td>26/05</td><td>OPENAI</td><td>$5,24</td><td>$5,24</td></tr>
+      <tr style="background:#1a1f26"><td colspan="2"><strong>Total recusado Felipe</strong></td><td></td><td><strong>$80,03</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>♻️ Reembolso — Alexia</h2>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>Valor USD</th><th>Valor BRL</th><th>Obs.</th></tr>
+      <tr><td>19/05</td><td>SUP REAL-VPOS (reembolso)</td><td>+$1,63</td><td>+R$ 8</td><td>Já descontado do total</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== CONCLUSÕES ===== -->
+<div id="tab-conclusoes" class="content">
+  <div class="section">
+    <h2>📋 Respostas às 17 Perguntas Obrigatórias</h2>
+    <table>
+      <tr><th>#</th><th>Pergunta</th><th>Resposta</th></tr>
+      <tr><td>1</td><td>Total por pessoa?</td><td>Alexia: R$8.294 (US$1.655) | Felipe: R$4.822 (US$960)</td></tr>
+      <tr><td>2</td><td>Total familiar?</td><td><strong>R$ 21.292</strong> (cartões + custos ocultos)</td></tr>
+      <tr><td>3</td><td>Qual mês teve mais gastos?</td><td>Maio 2026 — único mês com dados completos (abr.25 e abr.30 parciais)</td></tr>
+      <tr><td>4</td><td>Categorias que mais gastaram?</td><td>1.Moradia R$5.800 · 2.Mercado R$5.215 · 3.Documentação R$2.660 · 4.Compras online R$2.464</td></tr>
+      <tr><td>5</td><td>Categorias que precisam de atenção?</td><td>Compras online (Felipe crescente), Serviços digitais (R$814 — verificar duplicidades), Mercado (R$186/dia)</td></tr>
+      <tr><td>6</td><td>Maiores gastos individuais?</td><td>DNM US$530,71 · Amazon US$414 · Hipermercado US$180,78 · SUP REAL 13/05 US$155,49</td></tr>
+      <tr><td>7</td><td>Dias com maiores gastos?</td><td>04/05 (US$686), 16/05 (US$516), 22/05 (US$180), 28/05 (US$98), 13/05 (US$155)</td></tr>
+      <tr><td>8</td><td>Períodos de maior concentração?</td><td>Semana 1 (04–10/05): US$871 · Semana 2 (11–17/05): US$854</td></tr>
+      <tr><td>9</td><td>Períodos de maior gasto em mercado?</td><td>Semana 1 (04/05): SUP REAL + PUNTO CARNE = US$251 | 22/05: Hipermercado US$181 | 13/05: SUP REAL US$155</td></tr>
+      <tr><td>10</td><td>Total mercado?</td><td>R$ 5.215 (US$ 1.040,38) — Alexia 76% · Felipe 24%</td></tr>
+      <tr><td>11</td><td>Total alimentação fora?</td><td>R$ 432 (US$ 86,26) — Alexia dominante (Multiplaza, Berry Sweet, etc.)</td></tr>
+      <tr><td>12</td><td>Total transporte?</td><td>R$ 326 (US$ 32,04 cartão + R$165 espécie/gasolina Romário)</td></tr>
+      <tr><td>13</td><td>Total moradia/casa/manutenção?</td><td>R$ 9.393 (aluguel apto R$5.800 + móveis R$1.533 + termotanque R$331 + Romário R$1.729)</td></tr>
+      <tr><td>14</td><td>Total saúde/farmácia?</td><td>R$ 604 (US$ 120,39) — Alexia 98% do gasto de farmácia</td></tr>
+      <tr><td>15</td><td>Total documentação/imigração?</td><td>R$ 2.660 (US$ 531,84) — exclusivamente Alexia em 04/05</td></tr>
+      <tr><td>16</td><td>Pontuais × recorrentes?</td><td>Recorrentes: ~R$13.191 (62%) | Pontuais: ~R$8.101 (38%)</td></tr>
+      <tr><td>17</td><td>Conclusão prática?</td><td>Ver seção abaixo ↓</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>📈 Projeção Mensal — Categorias Recorrentes</h2>
+    <table>
+      <tr><th>Categoria</th><th>Base (28 dias)</th><th>Média/dia</th><th>Projeção 30 dias</th><th>Fonte</th></tr>
+      <tr><td>🛒 Mercado/Supermercado</td><td>US$1.040</td><td>US$37,16</td><td>US$1.115</td><td>Ambos</td></tr>
+      <tr><td>🍽️ Alimentação fora</td><td>US$86</td><td>US$3,07</td><td>US$92</td><td>Alexia</td></tr>
+      <tr><td>🚗 Transporte/Bolt</td><td>US$32</td><td>US$1,14</td><td>US$34</td><td>Ambos</td></tr>
+      <tr><td>💊 Farmácia recorrente</td><td>US$120</td><td>US$4,29</td><td>US$129</td><td>Alexia</td></tr>
+      <tr><td>💻 Serv. digitais (fix.)</td><td>US$162</td><td>—</td><td>US$162</td><td>Ambos (assinatura)</td></tr>
+      <tr style="background:#1a1f26"><td><strong>Estimativa Recorrente/mês</strong></td><td>—</td><td>—</td><td><strong>~US$1.532</strong><br><strong>~R$7.700</strong></td><td></td></tr>
+    </table>
+    <p class="nota">Excluídos da projeção: DNM (imigração), Amazon/eBay (avulsos), aluguel de móveis, termotanque, TIO IPHONERO.</p>
+  </div>
+
+  <div class="section">
+    <h2>🎯 Plano Prático para o Próximo Mês</h2>
+    <p style="font-size:.82rem;line-height:1.8">
+      <strong>1. Mercado:</strong> Consolidar compras em 2–3 datas fixas por semana em vez de compras diárias pequenas. Meta: reduzir de R$5.215 para ≤R$4.000 (−23%).<br>
+      <strong>2. Serviços digitais:</strong> Felipe tem Claude AI $84, Anthropic $5 e OpenAI $5 no mesmo dia. Revisar se todas são necessárias simultaneamente. Alexia tem Claude $20 + Kiwify $47 — confirmar se Kiwify é assinatura ou compra única.<br>
+      <strong>3. Compras online:</strong> Amazon US$414 e eBay US$53 foram grandes gastos. Estabelecer limite mensal de US$100 para compras online avulsas.<br>
+      <strong>4. Farmácia:</strong> Alexia frequenta 4 farmácias diferentes. Centralizar em 1–2 para melhor controle e possível fidelidade.<br>
+      <strong>5. Alimentação fora:</strong> 17/05 (domingo) concentrou R$247 em saídas (Berry Sweet, JA Vira, Don Vito, Esquina Libano). Estabelecer orçamento semanal de lazer/alimentação fora.<br>
+      <strong>6. Moradia:</strong> Com aluguel R$5.800 + móveis R$1.533 = R$7.333 só em habitação, esse é o maior centro de custo real. Verificar fim do contrato dos móveis.<br>
+      <strong>7. Acompanhar:</strong> TIO IPHONERO (celular US$98) — se recorrente, planejar. Dinheiro em espécie (Romário ₲1M) — rastrear melhor no próximo mês.
+    </p>
+  </div>
+
+  <!-- WHATSAPP -->
+  <div class="section">
+    <h2>📱 Resumo Pronto para WhatsApp</h2>
+    <div class="wpp-box" id="wppText">📊 RELATÓRIO FINANCEIRO FAMILIAR — MAIO 2026
+
+💰 TOTAIS
+• Total Familiar: R$ 21.292 (~ US$ 4.230)
+• Alexia (cartão): R$ 8.294 (US$ 1.655,56)
+• Felipe (cartão): R$ 4.822 (US$ 960,53)
+• Custos ocultos: R$ 8.160 (aluguel + Romário)
+
+🏆 TOP CATEGORIAS
+1. Moradia/Aluguel: R$ 5.800 (27%)
+2. Mercado/Supermercado: R$ 5.215 (25%)
+3. Documentação/Imigração: R$ 2.660 (13%)
+4. Compras Online: R$ 2.464 (12%)
+5. Casa/Móveis/Manutenção: R$ 2.360 (11%)
+
+📅 DIAS MAIS PESADOS
+• 04/05 (Seg): US$ 686 — DNM imigração + mercado
+• 16/05 (Sáb): US$ 516 — Amazon US$414 (Felipe)
+• 22/05 (Sex): US$ 181 — Hipermercado Luisito
+
+🛒 MERCADO (R$ 5.215)
+• Alexia: R$ 3.957 (média R$185/semana)
+• Felipe: R$ 1.258 (média R$62/semana)
+• Maior compra: Hipermercado Luisito R$ 918 em 22/05
+
+⚠️ PONTOS DE ATENÇÃO
+• DNM (imigração): R$ 2.654 em 04/05 — pontual
+• Amazon R$ 2.079 em 16/05 — verificar o que foi
+• Serv. digitais família: R$ 814 (Claude AI + OpenAI + Anthropic + Kiwify)
+• Farmácia Alexia: R$ 590 em 5 estabelecimentos diferentes
+
+🎯 CONCLUSÃO
+Sem os gastos pontuais (DNM + Amazon + aluguel móveis), o custo real recorrente seria ~R$ 13.191/mês. Meta para próximo mês: controlar mercado (−R$1.200), revisar assinaturas digitais e limitar compras online avulsas.</div>
+    <button class="copy-btn" onclick="copyWpp()">📋 Copiar para WhatsApp</button>
+  </div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  setTimeout(initCharts,100);
+}
+
+function copyWpp(){
+  const txt=document.getElementById('wppText').innerText;
+  navigator.clipboard.writeText(txt).then(()=>alert('Copiado! Cole no WhatsApp.'));
+}
+
+let chartsInit=false;
+function initCharts(){
+  if(chartsInit)return;
+  chartsInit=true;
+
+  const C=(id,cfg)=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    new Chart(el,cfg);
+  };
+
+  const colors=['#3fb950','#58a6ff','#f85149','#e3b341','#bc8cff','#ffa657','#7ee8a2','#ff9800','#00bcd4','#e91e63'];
+  const defaultOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8b949e',font:{size:11}}}}};
+
+  // Pessoas
+  C('chartPessoas',{type:'doughnut',data:{labels:['Alexia (cartão)','Felipe (cartão)','Custos Ocultos'],datasets:[{data:[8294,4822,8160],backgroundColor:['#3fb950','#58a6ff','#e3b341'],borderWidth:2,borderColor:'#161b22'}]},options:{...defaultOpts,plugins:{legend:{position:'right',labels:{color:'#8b949e'}}}}});
+
+  // Cat resumo
+  C('chartCatResumo',{type:'bar',data:{labels:['Moradia','Mercado','Documentação','Compras Online','Casa/Móveis','Serv.Digitais','Farmácia'],datasets:[{data:[5800,5215,2660,2464,2360,814,604],backgroundColor:['#58a6ff','#3fb950','#f85149','#bc8cff','#ffa657','#e3b341','#7ee8a2']}]},options:{...defaultOpts,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+
+  // Alexia cat
+  C('chartAlexiaCat',{type:'doughnut',data:{labels:['Mercado','Documentação','Farmácia','Alimentação','Serv.Digitais','Transporte','Outros'],datasets:[{data:[789.87,531.84,117.62,77.14,67.57,25.38,46.14],backgroundColor:colors,borderWidth:2,borderColor:'#161b22'}]},options:{...defaultOpts,plugins:{legend:{position:'right',labels:{color:'#8b949e'}}}}});
+
+  // Alexia data
+  C('chartAlexiaData',{type:'bar',data:{labels:['04/05','05/05','06/05','08/05','11/05','13/05','14/05','15/05','16/05','17/05','18/05','19/05','20/05','22/05','23/05','25/05','27/05','29/05','30/05'],datasets:[{label:'US$ gasto',data:[594.15,28.17,31.77,103.84,25.09,155.49,23.03,2.48,102.14,109.94,30.21,103.41,50.27,180.78,5.06,35.30,48.39,25.14,0.90],backgroundColor:'#3fb950aa',borderColor:'#3fb950',borderWidth:1}]},options:{...defaultOpts,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+
+  // Felipe cat
+  C('chartFelipeCat',{type:'doughnut',data:{labels:['Compras Online','Mercado','Eletrônicos','Serv.Digitais','Lazer','Transporte','Farmácia'],datasets:[{data:[490.97,250.51,98.38,94.36,16.88,6.66,2.77],backgroundColor:colors,borderWidth:2,borderColor:'#161b22'}]},options:{...defaultOpts,plugins:{legend:{position:'right',labels:{color:'#8b949e'}}}}});
+
+  // Felipe data
+  C('chartFelipeData',{type:'bar',data:{labels:['30/04','01/05','02/05','03/05','04/05','05/05','06/05','07/05','11/05','15/05','16/05','26/05','28/05','29/05','30/05','31/05'],datasets:[{label:'US$ gasto',data:[2.77,73.84,2.73,26.00,92.36,1.93,6.66,8.59,23.98,52.99,414.00,94.36,98.38,11.58,21.50,28.86],backgroundColor:'#58a6ffaa',borderColor:'#58a6ff',borderWidth:1}]},options:{...defaultOpts,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+
+  // Comparativo
+  C('chartComparativo',{type:'bar',data:{labels:['Alexia','Felipe','Custos Ocultos'],datasets:[{label:'BRL',data:[8294,4822,8160],backgroundColor:['#3fb950','#58a6ff','#e3b341']}]},options:{...defaultOpts,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+
+  // Família por data
+  const famDates=['30/04','01/05','02/05','03/05','04/05','05/05','06/05','07/05','08/05','11/05','13/05','14/05','15/05','16/05','17/05','18/05','19/05','20/05','22/05','23/05','25/05','26/05','27/05','28/05','29/05','30/05','31/05'];
+  const alexiaByDate=[0,0,0,0,594.15,28.17,31.77,0,103.84,25.09,155.49,23.03,2.48,102.14,109.94,30.21,103.41,50.27,180.78,5.06,35.30,0,48.39,0,25.14,0.90,0];
+  const felipeByDate=[2.77,73.84,2.73,26.00,92.36,1.93,6.66,8.59,0,23.98,0,0,52.99,414.00,0,0,0,0,0,0,0,94.36,0,98.38,11.58,21.50,28.86];
+  C('chartFamiliaData',{type:'bar',data:{labels:famDates,datasets:[{label:'Alexia',data:alexiaByDate,backgroundColor:'#3fb950aa'},{label:'Felipe',data:felipeByDate,backgroundColor:'#58a6ffaa'}]},options:{...defaultOpts,scales:{x:{stacked:true,ticks:{color:'#8b949e',font:{size:10}},grid:{color:'#21262d'}},y:{stacked:true,ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+}
+
+// Init charts on load for first tab
+setTimeout(initCharts,300);
+</script>
+</body>
+</html>

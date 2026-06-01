@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💰 Relatório Financeiro Familiar — Maio 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--primary:#1e3a5f;--accent:#e8a020;--green:#2d8a4e;--red:#c0392b;--blue:#2980b9;--light:#f5f7fa;--border:#dde3ec;--text:#2c3e50;--muted:#6b7c93}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:var(--text);font-size:14px}
+.header{background:linear-gradient(135deg,var(--primary) 0%,#2d5986 100%);color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header h1{font-size:1.4rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.summary-cards{display:flex;gap:12px;flex-wrap:wrap;padding:16px 24px;background:#fff;border-bottom:2px solid var(--border)}
+.card{background:var(--light);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;min-width:160px;flex:1}
+.card.green{border-left-color:var(--green)}
+.card.red{border-left-color:var(--red)}
+.card.blue{border-left-color:var(--blue)}
+.card label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.card .val{font-size:1.2rem;font-weight:700;color:var(--primary);margin-top:4px}
+.card .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.tabs{display:flex;flex-wrap:wrap;background:#fff;border-bottom:2px solid var(--border);padding:0 16px}
+.tab-btn{padding:10px 14px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:.2s}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--accent)}
+.tab-btn:hover{color:var(--primary)}
+.tab-content{display:none;padding:20px 24px;max-width:1200px;margin:0 auto}
+.tab-content.active{display:block}
+h2{font-size:1.1rem;color:var(--primary);margin-bottom:16px;border-left:4px solid var(--accent);padding-left:10px}
+h3{font-size:.95rem;color:var(--primary);margin:16px 0 8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.summary-cards{flex-direction:column}.tabs{overflow-x:auto}}
+.chart-box{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);position:relative;min-height:260px}
+.chart-box canvas{max-height:260px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07);font-size:13px}
+th{background:var(--primary);color:#fff;padding:9px 11px;text-align:left;font-size:12px;white-space:nowrap}
+td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f0f4fa}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.badge.ess{background:#d4edda;color:#1a7a36}
+.badge.non{background:#ffe0e0;color:#b01c1c}
+.badge.pont{background:#fff3cd;color:#856404}
+.badge.maybe{background:#e8f4fd;color:#1a5276}
+.insight-card{background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid var(--green)}
+.insight-card.warn{border-left-color:var(--red)}
+.insight-card.info{border-left-color:var(--blue)}
+.insight-card.tip{border-left-color:var(--accent)}
+.insight-card h4{font-size:.9rem;margin-bottom:6px;color:var(--primary)}
+.insight-card p{font-size:13px;color:var(--text);line-height:1.5}
+.whatsapp-box{background:#075e54;color:#fff;border-radius:12px;padding:20px;font-family:monospace;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+.section-box{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.progress-bar{background:#e9ecef;border-radius:6px;height:18px;overflow:hidden;margin:4px 0}
+.progress-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;color:#fff;font-weight:600;transition:width .4s}
+.input-group{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.input-group label{font-size:12px;color:var(--muted);min-width:120px}
+.input-group input{border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;width:120px}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filter-bar input,.filter-bar select{border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px}
+.tag{display:inline-block;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:2px 10px;font-size:11px;margin:2px;cursor:pointer}
+.tag.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.note{font-size:11px;color:var(--muted);font-style:italic;margin-top:4px}
+.total-row td{font-weight:700;background:#f0f4fa}
+.highlight{background:#fffde7 !important}
+.text-right{text-align:right}
+.text-center{text-align:center}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>💰 Relatório Financeiro Familiar — Maio 2026</h1>
+  <div style="font-size:12px;opacity:.85">📅 01/05/2026 a 30/05/2026 &nbsp;|&nbsp; 47 comprovantes analisados</div>
+</div>
+
+<div class="summary-cards" id="summaryCards"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('tab1')">📊 Resumo</button>
+  <button class="tab-btn" onclick="showTab('tab2')">📋 Todos os Gastos</button>
+  <button class="tab-btn" onclick="showTab('tab3')">📅 Por Dia</button>
+  <button class="tab-btn" onclick="showTab('tab4')">🏷️ Por Categoria</button>
+  <button class="tab-btn" onclick="showTab('tab5')">🛒 Mercado</button>
+  <button class="tab-btn" onclick="showTab('tab6')">✅ Essencial vs Não</button>
+  <button class="tab-btn" onclick="showTab('tab7')">💊 Farmácia/Leite/Fralda</button>
+  <button class="tab-btn" onclick="showTab('tab8')">🎡 Passeios e Lazer</button>
+  <button class="tab-btn" onclick="showTab('tab9')">🏪 Comparativo Mercados</button>
+  <button class="tab-btn" onclick="showTab('tab10')">🗒️ Lista Junho</button>
+  <button class="tab-btn" onclick="showTab('tab11')">💡 Insights</button>
+  <button class="tab-btn" onclick="showTab('tab12')">📱 WhatsApp</button>
+</div>
+
+<div id="tab1" class="tab-content active"></div>
+<div id="tab2" class="tab-content"></div>
+<div id="tab3" class="tab-content"></div>
+<div id="tab4" class="tab-content"></div>
+<div id="tab5" class="tab-content"></div>
+<div id="tab6" class="tab-content"></div>
+<div id="tab7" class="tab-content"></div>
+<div id="tab8" class="tab-content"></div>
+<div id="tab9" class="tab-content"></div>
+<div id="tab10" class="tab-content"></div>
+<div id="tab11" class="tab-content"></div>
+<div id="tab12" class="tab-content"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+let USD_RATE = 7600;
+let BRL_RATE = 5.80;
+
+const transactions = [
+  {id:1,  date:"2026-05-01", dow:"Quinta",   store:"Cadena Real",                      cat:"Supermercado",        total:113358,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Margarina, Jamon, Queso Mozz, Mandarina, Rosa Real, Yogurt Griego ×3, Pan"},
+  {id:2,  date:"2026-05-03", dow:"Sábado",   store:"McDonald's",                       cat:"Restaurante",         total:169000,  essential:false, payMethod:"Tarjeta Crédito",       note:"McBacon Double, McMelt ×2, Sundae, McPapaCheddar, Refri, Papas, Água"},
+  {id:3,  date:"2026-05-03", dow:"Sábado",   store:"Sky Games (Shopping)",              cat:"Lazer",               total:50000,   essential:false, payMethod:"Contado",               note:"Área infantil/playground — 1 hr"},
+  {id:4,  date:"2026-05-03", dow:"Sábado",   store:"Não identificado (INFONET)",        cat:"Não identificado",    total:50000,   essential:false, payMethod:"Visa Internacional",    note:"Apenas comprovante de cartão — sem nota itemizada"},
+  {id:5,  date:"2026-05-04", dow:"Domingo",  store:"Cadena Real",                      cat:"Supermercado",        total:24666,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Fideos 2un, Banana 0.81kg, Pepino 0.55kg, Esponja, Bombones, Bolsa"},
+  {id:6,  date:"2026-05-06", dow:"Terça",    store:"Farma SA (Punto Farma)",            cat:"Farmácia/Infantil",   total:110000,  essential:true,  payMethod:"Tarjeta Crédito",       note:"Bebelac Gold 3 - Lata 900gr (fórmula infantil)"},
+  {id:7,  date:"2026-05-06", dow:"Terça",    store:"Copistería (Molten Bosquin)",       cat:"Serviços",            total:7000,    essential:false, payMethod:"Bancard",               note:"Impressão Color A4 — 2 folhas"},
+  {id:8,  date:"2026-05-06", dow:"Terça",    store:"Donca (Donuteria)",                 cat:"Alimentação Fora",    total:40000,   essential:false, payMethod:"Tarjeta Crédito",       note:"Dona Brownie, Choco Chips, Glasê Rosa — 3 donuts"},
+  {id:9,  date:"2026-05-07", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:53034,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Osobuco en Bandeja 1.425kg"},
+  {id:10, date:"2026-05-11", dow:"Segunda",  store:"Cadena Real",                      cat:"Supermercado",        total:208746,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Papa, Bife Chorizo 0.5kg, Coca S/AZU, Pepino, Queso Rallado, Arroz 5un, Ovos, Pan, Água, Limão, Patitas Pollo"},
+  {id:11, date:"2026-05-11", dow:"Segunda",  store:"Cadena Real",                      cat:"Supermercado",        total:49302,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Banana Karape 0.95kg, Margarina, Fruta Lacyosa 5un, Bolsa"},
+  {id:12, date:"2026-05-11", dow:"Segunda",  store:"Cadena Farmacenter",               cat:"Farmácia",            total:152690,  essential:true,  payMethod:"Visa Internacional",    note:"Hemchoral BO Manzana G.62.590, Korogsos 8mg Sublingual G.43.000, Bolsa Inplast G.200, Entrega G.12.000"},
+  {id:13, date:"2026-05-13", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:940209,  essential:true,  payMethod:"Tarjeta Integracion",   note:"COMPRA GRANDE (47 itens): Toallitas, Queso, Cerveja, Purê Tomate, Cebolla, Papa, Naranjas, Kiwi, Ovos, Esponja, Coco, Especiarias, Brócoli e muito mais"},
+  {id:14, date:"2026-05-13", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:62082,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Limpador ZOOM, Pan de Leche 0.48kg, Panceta 1.19kg, Sal Fina, Crema de Leche"},
+  {id:15, date:"2026-05-14", dow:"Quinta",   store:"Farma SA (Punto Farma)",            cat:"Farmácia/Infantil",   total:138780,  essential:true,  payMethod:"Tarjeta Crédito",       note:"Primalac Ultimate 3 - Lata 800gr G.121.800 (orig.G.145.000) + Johnson Talco 200gr G.16.980"},
+  {id:16, date:"2026-05-16", dow:"Sábado",   store:"Cadena Real",                      cat:"Supermercado",        total:99424,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Cobertura Top Got, Pan de Leche 0.47kg, Banana Karape 2.43kg, Mandioca Congelada 2un, Bolsa"},
+  {id:17, date:"2026-05-16", dow:"Sábado",   store:"Luisito (Hipermercado)",            cat:"Supermercado",        total:234898,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Carnaza Paral Vacuna 2.01kg G.90.248, Papel Higiênico, Al.Perros, Bombones, Pan de Viena, Jugo, Mostaza, Gaseosa, Leche, Obleas"},
+  {id:18, date:"2026-05-17", dow:"Domingo",  store:"Cadena Real",                      cat:"Supermercado",        total:261483,  essential:false, payMethod:"Tarjeta Integracion",   note:"Tintura Cabelo, Chapinha G.54.900, PH Sublime G.29.800, LIQUIDIFICADOR G.79.950, Jabón, Margarina, Vinagre, Manteca, Grasa Veg."},
+  {id:19, date:"2026-05-17", dow:"Domingo",  store:"Sky Games (Multiplaza)",            cat:"Lazer",               total:70000,   essential:false, payMethod:"Contado",               note:"Soft Place 1Hr G.35.000 + City 1Hr G.35.000"},
+  {id:20, date:"2026-05-17", dow:"Domingo",  store:"Padre Pio SRL (Rest. JA-VIRA)",    cat:"Restaurante",         total:189000,  essential:false, payMethod:"Tarjeta Débito",        note:"Grille Napolitana, Milanesa Cavallo, Tallarín, Mila/Cheddar, Guarniciones, 2 Coca Zero"},
+  {id:21, date:"2026-05-17", dow:"Domingo",  store:"Esquina Líbano",                   cat:"Alimentação Fora",    total:33000,   essential:false, payMethod:"Contado",               note:"Sandwich de Lomito (sin jamón) G.33.000"},
+  {id:22, date:"2026-05-19", dow:"Terça",    store:"Cadena Real",                      cat:"Supermercado",        total:11701,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Queso Mozzarella 0.055kg"},
+  {id:23, date:"2026-05-19", dow:"Terça",    store:"Cadena Real",                      cat:"Supermercado",        total:123758,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Pollo Chandioca, Mandioca Festi 0.78kg, Supa Paraguaya, Choc.Polvo, Ketchup, Molho Pimenta, Kiwi 0.22kg, Farofa"},
+  {id:24, date:"2026-05-19", dow:"Terça",    store:"Cadena Real (Ecommerce)",           cat:"Supermercado",        total:345975,  essential:true,  payMethod:"Ecommerce",             note:"Carne Molida 4un, Pechuga 4kg, Hígado 1.13kg, Leche Coco 2un, Lechuga, Muslo 3kg, Pan Sandwich, Pechuga 1.02kg + Envio G.22k"},
+  {id:25, date:"2026-05-20", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:16172,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Banana 0.57kg, Limão 0.43kg, Lechuga Nacional, Queso del Cerda, Bolsa"},
+  {id:26, date:"2026-05-20", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:270304,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Carne Molida, Queso, Leite, Purê Tomate ×2, Margarina, Fideos ×2, Vinagre, Cerveja, Sardinas, Ovos, Perejil, Crema, Cebolla, Naranjas, Água"},
+  {id:27, date:"2026-05-20", dow:"Quarta",   store:"Cadena Real",                      cat:"Supermercado",        total:437331,  essential:true,  payMethod:"Tarjeta Integracion",   note:"COMPRA GRANDE: Muslos Pollo, Hamburguesa, Chorizo, Filet Pechuga, Corte Paleta, Pan Francés, Leche, Galletita, Ovos, Jabón, Bolsa"},
+  {id:28, date:"2026-05-20", dow:"Quarta",   store:"SAGAS SA (Fixo Cargo PY)",         cat:"Serviços",            total:22200,   essential:false, payMethod:"Contado",               note:"Frete Courier — Felipe Sain — Itens Pessoais 542.6g"},
+  {id:29, date:"2026-05-23", dow:"Sábado",   store:"Farmacenter Boggiani 2",            cat:"Farmácia",            total:31060,   essential:true,  payMethod:"Visa Internacional",    note:"Compra farmácia — itens não detalhados no comprovante"},
+  {id:30, date:"2026-05-25", dow:"Segunda",  store:"INFONET / Alea España (Eletrôn.)", cat:"Eletrônicos",         total:151800,  essential:false, payMethod:"Contado",               note:"Pen SanDisk 128GB Cruzer Blade G.127.050 + Adapt. USB-A/USB-C G.24.750"},
+  {id:31, date:"2026-05-25", dow:"Segunda",  store:"Ceferino Vega (INFONET)",           cat:"Não identificado",    total:127000,  essential:false, payMethod:"Visa Internacional",    note:"Apenas comprovante de cartão Visa — sem nota itemizada"},
+  {id:32, date:"2026-05-25", dow:"Segunda",  store:"Surcos Textil Villa Morra",         cat:"Vestuário/Calçados",  total:89700,   essential:true,  payMethod:"Contado",               note:"Calzado Champion G.76.500 + Meia 3par G.6.500 + Brinquedo Inflável G.6.500"},
+  {id:33, date:"2026-05-29", dow:"Sexta",    store:"Farmacenter SA (Cadena)",           cat:"Farmácia/Infantil",   total:149600,  essential:true,  payMethod:"Ecommerce",             note:"Nutrilon Premium +3 NF PB 1un G.137.600 (orig.G.172.000) + Entrega G.12.000 — economia G.34.400"},
+  {id:34, date:"2026-05-30", dow:"Sábado",   store:"Cadena Real",                      cat:"Supermercado",        total:132420,  essential:false, payMethod:"Visa Internacional",    note:"Doritos Queso, Snack Doritos ×2, Queso Mozzarella, Queso del Cerda, Yogurt Diet ×3"},
+  {id:35, date:"2026-05-30", dow:"Sábado",   store:"Cadena Real",                      cat:"Supermercado",        total:75206,   essential:true,  payMethod:"Tarjeta Integracion",   note:"Banana Karape 0.42kg, Pollo Croquetas, Mostaza Nativa ×2, Bolsa"},
+  {id:36, date:"Ilegível",   dow:"Ilegível", store:"Sin Nombre (Açougue/Churrascaria)", cat:"Supermercado",        total:547021,  essential:true,  payMethod:"Visa Internacional",    note:"Chorizo Toscano 2un, Carnaza Moura 3.24kg G.173k, Tabasco G.31.6k, Panchon×16, Entrada Premium 1.115kg, Nuggets 2.5kg G.130k, Entrada Gruesa 1.83kg"},
+  {id:37, date:"Ilegível",   dow:"Ilegível", store:"Cadena Real",                      cat:"Supermercado",        total:632044,  essential:true,  payMethod:"Tarjeta Integracion",   note:"COMPRA GRANDE (42 itens): PAMPERS CONFORTSE G.164.5k, Bebida Lactea, Papel Toalha, Jabón, Toallita Babysun ×2, Cereales, Álcool, Detergente, Cepillo, Globo del Rey, Pan de Leche"},
+  {id:38, date:"Ilegível",   dow:"Ilegível", store:"Cadena Real",                      cat:"Supermercado",        total:282901,  essential:true,  payMethod:"Tarjeta Integracion",   note:"Compra média (~25 itens) — data ilegível no recibo — Zanahoria, Pan de Leche, Cebolla, Banana e outros"},
+  {id:39, date:"27/06 (?)",  dow:"Sábado(?)",store:"Amandau SA (Sorveteria/Confeit.)",  cat:"Alimentação Fora",    total:10000,   essential:false, payMethod:"Débito",                note:"⚠️ DATA NO RECIBO: 27/06/2026 — possível erro de impressora. Vaso 1 Bocha sorvete G.10.000"},
+  {id:40, date:"~2026-05-28",dow:"Quinta(est.)",store:"Luisito (Hipermercado)",        cat:"Supermercado",        total:1169523, essential:true,  payMethod:"Tarjeta Integracion",   note:"MAIOR COMPRA DO MÊS — grande compra de mercado: carnes, frutas, verduras, laticínios, itens domésticos (~37 itens)"},
+];
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+const fmt = n => n.toLocaleString('pt-BR');
+const fmtGs = n => 'G. ' + Math.round(n).toLocaleString('pt-BR');
+const fmtUsd = n => 'USD ' + (n/USD_RATE).toFixed(2);
+const fmtBrl = n => 'R$ ' + ((n/USD_RATE)*BRL_RATE).toFixed(2);
+const totalMonth = transactions.reduce((s,t) => s + t.total, 0);
+
+// ─── SUMMARY CARDS ──────────────────────────────────────────────────────────
+function buildSummary() {
+  const essTotal = transactions.filter(t=>t.essential).reduce((s,t)=>s+t.total,0);
+  const nonEss = totalMonth - essTotal;
+  const html = `
+    <div class="card"><label>Total Maio 2026</label><div class="val">${fmtGs(totalMonth)}</div><div class="sub">${fmtUsd(totalMonth)} | ${fmtBrl(totalMonth)}</div></div>
+    <div class="card blue"><label>Total Guaranis</label><div class="val">${fmt(totalMonth)} Gs</div><div class="sub">40 transações identificadas</div></div>
+    <div class="card green"><label>Essencial</label><div class="val">${fmtGs(essTotal)}</div><div class="sub">${(essTotal/totalMonth*100).toFixed(1)}% do total</div></div>
+    <div class="card red"><label>Não essencial</label><div class="val">${fmtGs(nonEss)}</div><div class="sub">${(nonEss/totalMonth*100).toFixed(1)}% do total</div></div>
+    <div class="card"><label>Taxa estimada USD/Gs</label><div class="val">7.600 Gs/USD</div><div class="sub">Taxa média estimada Mai/26</div></div>
+    <div class="card"><label>Em Reais (est.)</label><div class="val">${fmtBrl(totalMonth)}</div><div class="sub">USD/BRL est.: R$ 5,80</div></div>
+  `;
+  document.getElementById('summaryCards').innerHTML = html;
+}
+
+// ─── TAB 1: RESUMO ──────────────────────────────────────────────────────────
+function buildTab1() {
+  const byStore = {};
+  transactions.forEach(t => { byStore[t.store] = (byStore[t.store]||0) + t.total; });
+  const storeSorted = Object.entries(byStore).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  
+  const byCat = {};
+  transactions.forEach(t => { byCat[t.cat] = (byCat[t.cat]||0) + t.total; });
+  const catSorted = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+
+  // Weekly
+  const weeks = {W1:0,W2:0,W3:0,W4:0,W5:0};
+  transactions.forEach(t => {
+    const d = t.date.replace(/~/,'');
+    const day = parseInt(d.slice(8,10)) || 0;
+    if(day>=1&&day<=7) weeks.W1+=t.total;
+    else if(day>=8&&day<=14) weeks.W2+=t.total;
+    else if(day>=15&&day<=21) weeks.W3+=t.total;
+    else if(day>=22&&day<=31) weeks.W4+=t.total;
+    else weeks.W5+=t.total; // ilegível
+  });
+
+  document.getElementById('tab1').innerHTML = `
+  <h2>📊 Resumo Geral — Maio 2026</h2>
+  
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="chart-box">
+      <h3 style="margin-top:0">Gastos por Categoria</h3>
+      <canvas id="chartCat"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3 style="margin-top:0">Gastos por Semana</h3>
+      <canvas id="chartWeek"></canvas>
+    </div>
+  </div>
+  
+  <div class="section-box">
+    <h3>🏆 Top 10 Estabelecimentos</h3>
+    <table>
+      <tr><th>Estabelecimento</th><th>Total Gs</th><th>Total USD</th><th>Total R$</th><th>% do mês</th></tr>
+      ${storeSorted.map(([s,v]) => `<tr><td>${s}</td><td class="text-right">${fmtGs(v)}</td><td class="text-right">${fmtUsd(v)}</td><td class="text-right">${fmtBrl(v)}</td><td><div class="progress-bar"><div class="progress-fill" style="width:${(v/totalMonth*100).toFixed(0)}%;background:var(--primary)">${(v/totalMonth*100).toFixed(1)}%</div></div></td></tr>`).join('')}
+      <tr class="total-row"><td>TOTAL GERAL</td><td class="text-right">${fmtGs(totalMonth)}</td><td class="text-right">${fmtUsd(totalMonth)}</td><td class="text-right">${fmtBrl(totalMonth)}</td><td>100%</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <h3>📂 Gastos por Categoria</h3>
+    <table>
+      <tr><th>Categoria</th><th>Total Gs</th><th>USD</th><th>R$</th><th>% do mês</th></tr>
+      ${catSorted.map(([c,v]) => `<tr><td>${c}</td><td class="text-right">${fmtGs(v)}</td><td class="text-right">${fmtUsd(v)}</td><td class="text-right">${fmtBrl(v)}</td><td><div class="progress-bar"><div class="progress-fill" style="width:${Math.max(2,(v/totalMonth*100)).toFixed(0)}%;background:var(--accent)">${(v/totalMonth*100).toFixed(1)}%</div></div></td></tr>`).join('')}
+      <tr class="total-row"><td>TOTAL</td><td class="text-right">${fmtGs(totalMonth)}</td><td class="text-right">${fmtUsd(totalMonth)}</td><td class="text-right">${fmtBrl(totalMonth)}</td><td>100%</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <h3>💰 Conversão de Moedas</h3>
+    <div class="input-group"><label>Taxa PYG/USD:</label><input type="number" id="usdInput" value="7600" onchange="updateRates()"> <span class="note">Ajuste conforme extrato do cartão</span></div>
+    <div class="input-group"><label>Taxa USD/BRL:</label><input type="number" id="brlInput" value="5.80" step="0.01" onchange="updateRates()"></div>
+    <table>
+      <tr><th>Moeda</th><th>Total</th><th>Média/dia (30 dias)</th><th>Maior gasto único</th></tr>
+      <tr><td>🇵🇾 Guaranis (PYG)</td><td id="convGs">${fmt(totalMonth)} Gs</td><td>${fmt(Math.round(totalMonth/30))} Gs</td><td>G. 1.169.523 (Luisito ~28/05)</td></tr>
+      <tr><td>🇺🇸 Dólar (USD)</td><td id="convUsd">${(totalMonth/7600).toFixed(2)} USD</td><td>${(totalMonth/30/7600).toFixed(2)} USD</td><td>USD ${(1169523/7600).toFixed(2)} (Luisito)</td></tr>
+      <tr><td>🇧🇷 Real (BRL)</td><td id="convBrl">R$ ${(totalMonth/7600*5.80).toFixed(2)}</td><td>R$ ${(totalMonth/30/7600*5.80).toFixed(2)}</td><td>R$ ${(1169523/7600*5.80).toFixed(2)} (Luisito)</td></tr>
+    </table>
+    <p class="note" style="margin-top:8px">⚠️ Taxas de câmbio estimadas para maio/2026. Ajuste nos campos acima se tiver o valor exato do extrato do cartão. Para compras em cartão Visa Internacional, a conversão PYG→USD→BRL ocorre automaticamente pelo banco.</p>
+  </div>
+  `;
+
+  // Charts
+  setTimeout(() => {
+    new Chart(document.getElementById('chartCat'), {
+      type:'doughnut',
+      data:{
+        labels: catSorted.map(([c])=>c),
+        datasets:[{data: catSorted.map(([,v])=>v), backgroundColor:['#1e3a5f','#2980b9','#e8a020','#2d8a4e','#c0392b','#8e44ad','#16a085','#e74c3c','#f39c12','#27ae60']  }]
+      },
+      options:{plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12}}},cutout:'55%'}
+    });
+    new Chart(document.getElementById('chartWeek'), {
+      type:'bar',
+      data:{
+        labels:['Sem 1 (1-7/5)','Sem 2 (8-14/5)','Sem 3 (15-21/5)','Sem 4 (22-31/5)','Data ilegível'],
+        datasets:[{label:'Guaranis',data:Object.values(weeks),backgroundColor:'#2980b9'}]
+      },
+      options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)+' Gs'}}}}
+    });
+  },100);
+}
+
+function updateRates() {
+  USD_RATE = parseFloat(document.getElementById('usdInput').value)||7600;
+  BRL_RATE = parseFloat(document.getElementById('brlInput').value)||5.80;
+  document.getElementById('convGs').textContent = fmt(totalMonth)+' Gs';
+  document.getElementById('convUsd').textContent = (totalMonth/USD_RATE).toFixed(2)+' USD';
+  document.getElementById('convBrl').textContent = 'R$ '+(totalMonth/USD_RATE*BRL_RATE).toFixed(2);
+}
+
+// ─── TAB 2: TODOS OS GASTOS ──────────────────────────────────────────────────
+function buildTab2() {
+  const rows = transactions.map(t => `
+    <tr>
+      <td>${t.date}</td><td>${t.dow}</td>
+      <td>${t.store}</td>
+      <td>${t.cat}</td>
+      <td class="text-right" style="font-weight:600">${fmtGs(t.total)}</td>
+      <td class="text-right">${fmtUsd(t.total)}</td>
+      <td class="text-right">${fmtBrl(t.total)}</td>
+      <td><span class="badge ${t.essential?'ess':'non'}">${t.essential?'Essencial':'Não ess.'}</span></td>
+      <td>${t.payMethod}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:250px">${t.note}</td>
+    </tr>`).join('');
+  
+  document.getElementById('tab2').innerHTML = `
+  <h2>📋 Base Única de Todos os Gastos</h2>
+  <div class="filter-bar">
+    <input type="text" id="searchTx" placeholder="🔍 Buscar..." oninput="filterTable()" style="width:220px">
+    <select id="filterCat" onchange="filterTable()">
+      <option value="">Todas as categorias</option>
+      ${[...new Set(transactions.map(t=>t.cat))].sort().map(c=>`<option>${c}</option>`).join('')}
+    </select>
+    <select id="filterEss" onchange="filterTable()">
+      <option value="">Essencial / Não essencial</option>
+      <option value="true">Essencial</option>
+      <option value="false">Não essencial</option>
+    </select>
+  </div>
+  <p class="note" style="margin-bottom:10px">⚠️ 3 transações têm data ilegível no recibo. Taxas: 7.600 PYG/USD | R$ 5,80/USD (estimativa mai/26).</p>
+  <div style="overflow-x:auto">
+  <table id="txTable">
+    <thead><tr><th>Data</th><th>Dia</th><th>Estabelecimento</th><th>Categoria</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Essencial?</th><th>Pagamento</th><th>Observações</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr class="total-row"><td colspan="4">TOTAL (40 transações)</td><td class="text-right">${fmtGs(totalMonth)}</td><td class="text-right">${fmtUsd(totalMonth)}</td><td class="text-right">${fmtBrl(totalMonth)}</td><td colspan="3"></td></tr></tfoot>
+  </table></div>`;
+}
+
+function filterTable() {
+  const q = document.getElementById('searchTx').value.toLowerCase();
+  const cat = document.getElementById('filterCat').value;
+  const ess = document.getElementById('filterEss').value;
+  const rows = document.querySelectorAll('#txTable tbody tr');
+  rows.forEach(r => {
+    const text = r.textContent.toLowerCase();
+    const show = (!q||text.includes(q)) && (!cat||text.includes(cat.toLowerCase())) && (!ess||text.includes(ess==='true'?'essencial':'não ess'));
+    r.style.display = show?'':'none';
+  });
+}
+
+// ─── TAB 3: POR DIA ──────────────────────────────────────────────────────────
+function buildTab3() {
+  const byDay = {};
+  transactions.forEach(t => {
+    const key = t.date;
+    if(!byDay[key]) byDay[key]={date:t.date,dow:t.dow,total:0,stores:[],count:0};
+    byDay[key].total += t.total;
+    byDay[key].stores.push(t.store);
+    byDay[key].count++;
+  });
+  const days = Object.values(byDay).sort((a,b) => {
+    const ad = a.date.replace(/[^0-9]/g,''), bd = b.date.replace(/[^0-9]/g,'');
+    return ad.localeCompare(bd);
+  });
+  const topDays = [...days].sort((a,b)=>b.total-a.total).slice(0,5);
+
+  document.getElementById('tab3').innerHTML = `
+  <h2>📅 Gastos por Dia</h2>
+  
+  <div class="section-box" style="margin-bottom:16px">
+    <h3>🔥 Maiores dias de gasto</h3>
+    <table>
+      <tr><th>Posição</th><th>Data</th><th>Dia</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Transações</th></tr>
+      ${topDays.map((d,i) => `<tr class="${i===0?'highlight':''}"><td>${i+1}º</td><td>${d.date}</td><td>${d.dow}</td><td class="text-right" style="font-weight:700">${fmtGs(d.total)}</td><td class="text-right">${fmtUsd(d.total)}</td><td class="text-right">${fmtBrl(d.total)}</td><td style="font-size:11px">${d.stores.join(', ')}</td></tr>`).join('')}
+    </table>
+  </div>
+  
+  <div class="chart-box" style="margin-bottom:16px">
+    <h3 style="margin-top:0">Evolução de gastos por dia (valores em Guaranis)</h3>
+    <canvas id="chartDay" style="max-height:300px"></canvas>
+  </div>
+
+  <div class="section-box">
+    <h3>Tabela Completa por Dia</h3>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>Data</th><th>Dia da Semana</th><th>Nº Compras</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Estabelecimentos</th></tr>
+      ${days.map(d => `<tr><td>${d.date}</td><td>${d.dow}</td><td class="text-center">${d.count}</td><td class="text-right" style="font-weight:600">${fmtGs(d.total)}</td><td class="text-right">${fmtUsd(d.total)}</td><td class="text-right">${fmtBrl(d.total)}</td><td style="font-size:11px">${d.stores.join(' | ')}</td></tr>`).join('')}
+      <tr class="total-row"><td colspan="3">TOTAL</td><td class="text-right">${fmtGs(totalMonth)}</td><td class="text-right">${fmtUsd(totalMonth)}</td><td class="text-right">${fmtBrl(totalMonth)}</td><td></td></tr>
+    </table></div>
+  </div>`;
+
+  setTimeout(() => {
+    const datesWithData = days.filter(d=>!d.date.includes('Ilegível')&&!d.date.includes('~')&&!d.date.includes('?'));
+    new Chart(document.getElementById('chartDay'), {
+      type:'bar',
+      data:{
+        labels: datesWithData.map(d=>d.date.slice(8,10)+'/05'),
+        datasets:[{label:'Guaranis',data:datesWithData.map(d=>d.total),backgroundColor:'#1e3a5f',borderRadius:4}]
+      },
+      options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmt(v)+' Gs'}},x:{ticks:{maxRotation:45}}}}
+    });
+  },100);
+}
+
+// ─── TAB 4: POR CATEGORIA ────────────────────────────────────────────────────
+function buildTab4() {
+  const byCat = {};
+  transactions.forEach(t => {
+    if(!byCat[t.cat]) byCat[t.cat]={total:0,count:0,stores:new Set(),txs:[]};
+    byCat[t.cat].total+=t.total; byCat[t.cat].count++; byCat[t.cat].stores.add(t.store); byCat[t.cat].txs.push(t);
+  });
+  const cats = Object.entries(byCat).sort((a,b)=>b[1].total-a[1].total);
+
+  const rows = cats.map(([c,v]) => `<tr>
+    <td style="font-weight:600">${c}</td>
+    <td class="text-right" style="font-weight:700">${fmtGs(v.total)}</td>
+    <td class="text-right">${fmtUsd(v.total)}</td>
+    <td class="text-right">${fmtBrl(v.total)}</td>
+    <td class="text-center">${v.count}</td>
+    <td><div class="progress-bar"><div class="progress-fill" style="width:${Math.max(2,(v.total/totalMonth*100)).toFixed(0)}%;background:var(--primary)">${(v.total/totalMonth*100).toFixed(1)}%</div></div></td>
+    <td style="font-size:11px">${[...v.stores].slice(0,3).join(', ')}</td>
+  </tr>`).join('');
+
+  document.getElementById('tab4').innerHTML = `
+  <h2>🏷️ Gastos por Categoria</h2>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="chart-box"><canvas id="chartCatBar"></canvas></div>
+    <div class="section-box">
+      <h3>Resumo Rápido</h3>
+      ${cats.slice(0,5).map(([c,v])=>`<div style="margin-bottom:8px"><strong>${c}</strong>: ${fmtGs(v.total)} (${(v.total/totalMonth*100).toFixed(1)}%)<div class="progress-bar"><div class="progress-fill" style="width:${Math.max(2,(v.total/totalMonth*100)).toFixed(0)}%;background:var(--accent)">&nbsp;</div></div></div>`).join('')}
+    </div>
+  </div>
+  <div class="section-box">
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>Categoria</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Nº Trans.</th><th>% do mês</th><th>Estabelecimentos</th></tr>
+      ${rows}
+      <tr class="total-row"><td>TOTAL</td><td class="text-right">${fmtGs(totalMonth)}</td><td class="text-right">${fmtUsd(totalMonth)}</td><td class="text-right">${fmtBrl(totalMonth)}</td><td class="text-center">40</td><td>100%</td><td></td></tr>
+    </table></div>
+  </div>`;
+
+  setTimeout(()=>{
+    new Chart(document.getElementById('chartCatBar'),{
+      type:'bar',
+      data:{labels:cats.map(([c])=>c),datasets:[{label:'Gs',data:cats.map(([,v])=>v.total),backgroundColor:'#1e3a5f',borderRadius:4}]},
+      options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>fmt(v)}}}}
+    });
+  },100);
+}
+
+// ─── TAB 5: MERCADO ──────────────────────────────────────────────────────────
+function buildTab5() {
+  // Supermarket sub-categories estimated from items
+  const mercCats = [
+    {cat:"Carnes (Bovina)",    gs:620000, ess:true,  junho:true,  items:"Osobuco, Bife Chorizo, Carnaza Moura (3.24kg), Carnaza Paral Vacuna (2kg), Carne Molida, Hamburguer, Corte Paleta, Hígado, Entrada Premium/Gruesa"},
+    {cat:"Carnes (Frango)",    gs:580000, ess:true,  junho:true,  items:"Pechuga 5+kg, Muslo 3kg, Patitas, Carne Molida Popu, Pollo Chandioca, Filet Pechuga, Muslos Pollo, Pollo Croquetas"},
+    {cat:"Carnes (Embutidos)", gs:200000, ess:false, junho:false, items:"Chorizo Toscano 2un, Panceta 1.19kg, Super Panchon ×16, Chorizo Tipo"},
+    {cat:"Peixe/Frutos Mar",   gs:20000,  ess:true,  junho:true,  items:"Sardinas al Agua (conserva)"},
+    {cat:"Fórmula Infantil",   gs:369400, ess:true,  junho:true,  items:"Bebelac Gold 3 (1 lata 900gr), Primalac Ultimate 3 (1 lata 800gr), Nutrilon Premium +3 (1 lata)"},
+    {cat:"Leite e Derivados",  gs:280000, ess:true,  junho:true,  items:"Leche Fluida Entera, Leche Condensada, Leche de Coco, Bebida Lactea, Crema de Leche, Manteca, Grasa Vegetal"},
+    {cat:"Queijos",            gs:190000, ess:true,  junho:true,  items:"Queso Mozzarella (várias compras), Queso Paraguay, Queso Lactolanda, Queso Rallado, Queso del Cerda, Queso Requeson, Queso Santo Francis"},
+    {cat:"Iogurte/Yogurt",     gs:80000,  ess:true,  junho:true,  items:"Yogurt Griego DUP ×3, Yogurt Griego LA, Yogurt Diet ×3"},
+    {cat:"Fraldas/Pampers",    gs:164500, ess:true,  junho:true,  items:"Pampers Confortse 10un (~G.164.500)"},
+    {cat:"Prod. Higiene Bebê", gs:50000,  ess:true,  junho:true,  items:"Johnson Talco 200gr, Toallita Babysun ×2, Bolsa Inplast Med"},
+    {cat:"Ovos",               gs:80000,  ess:true,  junho:true,  items:"Huevos a Granel ×3 compras"},
+    {cat:"Frutas",             gs:110000, ess:true,  junho:true,  items:"Banana Karape/Oferta (várias vezes), Kiwi Italiano, Manzana, Mandarina, Naranja Ombligo, Limão Tahiti, Fruta Lacyosa"},
+    {cat:"Verduras",           gs:90000,  ess:true,  junho:true,  items:"Lechuga ×vários, Pepino ×2, Perejil/Cebollita, Tomate Santa Cruz, Brocoli"},
+    {cat:"Legumes/Tubérculos", gs:180000, ess:true,  junho:true,  items:"Papa/Batata ×várias, Mandioca Congelada ×2, Cebolla ×várias, Zapallo, Papa Cepillada"},
+    {cat:"Arroz/Massas/Grãos", gs:120000, ess:true,  junho:true,  items:"Arroz Tío Nico RO 5un, Fideos Monarca ×2, Fideos Anita Nido/Spag ×2, Locro/Supa Paraguaya, Feijão/Porotos"},
+    {cat:"Pães/Café da Manhã", gs:150000, ess:true,  junho:true,  items:"Pan de Sandwich, Pan Integral Bajo, Pan Felipe Real, Pan de Viena ×3, Pan de Leche, Pan Francés, Pan de Damacina"},
+    {cat:"Temperos/Molhos",    gs:110000, ess:true,  junho:true,  items:"Sal Fina, Ajo ×2, Ketchup Picante, Molho de Pimienta, Mostaza Doypack, Vinagre, Tabasco, Purê de Tomate ×4"},
+    {cat:"Limpeza",            gs:100000, ess:true,  junho:true,  items:"Detergente Lava V, Álcool Rectificado, Cepillo Advanced, Esponja Polifoam, Esponja 3M, Sapriotador ZOOM, Jabón Líquido"},
+    {cat:"Higiene Pessoal",    gs:80000,  ess:true,  junho:true,  items:"Jabón de Tocador ×2, PH Sublime HS ×2, Papel Higiênico, Jabonera"},
+    {cat:"Bebidas",            gs:180000, ess:false, junho:false, items:"Cerveza Miller ×2, Gaseosa Retornable, Agua en Bidon ×2, Coca Cola/Zero, Jugo del Valle, Jugo Listo, Bebida Lactea"},
+    {cat:"Doces/Snacks/Best.",  gs:220000, ess:false, junho:false, items:"Bombones Sueño ×2, Doritos Queso ×3, Snack Doritos, Mega Alfajor, Obleas con Relleno, Chocolate Polvo, Cobertura, Barrocereal Nutry, Cereales"},
+    {cat:"Alimento Pet",       gs:21900,  ess:true,  junho:true,  items:"Alimento Perros Anzas"},
+    {cat:"Utilidades Domésticas",gs:219000,ess:false,junho:false, items:"Chapinha Plancha G.54.900, Liquidificador Deporti G.79.950, Santa Helena Tint G.27.500, PH Sublime ×2 G.29.800, Tintas/Higiene Beleza"},
+    {cat:"Outros/Embalagens",  gs:30000,  ess:false, junho:false, items:"Bolsa Camisilla (várias), Envase Vazio PET, Globo del Rey, Brinquedo Inflável, Pincel Alam"},
+  ];
+
+  const totalMerc = mercCats.reduce((s,c)=>s+c.gs,0);
+
+  document.getElementById('tab5').innerHTML = `
+  <h2>🛒 Mercado e Supermercado — Breakdown Detalhado</h2>
+  <div class="section-box" style="margin-bottom:12px">
+    <p>Total estimado em mercados/supermercados: <strong>${fmtGs(6091558)}</strong> (${(6091558/totalMonth*100).toFixed(1)}% do total do mês)</p>
+    <p class="note">Os valores abaixo são estimativas distribuídas pelos itens identificados nas notas. Alguns recibos possuem data ilegível.</p>
+  </div>
+  
+  <div style="overflow-x:auto">
+  <table>
+    <tr><th>Categoria</th><th>Total Est. Gs</th><th>USD</th><th>R$</th><th>Principais Itens</th><th>Essencial?</th><th>Entra Junho?</th></tr>
+    ${mercCats.sort((a,b)=>b.gs-a.gs).map(c=>`<tr>
+      <td style="font-weight:600">${c.cat}</td>
+      <td class="text-right" style="font-weight:700">${fmtGs(c.gs)}</td>
+      <td class="text-right">${fmtUsd(c.gs)}</td>
+      <td class="text-right">${fmtBrl(c.gs)}</td>
+      <td style="font-size:11px">${c.items}</td>
+      <td class="text-center"><span class="badge ${c.ess?'ess':'non'}">${c.ess?'Sim':'Não'}</span></td>
+      <td class="text-center"><span class="badge ${c.junho?'ess':'non'}">${c.junho?'Sim':'Não'}</span></td>
+    </tr>`).join('')}
+  </table></div>
+
+  <div class="section-box" style="margin-top:16px">
+    <h3>🍼 Destaque: Fórmula Infantil — Maior gasto unitário</h3>
+    <table>
+      <tr><th>Produto</th><th>Data</th><th>Farmácia</th><th>Preço pago Gs</th><th>Preço original Gs</th><th>Economia</th></tr>
+      <tr><td>Bebelac Gold 3 - Lata 900gr</td><td>06/05</td><td>Farma SA (Punto Farma)</td><td class="text-right">G. 110.000</td><td class="text-right">G. 110.000</td><td>—</td></tr>
+      <tr><td>Primalac Ultimate 3 - Lata 800gr</td><td>14/05</td><td>Farma SA (Punto Farma)</td><td class="text-right">G. 121.800</td><td class="text-right">G. 145.000</td><td style="color:var(--green);font-weight:600">G. 23.200 (16%)</td></tr>
+      <tr><td>Nutrilon Premium +3 NF PB</td><td>29/05</td><td>Farmacenter SA (Cadena)</td><td class="text-right">G. 137.600</td><td class="text-right">G. 172.000</td><td style="color:var(--green);font-weight:600">G. 34.400 (20%)</td></tr>
+      <tr class="total-row"><td colspan="3">Total — 3 latas em maio</td><td class="text-right">G. 369.400</td><td class="text-right">G. 427.000</td><td style="color:var(--green);font-weight:600">G. 57.600 economizado</td></tr>
+    </table>
+  </div>`;
+}
+
+// ─── TAB 6: ESSENCIAL VS NÃO ESSENCIAL ──────────────────────────────────────
+function buildTab6() {
+  const ess = transactions.filter(t=>t.essential);
+  const non = transactions.filter(t=>!t.essential);
+  const essTotal = ess.reduce((s,t)=>s+t.total,0);
+  const nonTotal = non.reduce((s,t)=>s+t.total,0);
+
+  document.getElementById('tab6').innerHTML = `
+  <h2>✅ Essencial vs Não Essencial</h2>
+  
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="section-box" style="border-left:4px solid var(--green)">
+      <h3 style="color:var(--green)">✅ Essenciais</h3>
+      <div style="font-size:1.4rem;font-weight:700;color:var(--green)">${fmtGs(essTotal)}</div>
+      <div style="font-size:13px;color:var(--muted)">${fmtUsd(essTotal)} | ${fmtBrl(essTotal)}</div>
+      <div style="font-size:13px;margin-top:8px"><strong>${(essTotal/totalMonth*100).toFixed(1)}%</strong> do total do mês</div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${(essTotal/totalMonth*100).toFixed(0)}%;background:var(--green)">${(essTotal/totalMonth*100).toFixed(1)}%</div></div>
+      <p class="note" style="margin-top:8px">${ess.length} transações classificadas como essenciais</p>
+    </div>
+    <div class="section-box" style="border-left:4px solid var(--red)">
+      <h3 style="color:var(--red)">❌ Não Essenciais / Controláveis</h3>
+      <div style="font-size:1.4rem;font-weight:700;color:var(--red)">${fmtGs(nonTotal)}</div>
+      <div style="font-size:13px;color:var(--muted)">${fmtUsd(nonTotal)} | ${fmtBrl(nonTotal)}</div>
+      <div style="font-size:13px;margin-top:8px"><strong>${(nonTotal/totalMonth*100).toFixed(1)}%</strong> do total do mês</div>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${(nonTotal/totalMonth*100).toFixed(0)}%;background:var(--red)">${(nonTotal/totalMonth*100).toFixed(1)}%</div></div>
+      <p class="note" style="margin-top:8px">${non.length} transações classificadas como não essenciais</p>
+    </div>
+  </div>
+
+  <div class="chart-box" style="margin-bottom:16px">
+    <canvas id="chartEss" style="max-height:220px"></canvas>
+  </div>
+
+  <div class="section-box" style="margin-bottom:12px">
+    <h3 style="color:var(--red)">❌ Transações Não Essenciais (onde dá para reduzir)</h3>
+    <table>
+      <tr><th>Data</th><th>Estabelecimento</th><th>Categoria</th><th>Total Gs</th><th>R$</th><th>Observação</th></tr>
+      ${non.map(t=>`<tr><td>${t.date}</td><td>${t.store}</td><td>${t.cat}</td><td class="text-right" style="color:var(--red);font-weight:600">${fmtGs(t.total)}</td><td class="text-right">${fmtBrl(t.total)}</td><td style="font-size:11px">${t.note}</td></tr>`).join('')}
+      <tr class="total-row"><td colspan="3">TOTAL NÃO ESSENCIAL</td><td class="text-right" style="color:var(--red)">${fmtGs(nonTotal)}</td><td class="text-right">${fmtBrl(nonTotal)}</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <h3>💡 Onde dá para reduzir sem afetar o básico</h3>
+    <table>
+      <tr><th>Item / Categoria</th><th>Gasto Mai/26 Gs</th><th>Potencial economia</th><th>Sugestão</th></tr>
+      <tr><td>🍔 Restaurantes (McDonald's + Padre Pio)</td><td class="text-right">G. 358.000</td><td class="text-right" style="color:var(--green)">~G. 200.000</td><td>Reduzir para 1-2 saídas/mês</td></tr>
+      <tr><td>🎮 Lazer/Sky Games (×2 em 1 mês)</td><td class="text-right">G. 120.000</td><td class="text-right" style="color:var(--green)">~G. 60.000</td><td>1 visita por quinzena</td></tr>
+      <tr><td>💻 Eletrônicos (Pen Drive + USB)</td><td class="text-right">G. 151.800</td><td class="text-right" style="color:var(--green)">G. 151.800</td><td>Compra pontual — não repetir em jun</td></tr>
+      <tr><td>🍩 Alimentação fora (Donca, Lomito)</td><td class="text-right">G. 83.000</td><td class="text-right" style="color:var(--green)">~G. 50.000</td><td>Snacks em casa são mais baratos</td></tr>
+      <tr><td>🍺 Bebidas (cerveja, gaseosa, snacks)</td><td class="text-right">G. 400.000*</td><td class="text-right" style="color:var(--green)">~G. 150.000</td><td>*estimativa — reduzir cervejas e gaseosas</td></tr>
+      <tr><td>💇 Chapinha + Liquidificador</td><td class="text-right">G. 134.850</td><td class="text-right" style="color:var(--green)">G. 134.850</td><td>Compra pontual — não repetir</td></tr>
+      <tr class="total-row"><td>POTENCIAL ECONOMIA TOTAL</td><td></td><td class="text-right" style="color:var(--green);font-size:1.1rem">~G. 750.000+</td><td>~10% do gasto total</td></tr>
+    </table>
+  </div>`;
+
+  setTimeout(()=>{
+    new Chart(document.getElementById('chartEss'),{
+      type:'pie',
+      data:{labels:['Essencial','Não Essencial'],datasets:[{data:[essTotal,nonTotal],backgroundColor:['#2d8a4e','#c0392b']}]},
+      options:{plugins:{legend:{position:'right'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmtGs(ctx.raw)} (${(ctx.raw/totalMonth*100).toFixed(1)}%)`}}}}
+    });
+  },100);
+}
+
+// ─── TAB 7: FARMÁCIA / LEITE / FRALDA ────────────────────────────────────────
+function buildTab7() {
+  document.getElementById('tab7').innerHTML = `
+  <h2>💊 Farmácia, Leite Infantil e Fraldas</h2>
+
+  <div class="section-box" style="border-left:4px solid var(--red)">
+    <h3>🍼 Fórmula Infantil — 3 compras em maio</h3>
+    <table>
+      <tr><th>Data</th><th>Produto</th><th>Farmácia</th><th>Qtd</th><th>Preço Pago Gs</th><th>Preço Original</th><th>Economia</th><th>USD</th><th>R$</th></tr>
+      <tr><td>06/05</td><td>Bebelac Gold 3 (900gr)</td><td>Farma SA (Punto Farma)</td><td>1 lata</td><td class="text-right">G. 110.000</td><td class="text-right">G. 110.000</td><td>—</td><td class="text-right">USD 14.47</td><td class="text-right">R$ 83,94</td></tr>
+      <tr><td>14/05</td><td>Primalac Ultimate 3 (800gr)</td><td>Farma SA (Punto Farma)</td><td>1 lata</td><td class="text-right">G. 121.800</td><td class="text-right">G. 145.000</td><td style="color:var(--green)">-G.23.200 (16%)</td><td class="text-right">USD 16.03</td><td class="text-right">R$ 92,96</td></tr>
+      <tr><td>29/05</td><td>Nutrilon Premium +3 NF PB</td><td>Farmacenter SA (Cadena)</td><td>1 lata</td><td class="text-right">G. 137.600</td><td class="text-right">G. 172.000</td><td style="color:var(--green)">-G.34.400 (20%)</td><td class="text-right">USD 18.11</td><td class="text-right">R$ 105,02</td></tr>
+      <tr class="total-row"><td colspan="4">Total — 3 latas</td><td class="text-right">G. 369.400</td><td class="text-right">G. 427.000</td><td style="color:var(--green)">-G.57.600</td><td class="text-right">USD 48.61</td><td class="text-right">R$ 281,92</td></tr>
+    </table>
+    <div class="insight-card info" style="margin-top:12px">
+      <h4>📌 Análise da Fórmula Infantil</h4>
+      <p>A família comprou <strong>3 latas em maio</strong> — uma marca diferente a cada compra (Bebelac, Primalac, Nutrilon). Custo médio por lata: G. 123.133. A Farmacenter ofereceu o maior desconto (20% = G.34.400) na Nutrilon. Recomendo padronizar 1 marca e buscar programa de fidelidade/desconto para compras recorrentes. Previsão para junho: <strong>3-4 latas = ~G.370.000–490.000</strong>.</p>
+    </div>
+  </div>
+
+  <div class="section-box" style="margin-top:16px;border-left:4px solid var(--blue)">
+    <h3>👶 Fraldas — Pampers Confortse</h3>
+    <table>
+      <tr><th>Data</th><th>Produto</th><th>Mercado</th><th>Qtd</th><th>Valor Gs</th><th>Valor R$</th><th>Obs.</th></tr>
+      <tr><td>Ilegível</td><td>Pampers Confortse</td><td>Cadena Real</td><td>10 un (1 pct)</td><td class="text-right">G. 164.500 (est.)</td><td class="text-right">R$ 125,66</td><td>Encontrado no recibo G.632.044 — item ~G.164.500</td></tr>
+    </table>
+    <div class="insight-card warn" style="margin-top:12px">
+      <h4>⚠️ Atenção: Apenas 1 pacote de fralda identificado</h4>
+      <p>Somente 1 compra de Pampers foi claramente identificada em maio (G.164.500). Para um bebê, 10 fraldas duram poucos dias. Pode haver outras compras em notas ilegíveis ou no recibo sem data. Para junho: <strong>prever pelo menos 3-4 pacotes = G.500.000–650.000</strong>.</p>
+    </div>
+  </div>
+
+  <div class="section-box" style="margin-top:16px;border-left:4px solid var(--accent)">
+    <h3>💊 Farmácia — Medicamentos e Outros</h3>
+    <table>
+      <tr><th>Data</th><th>Produto</th><th>Farmácia</th><th>Qtd</th><th>Valor Gs</th><th>Categoria</th><th>Recorrente?</th></tr>
+      <tr><td>11/05</td><td>Hemchoral BO Manzana Sol. Fr.</td><td>Cadena Farmacenter</td><td>5 un</td><td class="text-right">G. 62.590</td><td>Medicamento</td><td><span class="badge maybe">Possível</span></td></tr>
+      <tr><td>11/05</td><td>Korogsos Hilton 8mg Sublingual</td><td>Cadena Farmacenter</td><td>35 un</td><td class="text-right">G. 43.000</td><td>Medicamento</td><td><span class="badge maybe">Possível</span></td></tr>
+      <tr><td>11/05</td><td>Entrega a Domicílio</td><td>Cadena Farmacenter</td><td>1</td><td class="text-right">G. 12.000</td><td>Serviço</td><td><span class="badge non">Pontual</span></td></tr>
+      <tr><td>11/05</td><td>Bolsa Inplast Med 30×45×25</td><td>Cadena Farmacenter</td><td>10 un</td><td class="text-right">G. 200</td><td>Material médico</td><td><span class="badge ess">Sim</span></td></tr>
+      <tr><td>14/05</td><td>Johnson Talco Clássico 200gr</td><td>Farma SA</td><td>1 un</td><td class="text-right">G. 16.980</td><td>Higiene infantil</td><td><span class="badge ess">Sim</span></td></tr>
+      <tr><td>23/05</td><td>Compra farmácia (ileg.)</td><td>Farmacenter Boggiani 2</td><td>—</td><td class="text-right">G. 31.060</td><td>Farmácia geral</td><td><span class="badge maybe">Possível</span></td></tr>
+      <tr><td>29/05</td><td>Entrega a Domicílio Farmacenter</td><td>Farmacenter SA</td><td>1</td><td class="text-right">G. 12.000</td><td>Serviço</td><td><span class="badge non">Evitar</span></td></tr>
+      <tr class="total-row"><td colspan="4">Total farmácia (excl. fórmula)</td><td class="text-right">G. 177.830</td><td colspan="2"></td></tr>
+    </table>
+  </div>
+
+  <div class="section-box" style="margin-top:16px">
+    <h3>📊 Resumo Farmácia + Fórmula + Fraldas</h3>
+    <table>
+      <tr><th>Item</th><th>Gasto Mai Gs</th><th>Gasto Mai R$</th><th>Média Semanal Gs</th><th>Estimativa Junho Gs</th><th>Prioridade</th></tr>
+      <tr><td>Fórmula infantil (3 latas)</td><td class="text-right">G. 369.400</td><td class="text-right">R$ 281,92</td><td class="text-right">~G. 92.350</td><td class="text-right">G. 370.000–490.000</td><td><span class="badge ess">Alta</span></td></tr>
+      <tr><td>Fraldas (Pampers)</td><td class="text-right">G. 164.500</td><td class="text-right">R$ 125,66</td><td class="text-right">~G. 41.125</td><td class="text-right">G. 500.000–650.000</td><td><span class="badge ess">Alta</span></td></tr>
+      <tr><td>Medicamentos recorrentes</td><td class="text-right">G. 137.650</td><td class="text-right">R$ 105,14</td><td class="text-right">~G. 34.413</td><td class="text-right">G. 130.000–150.000</td><td><span class="badge ess">Alta</span></td></tr>
+      <tr><td>Higiene infantil (Talco, Toallitas)</td><td class="text-right">G. 50.000</td><td class="text-right">R$ 38,17</td><td class="text-right">~G. 12.500</td><td class="text-right">G. 50.000</td><td><span class="badge ess">Média</span></td></tr>
+      <tr class="total-row"><td>TOTAL FARMÁCIA+FRALDA+FÓRMULA</td><td class="text-right">G. 721.550</td><td class="text-right">R$ 551,07</td><td class="text-right">~G. 180.388</td><td class="text-right">G. 1.050.000–1.340.000</td><td></td></tr>
+    </table>
+    <p class="note" style="margin-top:8px">⚠️ O gasto com fraldas parece baixo para o mês inteiro — verifique se há compras não incluídas nas notas. Para bebê em uso de fraldas 24/7, a previsão de junho é significativamente maior.</p>
+  </div>`;
+}
+
+// ─── TAB 8: PASSEIOS E LAZER ─────────────────────────────────────────────────
+function buildTab8() {
+  const lazer = transactions.filter(t=>['Lazer','Restaurante','Alimentação Fora','Restaurante/Fast Food'].includes(t.cat));
+  const totalLaz = lazer.reduce((s,t)=>s+t.total,0);
+
+  document.getElementById('tab8').innerHTML = `
+  <h2>🎡 Passeios, Lazer e Alimentação Fora</h2>
+  
+  <div class="section-box" style="margin-bottom:16px">
+    <p>Total gasto em lazer/saídas: <strong>${fmtGs(totalLaz)}</strong> — <strong>${(totalLaz/totalMonth*100).toFixed(1)}% do total do mês</strong></p>
+    <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${(totalLaz/totalMonth*100).toFixed(0)}%;background:var(--red)">${(totalLaz/totalMonth*100).toFixed(1)}% do orçamento</div></div>
+  </div>
+
+  <div style="overflow-x:auto;margin-bottom:16px">
+  <table>
+    <tr><th>Data</th><th>Local</th><th>Tipo</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Pontual/Recorrente</th><th>Descrição</th></tr>
+    <tr><td>03/05 (Sáb)</td><td>McDonald's (Av. Lopez Moreira)</td><td>Fast Food</td><td class="text-right">G. 169.000</td><td class="text-right">USD 22.24</td><td class="text-right">R$ 128,97</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">3 sanduíches, sundae, porcão, agua</td></tr>
+    <tr><td>03/05 (Sáb)</td><td>Sky Games (Shopping)</td><td>Lazer Infantil</td><td class="text-right">G. 50.000</td><td class="text-right">USD 6.58</td><td class="text-right">R$ 38,16</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">Área infantil 1hr — G.50.000</td></tr>
+    <tr><td>06/05 (Ter)</td><td>Donca (Donuteria)</td><td>Lanche fora</td><td class="text-right">G. 40.000</td><td class="text-right">USD 5.26</td><td class="text-right">R$ 30,53</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">3 donuts Brownie, Choco Chips, Glasê Rosa</td></tr>
+    <tr><td>17/05 (Dom)</td><td>Sky Games (Multiplaza)</td><td>Lazer Infantil</td><td class="text-right">G. 70.000</td><td class="text-right">USD 9.21</td><td class="text-right">R$ 53,42</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">Soft Place + City — 1hr cada G.35k</td></tr>
+    <tr><td>17/05 (Dom)</td><td>Rest. Padre Pio / JA-VIRA (Multiplaza)</td><td>Restaurante</td><td class="text-right">G. 189.000</td><td class="text-right">USD 24.87</td><td class="text-right">R$ 144,24</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">Grille Napolitana, Milanesa Cavallo, Tallarín, Mila/Cheddar, 2 Coca Zero</td></tr>
+    <tr><td>17/05 (Dom)</td><td>Esquina Líbano</td><td>Lanche fora</td><td class="text-right">G. 33.000</td><td class="text-right">USD 4.34</td><td class="text-right">R$ 25,18</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">Sandwich Lomito (sin jamón)</td></tr>
+    <tr><td>27/06 (?)</td><td>Amandau SA (Sorveteria — Luque)</td><td>Sorvete</td><td class="text-right">G. 10.000</td><td class="text-right">USD 1.32</td><td class="text-right">R$ 7.63</td><td><span class="badge pont">Pontual</span></td><td style="font-size:11px">⚠️ Data 27/06 no recibo — possível erro de impressora</td></tr>
+    <tr class="total-row"><td colspan="3">TOTAL LAZER/SAÍDAS</td><td class="text-right">${fmtGs(totalLaz)}</td><td class="text-right">${fmtUsd(totalLaz)}</td><td class="text-right">${fmtBrl(totalLaz)}</td><td colspan="2">${(totalLaz/totalMonth*100).toFixed(1)}% do mês</td></tr>
+  </table></div>
+
+  <div class="grid2">
+    <div class="insight-card warn">
+      <h4>⚠️ Atenção: Domingo 17/05 custou G. 292.000 em lazer</h4>
+      <p>Sky Games (G.70k) + Restaurante Padre Pio (G.189k) + Lomito Esquina Líbano (G.33k) = <strong>G. 292.000 em um único dia</strong>. Isso equivale a R$ 222,91 — um dos dias mais caros do mês.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>📌 Sky Games: 2 visitas em maio</h4>
+      <p>03/05 no Shopping (G.50.000) e 17/05 no Multiplaza (G.70.000) — total G.120.000. Para junho, considerar 1 visita mensal em vez de 2, economizando ~G.60.000.</p>
+    </div>
+  </div>`;
+}
+
+// ─── TAB 9: COMPARATIVO MERCADOS ─────────────────────────────────────────────
+function buildTab9() {
+  const cReal = transactions.filter(t=>t.store.includes('Cadena Real')).reduce((s,t)=>s+t.total,0);
+  const luisito = transactions.filter(t=>t.store.includes('Luisito')).reduce((s,t)=>s+t.total,0);
+  const sinNome = transactions.filter(t=>t.store.includes('Sin Nombre')).reduce((s,t)=>s+t.total,0);
+
+  document.getElementById('tab9').innerHTML = `
+  <h2>🏪 Comparativo entre Mercados</h2>
+  
+  <div class="section-box" style="margin-bottom:16px">
+    <h3>Visão Geral — Total por Mercado</h3>
+    <table>
+      <tr><th>Mercado</th><th>Total Gs</th><th>USD</th><th>R$</th><th>Nº Visitas</th><th>% do total mês</th></tr>
+      <tr class="highlight"><td><strong>🏬 Cadena Real</strong></td><td class="text-right" style="font-weight:700">${fmtGs(cReal)}</td><td class="text-right">${fmtUsd(cReal)}</td><td class="text-right">${fmtBrl(cReal)}</td><td class="text-center">~22</td><td><div class="progress-bar"><div class="progress-fill" style="width:${(cReal/totalMonth*100).toFixed(0)}%;background:var(--primary)">${(cReal/totalMonth*100).toFixed(1)}%</div></div></td></tr>
+      <tr><td><strong>🏬 Luisito (Hipermercado)</strong></td><td class="text-right" style="font-weight:700">${fmtGs(luisito)}</td><td class="text-right">${fmtUsd(luisito)}</td><td class="text-right">${fmtBrl(luisito)}</td><td class="text-center">2</td><td><div class="progress-bar"><div class="progress-fill" style="width:${(luisito/totalMonth*100).toFixed(0)}%;background:var(--accent)">${(luisito/totalMonth*100).toFixed(1)}%</div></div></td></tr>
+      <tr><td><strong>🥩 Sin Nombre (Açougue)</strong></td><td class="text-right" style="font-weight:700">${fmtGs(sinNome)}</td><td class="text-right">${fmtUsd(sinNome)}</td><td class="text-right">${fmtBrl(sinNome)}</td><td class="text-center">1</td><td><div class="progress-bar"><div class="progress-fill" style="width:${(sinNome/totalMonth*100).toFixed(0)}%;background:var(--red)">${(sinNome/totalMonth*100).toFixed(1)}%</div></div></td></tr>
+    </table>
+  </div>
+
+  <div class="section-box" style="margin-bottom:16px">
+    <h3>🥩 Comparativo de Preço de Carnes (por kg)</h3>
+    <table>
+      <tr><th>Produto</th><th>Cadena Real</th><th>Luisito</th><th>Sin Nombre (Açougue)</th><th>Mais barato em</th></tr>
+      <tr><td>Carne bovina (corte genérico)</td><td>~G. 37.000–54.000/kg</td><td>G. 44.900/kg (Carnaza)</td><td>G. 53.479/kg (Carnaza Moura)</td><td style="color:var(--green);font-weight:600">Cadena Real (Osobuco)</td></tr>
+      <tr><td>Carnaza / Carne Paral</td><td>N/A (não identificado)</td><td>G. 44.900/kg</td><td>G. 53.479/kg</td><td style="color:var(--green);font-weight:600">Luisito</td></tr>
+      <tr><td>Frango (Pechuga / Muslo)</td><td>G. 24.950/kg (pechuga)</td><td>Não identificado</td><td>N/A</td><td style="color:var(--green);font-weight:600">Cadena Real</td></tr>
+      <tr><td>Entrada/Nuggets (congelado)</td><td>N/A</td><td>N/A</td><td>G. 52.000/kg (nuggets)</td><td>Sem comparação</td></tr>
+    </table>
+    <p class="note">* Comparação limitada pois os mesmos cortes raramente aparecem nos dois mercados no mesmo mês</p>
+  </div>
+
+  <div class="section-box" style="margin-bottom:16px">
+    <h3>📦 Itens Identificados em Ambos os Mercados</h3>
+    <table>
+      <tr><th>Produto</th><th>Cadena Real</th><th>Luisito</th><th>Diferença</th><th>Melhor em</th></tr>
+      <tr><td>Bombones Sueño de Vals</td><td>G. 5.400/un (04/05)</td><td>G. 25.500/un c/desc. orig.G.30.000 (16/05)</td><td>Produtos diferentes (tamanhos)</td><td>Cadena Real p/ tamanho menor</td></tr>
+      <tr><td>Papel Higiênico</td><td>~G. 10.500 (est.)</td><td>G. 10.500/pct (16/05)</td><td>Similar</td><td>Igual</td></tr>
+      <tr><td>Mostaza</td><td>~G. 13.500 (est.)</td><td>G. 6.900/200gr Doypack (16/05)</td><td>Luisito com emb. menor</td><td>Luisito (mais econômico)</td></tr>
+    </table>
+    <p class="note">⚠️ Dados insuficientes para comparação item a item precisa — a maioria das compras dos dois mercados tem produtos diferentes.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="insight-card">
+      <h4>🏬 Cadena Real — Análise</h4>
+      <p><strong>Pontos positivos:</strong> Presença constante (22+ visitas), desconto na fórmula infantil (20%), variedade ampla, ecommerce com entrega.<br>
+      <strong>Pontos negativos:</strong> Muitas visitas pequenas (~G.10k-25k) que somam muito no final. Risco de compras por impulso.<br>
+      <strong>Recomendação:</strong> Manter como mercado principal, mas <em>consolidar visitas</em>: em vez de 22 visitas, tentar máx. 8-10/mês.</p>
+    </div>
+    <div class="insight-card tip">
+      <h4>🏬 Luisito — Análise</h4>
+      <p><strong>Pontos positivos:</strong> Grandes compras de uma vez (G.1.169.523 em uma ida!), preço de carnaza paral vacuna competitivo (G.44.900/kg).<br>
+      <strong>Pontos negativos:</strong> Distância pode ser fator; bombones apareceu mais caro que Cadena Real.<br>
+      <strong>Recomendação:</strong> Ideal para <em>compras mensais grandes</em>. Ir 1-2x/mês com lista preparada.</p>
+    </div>
+  </div>
+  <div class="insight-card info">
+    <h4>🥩 Sin Nombre (Açougue/Churrascaria) — Análise</h4>
+    <p>1 única compra de G.547.021 — foco em cortes premium (Carnaza Moura, Entrada Premium/Gruesa, Nuggets, Chorizo). Preço por kg elevado (G.53.479/kg carnaza vs G.44.900/kg Luisito). Os Nuggets a G.52.000/kg são caros.<br>
+    <strong>Recomendação:</strong> Usar apenas para ocasiões especiais (churrasco) ou quando precisar de cortes específicos. Para consumo diário, Cadena Real e Luisito são mais econômicos.</p>
+  </div>`;
+}
+
+// ─── TAB 10: LISTA JUNHO ─────────────────────────────────────────────────────
+function buildTab10() {
+  const juneList = [
+    // Categoria, Item, Qtd Maio, Qtd Junho, Freq, Val Maio Gs, Val Junho Gs Est, Tipo
+    ["🍼 Fórmula Infantil","Fórmula infantil (Nutrilon/Primalac/Bebelac)","3 latas","3–4 latas","Quinzenal","G. 369.400","G. 370.000–490.000","Essencial/Recorrente"],
+    ["👶 Fraldas","Pampers Confortse ou similar","~1 pct (10un) identificado","4–5 pcts","Semanal","G. 164.500","G. 500.000–660.000","Essencial/Recorrente"],
+    ["🥩 Carnes Bovina","Carnaza, Bife, Osobuco, Carne Molida","~8kg total (est.)","8kg","Bissemanual","~G. 620.000","~G. 620.000","Essencial/Recorrente"],
+    ["🍗 Frango","Pechuga, Muslo, Patitas","~12kg total (est.)","10–12kg","Bissemanual","~G. 580.000","~G. 580.000","Essencial/Recorrente"],
+    ["🧀 Queijos","Mozzarella, Paraguay, Rallado, Lactolanda","Várias compras","Manter","Semanal","~G. 190.000","~G. 190.000","Essencial/Recorrente"],
+    ["🥛 Leite/Laticínios","Leche Fluida, Crema, Manteca, Margarina","Várias compras","Manter","Semanal","~G. 280.000","~G. 280.000","Essencial/Recorrente"],
+    ["🥚 Ovos","Huevos a Granel","~3 dz","3 dz","Semanal","~G. 80.000","~G. 80.000","Essencial/Recorrente"],
+    ["🍞 Pães","Pan de Leche, Pan Sandwich, Pan Integral, Pan Francés","Várias compras","Manter","Semanal","~G. 150.000","~G. 150.000","Essencial/Recorrente"],
+    ["🌾 Arroz/Massas","Arroz Tío Nico 5un, Fideos Anita, Fideos Monarca","Mensal","Manter","Mensal","~G. 120.000","~G. 120.000","Essencial/Recorrente"],
+    ["🥔 Legumes/Tubérculos","Papa, Mandioca, Cebolla, Zapallo","Várias compras","Manter","Semanal","~G. 180.000","~G. 180.000","Essencial/Recorrente"],
+    ["🍌 Frutas","Banana Karape/Oferta, Kiwi, Limão, Naranja","Várias compras","Manter","Semanal","~G. 110.000","~G. 110.000","Essencial/Recorrente"],
+    ["🥗 Verduras","Lechuga, Pepino, Perejil, Tomate, Zanahoria","Várias compras","Manter","Semanal","~G. 90.000","~G. 90.000","Essencial/Recorrente"],
+    ["🧹 Limpeza","Detergente, Álcool, Esponja, Limpador","Várias compras","Manter","Quinzenal","~G. 100.000","~G. 100.000","Essencial/Recorrente"],
+    ["🚿 Higiene","Jabón Tocador, PH Sublimador, Papel Higiênico","Várias compras","Manter","Mensal","~G. 80.000","~G. 80.000","Essencial/Recorrente"],
+    ["👶 Higiene Bebê","Johnson Talco, Toallitas Babysun","Mensal","Manter","Mensal","~G. 50.000","~G. 50.000","Essencial/Recorrente"],
+    ["💊 Medicamentos","Hemchoral, Korogsos (conforme receita)","Mensal","Verificar","Conforme necessidade","~G. 115.000","~G. 100.000–120.000","Essencial/Recorrente"],
+    ["🐾 Pet","Alimento Perros Anzas","1 un (16/05)","1 un","Mensal","G. 21.900","~G. 22.000","Essencial/Recorrente"],
+    ["🌶️ Temperos","Sal, Ajo, Ketchup, Mostaza, Purê Tomate, Vinagre","Várias compras","Manter","Mensal","~G. 110.000","~G. 80.000","Essencial/Recorrente"],
+    ["🧴 Condim./Outros","Farofa, Chocolate Polvo, Coco Rayado","Pontual/Esporádico","Reduzir","Conforme necessidade","~G. 50.000","~G. 30.000","Opcional"],
+  ];
+
+  const totalJunhoMin = 370000+500000+620000+580000+190000+280000+80000+150000+120000+180000+110000+90000+100000+80000+50000+100000+22000+80000+30000;
+  const totalJunhoMax = 490000+660000+620000+580000+190000+280000+80000+150000+120000+180000+110000+90000+100000+80000+50000+120000+22000+80000+30000;
+
+  document.getElementById('tab10').innerHTML = `
+  <h2>🗒️ Lista de Compras Estimada para Junho/2026</h2>
+  
+  <div class="section-box" style="margin-bottom:16px;border-left:4px solid var(--green)">
+    <h3>📊 Previsão de Gasto em Junho (itens recorrentes)</h3>
+    <p>Estimativa mínima: <strong>${fmtGs(totalJunhoMin)}</strong> | Estimativa máxima: <strong>${fmtGs(totalJunhoMax)}</strong></p>
+    <p style="margin-top:8px;color:var(--muted);font-size:13px">❌ <strong>Excluídos da previsão:</strong> Chapinha (G.54.900), Liquidificador (G.79.950), Pen Drive (G.127.050), Adaptador USB (G.24.750), Calzado/Tênis (G.76.500), Tintura Cabelo, Eletrônicos, Courier, Impressões — itens pontuais.</p>
+  </div>
+
+  <div class="section-box">
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>Categoria</th><th>Item</th><th>Qtd Maio</th><th>Qtd Est. Junho</th><th>Frequência</th><th>Valor Maio Gs</th><th>Est. Junho Gs</th><th>Tipo</th></tr>
+      ${juneList.map(r=>`<tr>
+        <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="font-weight:600">${r[3]}</td><td>${r[4]}</td>
+        <td class="text-right">${r[5]}</td>
+        <td class="text-right" style="font-weight:600;color:var(--primary)">${r[6]}</td>
+        <td><span class="badge ${r[7].includes('Essencial')?'ess':(r[7].includes('Opcional')?'non':'maybe')}">${r[7]}</span></td>
+      </tr>`).join('')}
+      <tr class="total-row"><td colspan="6">ESTIMATIVA TOTAL JUNHO (apenas recorrentes)</td><td class="text-right" style="font-size:1.1rem">${fmtGs(totalJunhoMin)}–${fmtGs(totalJunhoMax)}</td><td></td></tr>
+    </table></div>
+  </div>
+
+  <div class="insight-card warn" style="margin-top:16px">
+    <h4>⚠️ Atenção: Fraldas subestimadas em maio</h4>
+    <p>Apenas 1 pacote de Pampers foi identificado claramente. Para junho, a previsão de G.500.000–660.000 em fraldas assume uso normal de bebê. Confirme a quantidade consumida e ajuste conforme necessário.</p>
+  </div>
+  <div class="insight-card tip" style="margin-top:8px">
+    <h4>💡 Dica: Compra única no Luisito pode economizar</h4>
+    <p>Se possível, fazer 1 compra grande mensal no Luisito (como a de ~G.1.169.523 em maio) garante economia pela compra em volume. Planeje lista completa antes de ir.</p>
+  </div>`;
+}
+
+// ─── TAB 11: INSIGHTS ────────────────────────────────────────────────────────
+function buildTab11() {
+  document.getElementById('tab11').innerHTML = `
+  <h2>💡 Insights e Recomendações Práticas</h2>
+  
+  <div class="insight-card">
+    <h4>🔍 1. Onde o dinheiro foi — Top Categorias</h4>
+    <p>
+      <strong>79% do gasto foi em supermercados</strong> (G.6,09 milhões). Cadena Real é o mercado dominante com ~54% do total do mês (G.4,14M em ~22+ visitas). O Luisito teve apenas 2 visitas mas totalizou G.1,4M. A fórmula infantil (3 latas = G.369.400) e as fraldas (~G.164.500) pesam muito no orçamento de farmácia/infantil.
+    </p>
+  </div>
+
+  <div class="insight-card warn">
+    <h4>⚠️ 2. Número excessivo de visitas à Cadena Real</h4>
+    <p>Foram ~22+ transações identificadas na Cadena Real em um único mês. Muitas compras pequenas (G.11.701, G.16.172, G.24.666) indicam compras frequentes e potencialmente impulsivas. <strong>Solução:</strong> Fazer uma lista semanal e consolidar em 1-2 visitas grandes por semana pode economizar G.200.000–400.000/mês.</p>
+  </div>
+
+  <div class="insight-card warn">
+    <h4>⚠️ 3. Domingo 17/05 foi o dia mais caro em lazer: G. 292.000</h4>
+    <p>Sky Games (G.70.000) + Restaurante Padre Pio (G.189.000) + Esquina Líbano (G.33.000) = G. 292.000 em um único domingo. Equivale a R$ 222. Para junho, planejamento do passeio com limite de orçamento pode reduzir isso em 30-40%.</p>
+  </div>
+
+  <div class="insight-card info">
+    <h4>📌 4. Fórmula infantil: 3 marcas diferentes — padronizar economiza</h4>
+    <p>Bebelac (G.110k), Primalac (G.121,8k), Nutrilon (G.137,6k). A Farmacenter ofereceu 20% de desconto na Nutrilon. <strong>Recomendação:</strong> Escolher 1 marca e comprar sempre na farmácia com maior desconto. A Farmacenter e Farma SA têm programas de desconto.</p>
+  </div>
+
+  <div class="insight-card tip">
+    <h4>💡 5. Itens pontuais que não se repetem em junho</h4>
+    <p>Chapinha G.54.900 + Liquidificador G.79.950 + Pen Drive G.127.050 + USB G.24.750 + Tênis G.76.500 + Courier G.22.200 + Impressão G.7.000 + Tintura G.27.500 = <strong>G. 419.850</strong> em gastos pontuais que não devem se repetir em junho. Isso representa ~5,5% do orçamento de maio.</p>
+  </div>
+
+  <div class="insight-card">
+    <h4>📊 6. Previsão de junho: quanto gastaremos?</h4>
+    <p>
+      <strong>Se manter o mesmo padrão:</strong> ~G. 7.682.388 (igual a maio)<br>
+      <strong>Sem os gastos pontuais:</strong> ~G. 7.262.538 (-G. 419.850)<br>
+      <strong>Com ajustes simples:</strong> ~G. 6.300.000–6.700.000<br>
+      <strong>Potencial de economia realista:</strong> G. 750.000–1.000.000/mês (10-13%)
+    </p>
+  </div>
+
+  <div class="insight-card tip">
+    <h4>💡 7. Como economizar sem afetar o básico</h4>
+    <p>
+      ✅ Reduzir visitas ao Cadena Real de 22+ para 8-10/mês → economia ~G.200.000<br>
+      ✅ Lazer: 1 Sky Games/mês (não 2) + limitar restaurante a 1 saída → economia ~G.200.000<br>
+      ✅ Padronizar fórmula e buscar desconto → economia ~G.30.000<br>
+      ✅ Comprar fraldas em atacado (pacote grande) → economia ~G.50.000<br>
+      ✅ Comprar carnes no Luisito (carnaza a G.44.900/kg vs açougue a G.53.479/kg) → economia ~G.50.000<br>
+      ✅ Reduzir compras de snacks/doces/cerveja → economia ~G.150.000<br>
+      <strong>Total potencial: ~G. 680.000/mês</strong>
+    </p>
+  </div>
+
+  <div class="insight-card info">
+    <h4>📌 8. Gastos com 3 notas sem data e 2 sem nota itemizada</h4>
+    <p>3 recibos do Cadena Real têm datas ilegíveis (totalizando G.1.461.966 = 19% do mês!). 2 transações INFONET têm apenas comprovante de cartão sem nota itemizada (G.177.000 total). Recomendo guardar ou fotografar as notas na hora da compra para melhor controle.</p>
+  </div>`;
+}
+
+// ─── TAB 12: WHATSAPP ────────────────────────────────────────────────────────
+function buildTab12() {
+  const essTotal = transactions.filter(t=>t.essential).reduce((s,t)=>s+t.total,0);
+  const nonTotal = totalMonth - essTotal;
+  const cReal = transactions.filter(t=>t.store.includes('Cadena Real')).reduce((s,t)=>s+t.total,0);
+  const luisito = transactions.filter(t=>t.store.includes('Luisito')).reduce((s,t)=>s+t.total,0);
+  const farma = transactions.filter(t=>t.cat.includes('Farmácia')).reduce((s,t)=>s+t.total,0);
+  const lazer = transactions.filter(t=>['Lazer','Restaurante','Alimentação Fora','Restaurante/Fast Food'].includes(t.cat)).reduce((s,t)=>s+t.total,0);
+
+  const waMsg = `📊 *RELATÓRIO FINANCEIRO — MAIO 2026*
+
+💰 *TOTAL GASTO: G. ${fmt(totalMonth)}*
+   (~USD ${(totalMonth/7600).toFixed(0)} | ~R$ ${(totalMonth/7600*5.80).toFixed(0)})
+
+━━━━━━━━━━━━━━━━━
+🛒 *POR ESTABELECIMENTO*
+• Cadena Real: G. ${fmt(cReal)} (${(cReal/totalMonth*100).toFixed(1)}%)
+• Luisito: G. ${fmt(luisito)} (${(luisito/totalMonth*100).toFixed(1)}%)
+• Farmácias: G. ${fmt(farma)} (${(farma/totalMonth*100).toFixed(1)}%)
+• Lazer/Restaurantes: G. ${fmt(lazer)} (${(lazer/totalMonth*100).toFixed(1)}%)
+
+━━━━━━━━━━━━━━━━━
+✅ *ESSENCIAL vs NÃO ESSENCIAL*
+• Essencial: G. ${fmt(essTotal)} (${(essTotal/totalMonth*100).toFixed(1)}%)
+• Não essencial: G. ${fmt(nonTotal)} (${(nonTotal/totalMonth*100).toFixed(1)}%)
+
+━━━━━━━━━━━━━━━━━
+🍼 *INFANTIL (fórmula + fraldas)*
+• Fórmula infantil (3 latas): G. 369.400
+• Fraldas Pampers (~1 pct): G. 164.500
+• Total infantil: G. ~533.900
+
+━━━━━━━━━━━━━━━━━
+⚠️ *PONTOS DE ATENÇÃO*
+• Cadena Real: 22+ visitas em 1 mês (compras impulsivas)
+• Dom 17/05: G.292.000 em 1 dia só de lazer
+• 3 marcas diferentes de fórmula (sem padronização)
+• 3 recibos sem data legível (G.1,46M = 19% do mês)
+
+━━━━━━━━━━━━━━━━━
+🗒️ *PREVISÃO JUNHO*
+• Mercado básico: ~G. 3.000.000
+• Fraldas: ~G. 500.000–660.000
+• Fórmula infantil: ~G. 370.000–490.000
+• Farmácia/Medicamentos: ~G. 130.000
+• Total estimado: *G. 4.000.000–4.280.000*
+  (sem gastos pontuais como eletrônicos, roupas etc.)
+
+━━━━━━━━━━━━━━━━━
+💡 *RECOMENDAÇÃO PRÁTICA*
+1️⃣ Consolidar visitas ao Cadena Real (8-10x/mês)
+2️⃣ Padronizar 1 marca de fórmula + buscar desconto
+3️⃣ 1 Sky Games/mês (não 2)
+4️⃣ Planejamento de passeios com orçamento limite
+5️⃣ Comprar carnes preferencialmente no Luisito
+
+💚 Potencial de economia: *~G. 680.000/mês*`;
+
+  document.getElementById('tab12').innerHTML = `
+  <h2>📱 Resumo para WhatsApp</h2>
+  <p style="margin-bottom:12px;color:var(--muted);font-size:13px">Copie o texto abaixo e envie para o grupo familiar:</p>
+  <div class="whatsapp-box">${waMsg.replace(/</g,'&lt;')}</div>
+  <button onclick="copyWa()" style="margin-top:12px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 20px;cursor:pointer;font-size:14px;font-weight:600">📋 Copiar texto</button>
+  <script>function copyWa(){const el=document.querySelector('.whatsapp-box');const txt=el.innerText;navigator.clipboard.writeText(txt).then(()=>alert('Texto copiado! Cole no WhatsApp.'));}<\/script>`;
+}
+
+// ─── TAB SWITCHING ───────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  // Build tab on first visit
+  const builders = {tab1:buildTab1,tab2:buildTab2,tab3:buildTab3,tab4:buildTab4,tab5:buildTab5,tab6:buildTab6,tab7:buildTab7,tab8:buildTab8,tab9:buildTab9,tab10:buildTab10,tab11:buildTab11,tab12:buildTab12};
+  if(document.getElementById(id).innerHTML.trim()==='') builders[id]();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+buildSummary();
+buildTab1();  // load first tab immediately
+
+</script>
+</body>
+</html>
