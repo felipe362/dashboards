@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard de Contas Pendentes - 3 Meses</title>
+<style>
+:root{--bg:#07111f;--card:#111d30;--card2:#0d1727;--text:#eef5ff;--muted:#9fb0c9;--line:#26364f;--accent:#5eead4;--warn:#fbbf24;--danger:#fb7185;--ok:#86efac;--blue:#93c5fd}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top left,#19365c 0,#07111f 38%,#040812 100%);color:var(--text)}
+header{padding:28px 22px 12px;max-width:1280px;margin:0 auto}.title{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:0 0 8px}.sub{color:var(--muted);line-height:1.45;max-width:980px}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:#dbeafe;background:#0a1527;margin:5px 6px 0 0;font-size:13px}
+main{max-width:1280px;margin:0 auto;padding:12px 22px 36px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}.card{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 12px 38px rgba(0,0,0,.22)}.card h3{margin:0 0 8px;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em}.big{font-size:25px;font-weight:800}.small{font-size:13px;color:var(--muted);margin-top:5px}.panel{background:rgba(11,22,39,.82);border:1px solid var(--line);border-radius:20px;padding:16px;margin-top:16px;overflow:hidden}.panel h2{margin:0 0 12px;font-size:20px}.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}button,.btn{background:#172b47;color:var(--text);border:1px solid #345071;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer}button:hover{background:#213b5f}.primary{background:linear-gradient(135deg,#14b8a6,#2563eb);border:0}.danger{background:#3b1822;border-color:#743044}.tableWrap{overflow:auto;border-radius:14px;border:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:1150px;background:rgba(3,8,17,.38)}th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:middle}th{font-size:12px;color:#b7c8e6;background:#101b2d;text-transform:uppercase;letter-spacing:.06em}td{font-size:14px}input,select{width:100%;background:#07111f;border:1px solid #31445f;border-radius:10px;color:var(--text);padding:9px}input[type=number]{text-align:right}.num{text-align:right;font-variant-numeric:tabular-nums}.barBox{height:10px;background:#0a1220;border-radius:999px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,#5eead4,#60a5fa);border-radius:999px}.monthGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.monthCard{background:#0a1527;border:1px solid var(--line);border-radius:16px;padding:14px}.monthCard h3{margin:0 0 12px;color:#e8f2ff}.line{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #22344f;padding:8px 0;color:#cfe0f7}.line:first-of-type{border-top:0}.totalLine{font-weight:800;color:#fff}.hint{color:var(--muted);font-size:13px;line-height:1.45}.footer{color:var(--muted);font-size:12px;margin-top:18px}.tag{font-size:12px;padding:4px 8px;border-radius:999px;background:#13233b;color:#cfe0ff;border:1px solid #2c4466}.pendingOk{color:var(--ok);font-weight:800}.pendingWarn{color:var(--warn);font-weight:800}.pendingBad{color:var(--danger);font-weight:800}@media(max-width:900px){.grid,.monthGrid{grid-template-columns:1fr}.title{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <h1 class="title">Dashboard de Contas Pendentes — Próximos 3 meses</h1>
+  <div class="sub">Edite os valores, moeda e distribuição por mês. O painel recalcula automaticamente o total de cada mês, total pendente e conversões em <b>Gs / R$ / US$</b>.</div>
+  <div><span class="pill">Câmbio Wise usado: 1 US$ = R$ 5,02575</span><span class="pill">1 US$ = Gs. 6.049,75</span><span class="pill">1 R$ ≈ Gs. 1.203,75</span></div>
+</header>
+<main>
+  <section class="grid">
+    <div class="card"><h3>Total pendente</h3><div class="big" id="totalBRL">-</div><div class="small" id="totalOther1">-</div></div>
+    <div class="card"><h3>Total em Guaranis</h3><div class="big" id="totalPYG">-</div><div class="small">Base consolidada de todas as contas</div></div>
+    <div class="card"><h3>Total em Dólar</h3><div class="big" id="totalUSD">-</div><div class="small">Câmbio Wise atual consultado</div></div>
+    <div class="card"><h3>Falta alocar</h3><div class="big" id="unallocatedBRL">-</div><div class="small" id="unallocatedHint">-</div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Resumo por mês</h2>
+    <div class="monthGrid" id="months"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Contas editáveis</h2>
+    <div class="controls">
+      <button class="primary" onclick="addRow()">+ Adicionar conta</button>
+      <button onclick="autoSplit()">Dividir tudo em 3 meses</button>
+      <button onclick="clearMonths()">Zerar meses</button>
+      <button onclick="saveData()">Salvar no navegador</button>
+      <button onclick="loadData()">Carregar salvo</button>
+      <button class="danger" onclick="resetData()">Voltar ao inicial</button>
+    </div>
+    <p class="hint">Nos campos de mês, coloque quanto pretende pagar naquele mês na mesma moeda da conta. Exemplo: se a conta está em Gs, os meses também ficam em Gs. O campo “pendente” mostra o que ainda não foi distribuído.</p>
+    <div class="tableWrap">
+      <table id="tbl">
+        <thead><tr><th>Conta</th><th>Valor</th><th>Moeda</th><th>Jun/2026</th><th>Jul/2026</th><th>Ago/2026</th><th>Pendente</th><th>Total em R$</th><th>Total em US$</th><th>Pago %</th><th>Ação</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Leitura rápida</h2>
+    <div class="hint" id="quickRead"></div>
+  </section>
+  <div class="footer">Câmbio consultado em 01/06/2026. Valores são estimativos e podem mudar conforme Wise/taxa efetiva, IOF, spread, banco ou forma de pagamento.</div>
+</main>
+<script>
+const USD_BRL = 5.02575;
+const USD_PYG = 6049.75;
+const MONTHS = ['Jun/2026','Jul/2026','Ago/2026'];
+const initial = [
+ {name:'Escola NOAH', amount:3700000, currency:'PYG', months:[3700000,0,0]},
+ {name:'Móveis', amount:10000000, currency:'PYG', months:[4000000,3000000,3000000]},
+ {name:'Cédula — Felipe, Noah e Ayra', amount:3000000, currency:'PYG', months:[3000000,0,0]},
+ {name:'Celular Yasmin', amount:1200, currency:'BRL', months:[1200,0,0]},
+ {name:'Estética mulheres', amount:700, currency:'BRL', months:[700,0,0]},
+ {name:'Exames e parto', amount:7000000, currency:'PYG', months:[3500000,3500000,0]},
+ {name:'Pagamento fixo cargo + teleprompter', amount:1500, currency:'BRL', months:[1500,0,0]},
+];
+let data = JSON.parse(JSON.stringify(initial));
+function toUSD(v,c){v=Number(v)||0; if(c==='USD')return v; if(c==='BRL')return v/USD_BRL; return v/USD_PYG;}
+function fromUSD(u,c){if(c==='USD')return u; if(c==='BRL')return u*USD_BRL; return u*USD_PYG;}
+function fmt(v,c){v=Number(v)||0; if(c==='BRL')return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); if(c==='USD')return 'US$ '+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); return 'Gs. '+Math.round(v).toLocaleString('es-PY');}
+function render(){
+ const tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
+ let totalUsd=0, monthUsd=[0,0,0], unallocUsd=0;
+ data.forEach((r,i)=>{
+   r.amount=Number(r.amount)||0; r.months=(r.months||[0,0,0]).map(x=>Number(x)||0);
+   const paid = r.months.reduce((a,b)=>a+b,0); const pending = r.amount-paid; const pct = r.amount? Math.min(100, Math.max(0, paid/r.amount*100)):0;
+   totalUsd += toUSD(r.amount,r.currency); unallocUsd += toUSD(Math.max(pending,0),r.currency); r.months.forEach((m,idx)=>monthUsd[idx]+=toUSD(m,r.currency));
+   let cls = pending<=0?'pendingOk':(paid>0?'pendingWarn':'pendingBad');
+   const tr=document.createElement('tr');
+   tr.innerHTML = `<td><input value="${escapeHtml(r.name)}" onchange="data[${i}].name=this.value;render()"></td>
+   <td><input type="number" value="${r.amount}" onchange="data[${i}].amount=parseFloat(this.value)||0;render()"></td>
+   <td><select onchange="data[${i}].currency=this.value;render()"><option ${r.currency==='PYG'?'selected':''}>PYG</option><option ${r.currency==='BRL'?'selected':''}>BRL</option><option ${r.currency==='USD'?'selected':''}>USD</option></select></td>
+   ${[0,1,2].map(m=>`<td><input type="number" value="${r.months[m]||0}" onchange="data[${i}].months[${m}]=parseFloat(this.value)||0;render()"></td>`).join('')}
+   <td class="num ${cls}">${fmt(pending,r.currency)}</td><td class="num">${fmt(toUSD(r.amount,r.currency)*USD_BRL,'BRL')}</td><td class="num">${fmt(toUSD(r.amount,r.currency),'USD')}</td>
+   <td><div class="barBox"><div class="bar" style="width:${pct}%"></div></div><span class="tag">${pct.toFixed(0)}%</span></td>
+   <td><button class="danger" onclick="removeRow(${i})">Excluir</button></td>`;
+   tb.appendChild(tr);
+ });
+ document.getElementById('totalBRL').textContent=fmt(totalUsd*USD_BRL,'BRL');
+ document.getElementById('totalOther1').textContent=`${fmt(totalUsd,'USD')} • ${fmt(totalUsd*USD_PYG,'PYG')}`;
+ document.getElementById('totalPYG').textContent=fmt(totalUsd*USD_PYG,'PYG');
+ document.getElementById('totalUSD').textContent=fmt(totalUsd,'USD');
+ document.getElementById('unallocatedBRL').textContent=fmt(unallocUsd*USD_BRL,'BRL');
+ document.getElementById('unallocatedHint').textContent=`${fmt(unallocUsd,'USD')} • ${fmt(unallocUsd*USD_PYG,'PYG')}`;
+ const maxM=Math.max(...monthUsd,1); document.getElementById('months').innerHTML=MONTHS.map((m,idx)=>`<div class="monthCard"><h3>${m}</h3><div class="line totalLine"><span>Total</span><span>${fmt(monthUsd[idx]*USD_BRL,'BRL')}</span></div><div class="line"><span>Em Gs</span><span>${fmt(monthUsd[idx]*USD_PYG,'PYG')}</span></div><div class="line"><span>Em US$</span><span>${fmt(monthUsd[idx],'USD')}</span></div><div class="barBox"><div class="bar" style="width:${monthUsd[idx]/maxM*100}%"></div></div></div>`).join('');
+ const biggest = monthUsd.indexOf(Math.max(...monthUsd));
+ document.getElementById('quickRead').innerHTML = `Total inicial das contas: <b>${fmt(totalUsd*USD_BRL,'BRL')}</b>, equivalente a <b>${fmt(totalUsd*USD_PYG,'PYG')}</b> ou <b>${fmt(totalUsd,'USD')}</b>. Pelo plano atual, o mês mais pesado é <b>${MONTHS[biggest]}</b>, com <b>${fmt(monthUsd[biggest]*USD_BRL,'BRL')}</b>. Ainda falta distribuir <b>${fmt(unallocUsd*USD_BRL,'BRL')}</b> em contas pendentes.`;
+}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function addRow(){data.push({name:'Nova conta',amount:0,currency:'BRL',months:[0,0,0]});render();}
+function removeRow(i){data.splice(i,1);render();}
+function clearMonths(){data.forEach(r=>r.months=[0,0,0]);render();}
+function autoSplit(){data.forEach(r=>{const x=(Number(r.amount)||0)/3;r.months=[x,x,x];});render();}
+function saveData(){localStorage.setItem('contasPendentes3Meses',JSON.stringify(data));alert('Salvo neste navegador.');}
+function loadData(){const s=localStorage.getItem('contasPendentes3Meses'); if(s){data=JSON.parse(s);render();}else alert('Nada salvo ainda.');}
+function resetData(){data=JSON.parse(JSON.stringify(initial));render();}
+render();
+</script>
+</body>
+</html>
