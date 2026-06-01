@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Família Sain · Análise Real · Assunção vs Batumi</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#09090F;color:#E2E4F0;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 24px;}
+.mono{font-family:'Space Mono',monospace;}
+.serif{font-family:'Fraunces',serif;}
+
+/* brand strip */
+.brandstrip{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+.logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#3DD6C4,#1D9E75);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:#04201C;}
+.brandname{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#E2E4F0;}
+.brandname span{color:#3DD6C4;}
+.period{font-family:'Space Mono',monospace;font-size:10px;color:#4A4C6A;letter-spacing:.14em;text-transform:uppercase;margin-top:1px;}
+
+/* section title */
+.stitle{font-family:'Space Mono',monospace;font-size:10px;color:#4A4C6A;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px;}
+
+/* cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.card{background:#0F1120;border:1px solid #1C1E30;border-radius:13px;padding:16px 18px;}
+.card.hi{border-color:#2A3060;}
+.card-tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.card-big{font-size:26px;font-weight:500;line-height:1.15;margin-bottom:2px;}
+.card-sub{font-size:12px;color:#8A8CAA;}
+.card-note{font-size:11px;margin-top:7px;line-height:1.45;}
+
+/* line table */
+.ltable{background:#0C0E1A;border:1px solid #1C1E30;border-radius:13px;overflow:hidden;margin-bottom:20px;}
+.lrow{display:grid;gap:0;border-bottom:1px solid #13152A;}
+.lrow.h{background:#0A0C18;border-bottom-color:#222440;}
+.lrow:last-child{border-bottom:none;}
+.lrow.foot{background:#0A0C18;border-top:1px solid #2A2C44;}
+.lc{padding:11px 14px;font-size:12px;color:#C4C6E0;line-height:1.4;}
+.lc.name{color:#E2E4F0;}
+.lc.hd{font-family:'Space Mono',monospace;font-size:9px;color:#4A4C6A;letter-spacing:.12em;text-transform:uppercase;}
+.lc.green{color:#5DD68A;font-weight:600;}
+.lc.amber{color:#E8B339;}
+.lc.purple{color:#B57BE8;}
+.lc.teal{color:#3DD6C4;}
+.lc.muted{color:#6A6C8A;font-size:11px;}
+.lc.big{font-size:15px;font-weight:600;}
+.tag-real{display:inline-block;font-size:9px;padding:1px 6px;border-radius:6px;background:#0D2A20;color:#3DD68A;font-family:'Space Mono',monospace;margin-right:4px;}
+.tag-est{display:inline-block;font-size:9px;padding:1px 6px;border-radius:6px;background:#1A1830;color:#8888CC;font-family:'Space Mono',monospace;margin-right:4px;}
+
+/* bar comparison */
+.barbox{display:flex;align-items:center;gap:8px;margin:3px 0;}
+.barlabel{font-family:'Space Mono',monospace;font-size:10px;color:#4A4C6A;width:22px;text-align:right;}
+.bartrack{height:7px;background:#13152A;border-radius:4px;overflow:hidden;flex:1;}
+.barfill{height:100%;border-radius:4px;}
+.barval{font-family:'Space Mono',monospace;font-size:10px;min-width:52px;text-align:right;}
+
+/* delta highlight */
+.delta-hero{background:linear-gradient(135deg,#0A1E10,#0C0E1A);border:1px solid #1A4020;border-left:3px solid #5DD68A;border-radius:13px;padding:20px 22px;margin-bottom:20px;}
+.delta-hero h2{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:#E2E4F0;margin-bottom:5px;}
+.delta-hero p{font-size:13px;color:#A0A8C0;line-height:1.55;}
+
+/* verdict */
+.verdict{background:#0C0E1A;border:1px solid #1C1E30;border-radius:13px;padding:20px 22px;margin-bottom:20px;}
+.verdict h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#E2E4F0;margin-bottom:14px;}
+.vblock{padding:12px 14px;border-radius:10px;margin-bottom:10px;}
+.vblock:last-child{margin-bottom:0;}
+.vblock h3{font-size:13px;font-weight:600;margin-bottom:7px;}
+.vblock p{font-size:12px;line-height:1.6;color:#C4C6E0;}
+.vblock ul{padding-left:14px;}
+.vblock ul li{font-size:12px;line-height:1.7;color:#C4C6E0;}
+
+/* footer */
+.foot-note{font-family:'Space Mono',monospace;font-size:9px;color:#2E3050;border-top:1px solid #141628;padding-top:14px;margin-top:8px;line-height:1.8;}
+
+/* responsive */
+@media(max-width:680px){.cards3{grid-template-columns:1fr;}.cards2{grid-template-columns:1fr;}.lrow{grid-template-columns:1fr!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Brand -->
+  <div class="brandstrip">
+    <div class="logo">S</div>
+    <div>
+      <div class="brandname">FAMÍLIA <span>SAIN</span></div>
+      <div class="period">Análise real · Maio 2026 · Assunção vs Batumi · Renda €30k/mês</div>
+    </div>
+  </div>
+
+  <!-- Resumo real do relatório -->
+  <div class="stitle">Gastos reais do relatório — Assunção, Maio 2026</div>
+  <div class="cards3">
+    <div class="card">
+      <div class="card-tag" style="color:#3DD6C4;">Custo de vida recorrente</div>
+      <div class="card-big mono" style="color:#3DD6C4;">US$ 2.474</div>
+      <div class="card-sub">≈ R$ 12.470/mês</div>
+      <div class="card-note" style="color:#8A8CAA;">Excluídos pontuais: DNM, Amazon, móveis alugados, Romário avulso</div>
+    </div>
+    <div class="card">
+      <div class="card-tag" style="color:#E8B339;">Imposto PY 10% flat</div>
+      <div class="card-big mono" style="color:#E8B339;">US$ 3.390</div>
+      <div class="card-sub">≈ R$ 17.086/mês</div>
+      <div class="card-note" style="color:#8A8CAA;">Sobre renda de US$ 33.900/mês (€30k × 1,13)</div>
+    </div>
+    <div class="card" style="background:#0C1A10;border-color:#1A3020;">
+      <div class="card-tag" style="color:#FF8888;">Saída total real</div>
+      <div class="card-big mono" style="color:#FF8888;">US$ 5.864</div>
+      <div class="card-sub">≈ R$ 29.555/mês · 17,3% da renda</div>
+      <div class="card-note" style="color:#6A6C8A;">Vida + imposto · sobra US$ 28.036/mês</div>
+    </div>
+  </div>
+
+  <!-- Linha a linha: Assunção vs Batumi -->
+  <div class="stitle">Linha a linha: seus gastos reais vs equivalente em Batumi</div>
+  <div class="ltable">
+    <div class="lrow h" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc hd">Categoria</div>
+      <div class="lc hd">Assunção (real)</div>
+      <div class="lc hd">Batumi (estimado)</div>
+      <div class="lc hd">Diferença</div>
+    </div>
+
+    <!-- rows -->
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Moradia</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 1.140 · R$ 5.800<br><span class="muted">Villa Morra, apto nobre</span></div>
+      <div class="lc"><span class="tag-est">○</span>US$ 800 · R$ 4.032<br><span class="muted">Apto 2Q vista mar, bairro bom</span></div>
+      <div class="lc green">−US$ 340/mês</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Mercado</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 855 · R$ 4.309<br><span class="muted">Sup Real (15x), Luisito, Punto Carne</span></div>
+      <div class="lc"><span class="tag-real">●</span>US$ 700 · R$ 3.528<br><span class="muted">Carrefour, Goodwill, feiras locais. Local barato, import. +30%</span></div>
+      <div class="lc green">−US$ 155/mês</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Alimentação fora</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 86 · R$ 433<br><span class="muted">Berry Sweet, Multiplaza, Amandau</span></div>
+      <div class="lc"><span class="tag-real">●</span>US$ 140 · R$ 706<br><span class="muted">Restaurantes Batumi excelentes — nível gastronomia georgiana única</span></div>
+      <div class="lc amber">+US$ 54/mês</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Farmácia / saúde</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 119 · R$ 600<br><span class="muted">5 farmácias, frequência alta</span></div>
+      <div class="lc"><span class="tag-real">●</span>US$ 110 · R$ 554<br><span class="muted">Clínicas privadas Batumi boas e baratas</span></div>
+      <div class="lc green">−US$ 9/mês</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Serviços digitais</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 162 · R$ 816<br><span class="muted">Claude AI US$84 + Anthropic $5 + OpenAI $5 + Kiwify $47 + Google $1</span></div>
+      <div class="lc"><span class="tag-real">●</span>US$ 162 · R$ 816<br><span class="muted">Não muda — serviços digitais são independentes da localização</span></div>
+      <div class="lc" style="color:#6A6C8A;">= igual</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Transporte</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 64 · R$ 323<br><span class="muted">Bolt US$32 + gasolina/espécie Romário</span></div>
+      <div class="lc"><span class="tag-est">○</span>US$ 60 · R$ 302<br><span class="muted">Bolt opera em Batumi · táxi app barato</span></div>
+      <div class="lc green">−US$ 4/mês</div>
+    </div>
+
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc name">Lazer / pessoal</div>
+      <div class="lc"><span class="tag-real">●</span>US$ 48 · R$ 242<br><span class="muted">Sky Games, serv. pessoais Alexia</span></div>
+      <div class="lc"><span class="tag-est">○</span>US$ 80 · R$ 403<br><span class="muted">Spa, Academia, banhos sulfúricos, praia — Batumi é resort</span></div>
+      <div class="lc amber">+US$ 32/mês</div>
+    </div>
+
+    <!-- TOTAL VIDA -->
+    <div class="lrow foot" style="grid-template-columns:220px 1fr 1fr 1fr;">
+      <div class="lc big" style="color:#E2E4F0;">CUSTO DE VIDA</div>
+      <div class="lc big amber">US$ 2.474 / R$ 12.470</div>
+      <div class="lc big teal">US$ 2.052 / R$ 10.342</div>
+      <div class="lc big green">−US$ 422/mês</div>
+    </div>
+
+    <!-- IMPOSTO -->
+    <div class="lrow" style="grid-template-columns:220px 1fr 1fr 1fr;background:#130B1E;">
+      <div class="lc name" style="color:#B57BE8;">Imposto (renda US$33.9k)</div>
+      <div class="lc" style="color:#FF8080;">US$ 3.390/mês<br><span class="muted">PY 10% flat</span></div>
+      <div class="lc green">US$ 339/mês<br><span class="muted">GE 1% autônomo</span></div>
+      <div class="lc big green">−US$ 3.051/mês<br><span class="muted" style="color:#3A8040;">R$ 15.377 a menos</span></div>
+    </div>
+
+    <!-- SAÍDA TOTAL -->
+    <div class="lrow foot" style="grid-template-columns:220px 1fr 1fr 1fr;background:#0A1810;">
+      <div class="lc big" style="color:#E2E4F0;">SAÍDA TOTAL</div>
+      <div class="lc big" style="color:#FF7070;">US$ 5.864 / R$ 29.555</div>
+      <div class="lc big green">US$ 2.391 / R$ 12.051</div>
+      <div class="lc" style="font-size:16px;font-weight:700;color:#5DD68A;">−US$ 3.473/mês<br><span style="font-size:11px;font-weight:400;color:#3A8040;">−R$ 17.504/mês</span></div>
+    </div>
+  </div>
+
+  <!-- DELTA HERO -->
+  <div class="delta-hero">
+    <h2>Batumi + imposto 1% = US$ 41.676 a mais no bolso por ano</h2>
+    <p>
+      Esse é o número que importa. Não é só a diferença de custo de vida (US$ 422/mês, relevante mas não explosivo). O que move o ponteiro de verdade é o imposto: <strong style="color:#5DD68A;">US$ 3.051/mês a menos em imposto</strong> porque a Geórgia cobra 1% de autônomo vs os 10% do Paraguai. Somados, a diferença total entre viver em Batumi e em Assunção com a renda de €30k é de <strong style="color:#5DD68A;">US$ 3.473/mês — R$ 17.504/mês — R$ 210.047/ano</strong> no seu bolso.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;">
+      <div style="background:#0A1810;border-radius:9px;padding:11px 14px;">
+        <div style="font-size:10px;color:#3A8040;font-family:'Space Mono',monospace;margin-bottom:3px;">% DA RENDA QUE FICA COM VOCÊ</div>
+        <div style="font-size:20px;font-weight:500;color:#5DD68A;">92,9%</div>
+        <div style="font-size:11px;color:#6A6C8A;">Batumi · sobra US$ 31.509/mês</div>
+      </div>
+      <div style="background:#1A0A0A;border-radius:9px;padding:11px 14px;">
+        <div style="font-size:10px;color:#8A4040;font-family:'Space Mono',monospace;margin-bottom:3px;">% DA RENDA QUE FICA COM VOCÊ</div>
+        <div style="font-size:20px;font-weight:500;color:#FF8080;">82,7%</div>
+        <div style="font-size:11px;color:#6A6C8A;">Assunção · sobra US$ 28.036/mês</div>
+      </div>
+      <div style="background:#0A1020;border-radius:9px;padding:11px 14px;">
+        <div style="font-size:10px;color:#3A5080;font-family:'Space Mono',monospace;margin-bottom:3px;">PATRIMÔNIO ADICIONAL EM 5 ANOS</div>
+        <div style="font-size:20px;font-weight:500;color:#54A3F0;">US$ 208k</div>
+        <div style="font-size:11px;color:#6A6C8A;">Se reinvestir a diferença mensalmente</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATUMI: O QUE VOCÊ GANHA E PERDE -->
+  <div class="stitle">Batumi especificamente — o que muda na prática</div>
+  <div class="cards2" style="margin-bottom:20px;">
+    <div class="card" style="border-color:#1A3020;">
+      <div class="card-tag" style="color:#5DD68A;">🏖 O que Batumi entrega</div>
+      <div style="font-size:12px;color:#C4C6E0;line-height:1.75;margin-top:8px;">
+        ✓ Praia real no Mar Negro — 7 meses de temporada<br>
+        ✓ Custo de vida ~17% menor que Assunção<br>
+        ✓ Imposto 1% flat — mais barato que qualquer país da lista<br>
+        ✓ Abertura de empresa em 1 dia, 100% remota, ~€250<br>
+        ✓ Gastronomia georgiana única — khinkali, churchkhela, vinho natural<br>
+        ✓ Casinos legais (peculiaridade de Batumi)<br>
+        ✓ Montanhas do Cáucaso a 4h de carro<br>
+        ✓ Comunidade expat internacional crescente<br>
+        ✓ Internet rápida e estável<br>
+        ✓ Sem restrição a estrangeiro para negócios digitais
+      </div>
+    </div>
+    <div class="card" style="border-color:#2A1A10;">
+      <div class="card-tag" style="color:#E8B339;">⚠ O que você abre mão</div>
+      <div style="font-size:12px;color:#C4C6E0;line-height:1.75;margin-top:8px;">
+        ✗ Brasil vira 14-16h de voo (Istanbul → SP)<br>
+        ✗ Brastanques fica a 5.000km da sua base<br>
+        ✗ Sem comunidade brasileira expressiva<br>
+        ✗ Idioma georgiano — alfabeto único, sem parentesco<br>
+        ✗ Cidade sazonal — inverno mais vazio<br>
+        ✗ Infra inferior à Europa Ocidental<br>
+        ✗ Instabilidade geopolítica regional (fronteira Rússia/Abecásia)<br>
+        ✗ Processo DNM Paraguai já iniciado (você investiu nisto)<br>
+        ✗ Você e Alexia já têm rotina e rede em Assunção
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXTO DO RELATÓRIO -->
+  <div class="stitle">O que o relatório revela sobre vocês</div>
+  <div class="card hi" style="margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:#6A6C8A;font-family:'Space Mono',monospace;margin-bottom:4px;">PERFIL DE CONSUMO</div>
+        <div style="font-size:12px;color:#C4C6E0;line-height:1.65;">
+          Vocês são 2 adultos vivendo num padrão de classe alta (Villa Morra), sem filhos nas despesas. 76% do mercado é Alexia — ela gerencia a casa. Os gastos digitais de Felipe (Claude $84, Anthropic, OpenAI) confirmam trabalho intenso com IA/digital.<br><br>
+          <strong style="color:#E2E4F0;">Ponto-chave:</strong> sem filhos nas despesas, a diferença entre PT/ES (escola pública) e qualquer outro país some — não há esse vetor de otimização aqui.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6A6C8A;font-family:'Space Mono',monospace;margin-bottom:4px;">O QUE O DNM SIGNIFICA</div>
+        <div style="font-size:12px;color:#C4C6E0;line-height:1.65;">
+          O pagamento DNM (US$ 530 em 04/05) é o processo de residência permanente de Alexia no Paraguai. Isso representa um compromisso ativo com a base paraguaia — vocês não estão apenas passando, estão construindo residência legal.<br><br>
+          Esse custo foi pontual e já foi pago. O processo está em curso. Reverter agora tem custo de oportunidade real.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6A6C8A;font-family:'Space Mono',monospace;margin-bottom:4px;">CUSTO REAL NORMALIZADO</div>
+        <div style="font-size:12px;color:#C4C6E0;line-height:1.65;">
+          Excluindo os pontuais (DNM, Amazon US$414, móveis, Romário avulso), o custo recorrente real é <strong style="color:#3DD6C4;">~US$ 2.474/mês</strong>. Isso é surpreendentemente eficiente para Villa Morra.<br><br>
+          Ponto de atenção: R$ 186/dia de mercado para 2 pessoas é alto. Meta sugerida no próprio relatório: R$ 4.000/mês (−23%).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VEREDITO FINAL -->
+  <div class="verdict">
+    <h2>Veredito final: onde ir</h2>
+
+    <div class="vblock" style="background:#080E14;border:1px solid #1A3060;">
+      <h3 style="color:#54A3F0;">A pergunta certa não é Assunção vs Batumi</h3>
+      <p>É: <strong style="color:#E2E4F0;">quando faz sentido migrar para Batumi?</strong> A diferença financeira de R$ 210k/ano é irrecusável no papel. Mas você tem dois freios concretos: (1) Brastanques operando fisicamente no Paraguai, e (2) processo de residência já em andamento para Alexia. Esses freios não são eternos.</p>
+    </div>
+
+    <div class="vblock" style="background:#0A1810;border:1px solid #1A3A20;margin-top:10px;">
+      <h3 style="color:#5DD68A;">Recomendação: manter Paraguai agora, planejar Geórgia em 12-18 meses</h3>
+      <ul>
+        <li><strong style="color:#E2E4F0;">Agora (0-12 meses):</strong> Completar a residência paraguaia (já em curso). Consolidar Brastanques — quando gerar caixa recorrente, ela se sustenta remotamente ou com gestor local.</li>
+        <li><strong style="color:#E2E4F0;">Transição (12-18 meses):</strong> Quando Brastanques tiver operação autônoma, considerar residência fiscal na Geórgia (Batumi ou Tbilisi) para renda digital. Manter estrutura PY para Brastanques. Os R$ 210k/ano de diferença viram a justificativa.</li>
+        <li><strong style="color:#E2E4F0;">Gatilho para acelerar:</strong> Se a renda digital (Instagram + mentoria/SaaS) ultrapassar a receita do Brastanques, o âncora principal muda de lado — e a mudança para GE vira urgente.</li>
+        <li><strong style="color:#E2E4F0;">O que não fazer:</strong> Mover a base para Batumi enquanto Brastanques ainda exige presença física regular. Você estaria pagando o preço da distância sem aproveitar o benefício fiscal completo.</li>
+      </ul>
+    </div>
+
+    <div class="vblock" style="background:#130B1E;border:1px solid #2A1A40;margin-top:10px;">
+      <h3 style="color:#B57BE8;">A estrutura ótima no horizonte de 2 anos</h3>
+      <p>
+        <strong style="color:#E2E4F0;">Residência fiscal Geórgia (1%)</strong> + <strong style="color:#E2E4F0;">estrutura societária Paraguai (10%)</strong> para Brastanques + <strong style="color:#E2E4F0;">base operacional mista</strong> com 3-4 meses/ano no Paraguai/Brasil e o resto em Batumi (ou Tbilisi). Essa configuração preserva o negócio físico, maximiza a eficiência fiscal na renda digital e entrega o Mar Negro como base de vida. O custo de operá-la: dois endereços reais e viagens regulares — que a R$ 210k/ano de diferença pagam com sobra.
+      </p>
+    </div>
+  </div>
+
+  <div class="foot-note">
+    ● dado real do relatório · ○ estimativa fundamentada em Numbeo/pbservices.ge/expatistan · Taxa USD/BRL usada: 5,04 (média maio 2026 do próprio relatório)<br>
+    Imposto GE: 1% sobre receita bruta para Individual Entrepreneur (IE) — válido para renda autônoma digital; renda local GE tributada normalmente. Imposto PY: 10% flat territorial (IRNP).<br>
+    Brastanques e estrutura societária PY não incluídos nos cálculos de imposto pessoal — depende de estruturação societária específica com contador local.
+  </div>
+
+</div>
+</body>
+</html>
