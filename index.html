@@ -281,6 +281,16 @@ async function loadFiles() {
     });
     const data = await resp.json();
 
+    if (!resp.ok) {
+      document.getElementById('loading').classList.add('hidden');
+      const isRateLimit = resp.status === 403 || resp.status === 429;
+      const msg = isRateLimit
+        ? '⚠️ Limite da API GitHub atingido (60 req/hora). Aguarde alguns minutos e atualize.'
+        : `Erro da API GitHub (${resp.status}): ${data.message || 'desconhecido'}`;
+      document.getElementById('status').textContent = msg;
+      return;
+    }
+
     const htmlFiles = (data.tree || []).filter(f =>
       f.type === 'blob' &&
       f.path.endsWith('.html') &&
