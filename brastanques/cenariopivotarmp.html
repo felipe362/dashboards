@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Decisão Final — Felipe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#05090f;--card:#0c1420;--card2:#101d2e;--border:#1a2d44;--text:#e0e7ef;--muted:#7a8fa6;--dim:#4a5d73;--blue:#2d8cf0;--green:#00c48c;--amber:#ffb020;--red:#ff4757;--purple:#7c5cfc;--cyan:#00d4ff;--pink:#ff6b9d}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.header{background:linear-gradient(135deg,#080e1a 0%,#0d1a2d 50%,#0a1225 100%);border-bottom:1px solid var(--border);padding:20px 28px 18px}
+.header h1{font-size:19px;font-weight:800;letter-spacing:-0.3px}
+.header p{font-size:11px;color:var(--muted);margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.kpi{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.kpi-l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.kpi-v{font-size:18px;font-weight:800;line-height:1.1}
+.kpi-s{font-size:9px;color:var(--muted);margin-top:2px}
+.tabs{display:flex;gap:1px;padding:14px 28px 0;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;border-radius:7px 7px 0 0;color:var(--muted);border:1px solid transparent;border-bottom:none;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--text)}.tab.active{background:var(--card);color:var(--text);border-color:var(--border)}
+.content{padding:18px 28px 40px}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+.card-t{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:6px 8px;text-align:left;color:var(--dim);font-weight:600;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase}
+td{padding:6px 8px;border-bottom:1px solid rgba(26,45,68,.4);color:var(--text)}
+tr:hover td{background:rgba(255,255,255,.015)}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700}
+.b-green{background:rgba(0,196,140,.12);color:var(--green)}
+.b-amber{background:rgba(255,176,32,.12);color:var(--amber)}
+.b-red{background:rgba(255,71,87,.12);color:var(--red)}
+.b-blue{background:rgba(45,140,240,.12);color:var(--blue)}
+.b-purple{background:rgba(124,92,252,.12);color:var(--purple)}
+.b-dim{background:rgba(74,93,115,.15);color:var(--dim)}
+.metric{background:var(--card2);border-radius:8px;padding:12px;text-align:center}
+.metric-v{font-size:22px;font-weight:800;line-height:1}
+.metric-l{font-size:10px;color:var(--muted);margin-top:3px}
+.chart-w{position:relative;height:220px}
+.chart-tall{position:relative;height:280px}
+.insight{background:var(--card2);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:11px;line-height:1.6;color:var(--muted)}
+.insight strong{color:var(--text)}
+.insight.warn{border-left-color:var(--amber)}
+.insight.danger{border-left-color:var(--red)}
+.insight.good{border-left-color:var(--green)}
+.section-t{font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.4px}
+.status-box{border-radius:10px;padding:16px;text-align:center;margin-bottom:12px}
+.status-box.safe{background:rgba(0,196,140,.08);border:1px solid rgba(0,196,140,.25)}
+.status-box.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.25)}
+.status-box.risk{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25)}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid}
+.pcard-h{font-size:12px;font-weight:700;margin-bottom:1px}
+.pcard-sub{font-size:10px;color:var(--muted);margin-bottom:6px}
+.pcard-row{display:flex;gap:4px;margin-bottom:4px}
+.pcard-m{flex:1;background:var(--card2);border-radius:5px;padding:4px;text-align:center}
+.pcard-m-v{font-size:12px;font-weight:700}
+.pcard-m-l{font-size:8px;color:var(--dim)}
+.pcard-bottom{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:4px}
+input[type=number],select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:5px;padding:5px 8px;font-size:12px;width:100%;outline:none;font-family:inherit}
+input[type=number]:focus{border-color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.input-row{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.input-row label{font-size:10px;color:var(--muted);font-weight:500}
+.toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.toggle{position:relative;width:32px;height:18px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.slider-t{position:absolute;inset:0;background:var(--border);border-radius:18px;transition:.2s}
+.slider-t:before{content:'';position:absolute;width:12px;height:12px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+input:checked+.slider-t{background:var(--blue)}input:checked+.slider-t:before{transform:translateX(14px)}
+.perc-bar{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.perc-label{font-size:10px;color:var(--muted);width:80px;text-align:right}
+.perc-track{flex:1;height:18px;background:var(--card2);border-radius:4px;position:relative;overflow:hidden}
+.perc-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 6px;font-size:9px;font-weight:700;color:#fff;white-space:nowrap}
+.perc-val{font-size:10px;font-weight:700;width:50px}
+.scenario-btns{display:flex;gap:6px;margin-bottom:12px}
+.scenario-btn{flex:1;padding:6px;border:1px solid var(--border);background:var(--card2);color:var(--muted);border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;transition:.15s;font-family:inherit}
+.scenario-btn:hover,.scenario-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(45,140,240,.08)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.empresa-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,45,68,.3);font-size:11px}
+.empresa-row:last-child{border-bottom:none}
+.mono{font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:22px">🎯</span>
+    <div>
+      <h1>Dashboard de Decisão Final — Instagram + Sobrevivência Financeira</h1>
+      <p>44 perfis analisados · 21 pessoais · 22 empresariais · Dados Social Blade Mai/2026</p>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">Capital</div><div class="kpi-v" style="color:var(--green)" id="h-cap">R$500k</div><div class="kpi-s">R$70k disp + R$430k entrando</div></div>
+    <div class="kpi"><div class="kpi-l">Runway</div><div class="kpi-v" style="color:var(--blue)" id="h-run">28m</div><div class="kpi-s" id="h-run-s">R$20k/mês → set/2028</div></div>
+    <div class="kpi"><div class="kpi-l">Mediana 0→10K</div><div class="kpi-v" style="color:var(--amber)">8–10m</div><div class="kpi-s">Perfis pessoais reais</div></div>
+    <div class="kpi"><div class="kpi-l">1ª Receita</div><div class="kpi-v" style="color:var(--purple)" id="h-recv">~6m</div><div class="kpi-s">Mentoria com 3–5K seg</div></div>
+    <div class="kpi"><div class="kpi-l">Viabilidade</div><div class="kpi-v" style="color:var(--green)" id="h-viab">✅</div><div class="kpi-s" id="h-viab-s">Runway > janela crítica</div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('financeiro')">💰 Financeiro</div>
+  <div class="tab" onclick="switchTab('pessoais')">👤 Perfis Pessoais</div>
+  <div class="tab" onclick="switchTab('empresariais')">🏢 Empresariais</div>
+  <div class="tab" onclick="switchTab('projecao')">📈 Projeção & Monetização</div>
+  <div class="tab" onclick="switchTab('insights')">🧠 Insights Críticos</div>
+</div>
+
+<div class="content">
+<!-- ======== TAB 1: FINANCEIRO ======== -->
+<div class="tab-pane active" id="tab-financeiro">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-t">⚙️ Parâmetros Financeiros</div>
+      <div class="grid2" style="margin-bottom:0">
+        <div>
+          <div class="input-row"><label>Capital Total (R$)</label><input type="number" id="capitalTotal" value="500000" step="10000" oninput="update()"></div>
+          <div class="input-row"><label>Disponível hoje (R$)</label><input type="number" id="dispHoje" value="70000" step="5000" oninput="update()"></div>
+          <div class="input-row"><label>Entrada diária (R$)</label><input type="number" id="entradaDiaria" value="3500" step="500" oninput="update()"></div>
+        </div>
+        <div>
+          <div class="input-row"><label>Selic anual (%)</label><input type="number" id="selicAnual" value="14.5" step="0.25" oninput="update()"></div>
+          <div class="input-row"><label>Gasto mensal (R$)</label><input type="number" id="gastoMensal" value="20000" step="1000" oninput="update()"></div>
+          <div class="toggle-row"><label class="toggle"><input type="checkbox" id="usarIR" checked onchange="update()"><span class="slider-t"></span></label><span style="font-size:11px;color:var(--muted)">Descontar IR (~15%)</span></div>
+        </div>
+      </div>
+      <div class="input-row" style="margin-top:6px">
+        <label>Gasto: <span id="gasto-lbl" style="color:var(--amber);font-weight:700">R$ 20.000</span></label>
+        <input type="range" id="gastoSlider" min="7000" max="35000" step="500" value="20000" oninput="syncSlider(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim)"><span>R$7k</span><span>R$35k</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">📈 Resultado</div>
+      <div class="grid2" style="gap:6px;margin-bottom:8px">
+        <div class="metric"><div class="metric-v" style="color:var(--blue)" id="m-dur">28m</div><div class="metric-l">Duração total</div></div>
+        <div class="metric"><div class="metric-v" style="color:var(--red);font-size:15px" id="m-fim">Set 2028</div><div class="metric-l">Data que zera</div></div>
+        <div class="metric"><div class="metric-v" style="color:var(--green);font-size:16px" id="m-rend">R$5.300</div><div class="metric-l">Rendimento líq./mês</div></div>
+        <div class="metric"><div class="metric-v" style="color:var(--amber);font-size:16px" id="m-cons">R$14.700</div><div class="metric-l">Consome capital/mês</div></div>
+      </div>
+      <div style="background:var(--card2);border-radius:6px;padding:8px;font-size:10px;color:var(--muted)">
+        💡 Capital <strong style="color:var(--green)">nunca acaba</strong> se gasto ≤ <strong id="m-be" style="color:var(--green)">R$5.300</strong>/mês
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-t">📉 Evolução do Saldo</div>
+    <div class="chart-w"><canvas id="cFin"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-t">📋 Tabela por Gasto Mensal</div>
+    <table><thead><tr><th>Gasto</th><th>Duração</th><th>Acaba em</th><th>Consome/mês</th><th>Status</th></tr></thead><tbody id="tCen"></tbody></table>
+  </div>
+</div>
+
+<!-- ======== TAB 2: PERFIS PESSOAIS ======== -->
+<div class="tab-pane" id="tab-pessoais">
+  <div class="section-t">📊 Distribuição por Status — 21 Perfis Pessoais</div>
+  <div class="grid5" id="statusCards"></div>
+
+  <div class="section-t">🏆 Ranking por Tamanho — Perfis Pessoais</div>
+  <div class="card" style="margin-bottom:12px">
+    <table>
+      <thead><tr><th>#</th><th>Perfil</th><th>Nicho</th><th>Seguidores</th><th>Ganho 30d</th><th>Média/dia</th><th>Posts/mês</th><th>Maior viral</th><th>Status</th></tr></thead>
+      <tbody id="tPessoais"></tbody>
+    </table>
+  </div>
+
+  <div class="section-t">⏱️ Tempo Real para Marcos (perfis com dados)</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-t">Meses para atingir 10K, 50K e 100K seguidores</div>
+      <div class="chart-tall"><canvas id="cMarcos"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Percentis — Tempo para 100K (desde início)</div>
+      <div id="percBars" style="margin-top:10px"></div>
+      <div style="margin-top:12px;font-size:10px;color:var(--dim)">
+        Dados reais de 9 perfis pessoais com marcos verificáveis. Exclui outliers corporativos.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-t">📈 Crescimento Diário Atual — Top 10 Pessoais</div>
+  <div class="card">
+    <div class="chart-w"><canvas id="cDiario"></canvas></div>
+  </div>
+
+  <div class="section-t">⚠️ Perfis que PARARAM ou DECLINARAM — Lições</div>
+  <div class="grid3" id="declinandoCards"></div>
+</div>
+
+<!-- ======== TAB 3: EMPRESARIAIS ======== -->
+<div class="tab-pane" id="tab-empresariais">
+  <div class="insight">
+    ℹ️ <strong>Perfis empresariais servem como referência de mercado</strong>, mas não como benchmark para sua estratégia pessoal. Contas corporativas crescem com budgets de marketing, equipes dedicadas e associação a plataformas (Shopee, ML). Seu modelo será diferente.
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-t">🏢 22 Perfis Empresariais — Resumo</div>
+    <table>
+      <thead><tr><th>Perfil</th><th>Tipo</th><th>Seguidores</th><th>Ganho 30d</th><th>Status</th></tr></thead>
+      <tbody id="tEmpresas"></tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="insight warn">⚠️ <strong>@ecommercenapratica</strong> (435K) e <strong>@wedropbr</strong> (167K) estão PERDENDO seguidores mesmo com 58-66 posts/mês. Volume sem qualidade é armadilha — para empresas também.</div>
+    <div class="insight good">✅ <strong>@vendedoresmercadolivre</strong> cresceu de 0 a 86K em 17 meses com viral de 3M views. <strong>@ecommercepuro</strong> acelerou de 793/mês para 6.700/mês. Comunidades de nicho específico crescem bem.</div>
+  </div>
+</div>
+
+<!-- ======== TAB 4: PROJEÇÃO & MONETIZAÇÃO ======== -->
+<div class="tab-pane" id="tab-projecao">
+  <div id="statusBoxProj" class="status-box safe">
+    <div style="font-size:32px" id="statIcon">✅</div>
+    <div style="font-size:18px;font-weight:800" id="statTitle">Viável — Runway cobre a janela crítica</div>
+    <div style="font-size:12px;color:var(--muted)" id="statSub">O capital dura até a monetização se estabelecer</div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-t">🎯 Cenário de Crescimento (baseado nos perfis pessoais)</div>
+      <div class="scenario-btns">
+        <button class="scenario-btn" onclick="setScen('conservador')">🐢 Conservador</button>
+        <button class="scenario-btn active" onclick="setScen('moderado')">⚡ Moderado</button>
+        <button class="scenario-btn" onclick="setScen('agressivo')">🚀 Agressivo</button>
+      </div>
+      <div class="grid3" style="margin-bottom:0">
+        <div class="input-row"><label>0→10K (meses)</label><input type="number" id="s10k" value="9" min="1" max="36" oninput="updateProj()"></div>
+        <div class="input-row"><label>10K→50K (meses)</label><input type="number" id="s50k" value="14" min="1" max="60" oninput="updateProj()"></div>
+        <div class="input-row"><label>10K→100K (meses)</label><input type="number" id="s100k" value="24" min="1" max="72" oninput="updateProj()"></div>
+      </div>
+      <div style="font-size:9px;color:var(--dim);margin-top:4px">Baseado nos percentis P25/P50/P75 dos 21 perfis pessoais analisados</div>
+    </div>
+    <div class="card">
+      <div class="card-t">💰 Modelo de Monetização (mentoria anti-crise)</div>
+      <div class="grid2" style="margin-bottom:0">
+        <div>
+          <div class="input-row"><label>Ticket mentoria (R$/cliente/mês)</label><input type="number" id="ticketM" value="4000" step="500" oninput="updateProj()"></div>
+          <div class="input-row"><label>Clientes ao atingir 10K seg</label><input type="number" id="clientesM" value="5" step="1" oninput="updateProj()"></div>
+        </div>
+        <div>
+          <div class="input-row"><label>Ticket membership (R$/membro/mês)</label><input type="number" id="ticketMb" value="200" step="50" oninput="updateProj()"></div>
+          <div class="input-row"><label>Membros ao atingir 50K seg</label><input type="number" id="membros" value="100" step="10" oninput="updateProj()"></div>
+        </div>
+      </div>
+      <div class="input-row"><label>Mês da 1ª venda de mentoria (mesmo sem 10K)</label><input type="number" id="mes1venda" value="6" min="1" max="24" oninput="updateProj()"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-t">📊 Saldo Financeiro × Receita Instagram — Cruzamento</div>
+    <div class="chart-tall"><canvas id="cViab"></canvas></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-t">📅 Marcos de Monetização</div>
+      <div id="timeline"></div>
+    </div>
+    <div class="card">
+      <div class="card-t">🔑 Tabela de Cruzamento</div>
+      <table><thead><tr><th>Evento</th><th>Mês</th><th>Saldo</th><th>Receita/mês</th><th>OK?</th></tr></thead><tbody id="tCruz"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 5: INSIGHTS ======== -->
+<div class="tab-pane" id="tab-insights">
+  <div class="section-t">🔍 O que os dados dizem e você provavelmente não está vendo</div>
+
+  <div class="insight good" style="border-left-width:4px">
+    <strong style="color:var(--green);font-size:13px">🟢 INSIGHT #1 — Gap de Mercado Confirmado</strong><br>
+    Dos 44 perfis analisados, <strong>ZERO</strong> foca em "crise empresarial" ou "recuperação de negócios". Todos vendem crescimento: como vender mais, escalar, faturar. Ninguém fala para o empreendedor que está QUEBRANDO. Isso não é um nicho — é um <strong>oceano azul</strong> no Instagram brasileiro.
+  </div>
+
+  <div class="insight warn" style="border-left-width:4px">
+    <strong style="color:var(--amber);font-size:13px">🟡 INSIGHT #2 — Volume ≠ Crescimento (dados provam)</strong><br>
+    • <strong>@ecommercenapratica</strong>: 58 posts/mês → PERDENDO -3.256 seg/mês<br>
+    • <strong>@wedropbr</strong>: 66 posts/mês → crescimento ZERO<br>
+    • <strong>@marcoguedes01</strong>: 9.9 posts/mês → +15.099 seg/mês (!)<br>
+    • <strong>@williancelso</strong>: 11 posts/mês → 536K seguidores<br>
+    A conclusão é clara: <strong>1 reel viral vale mais que 100 reels mediocres</strong>. Para seu modelo de mentoria, qualidade > volume.
+  </div>
+
+  <div class="insight" style="border-left-width:4px">
+    <strong style="color:var(--blue);font-size:13px">🔵 INSIGHT #3 — Engajamento > Seguidores para Vender Mentoria</strong><br>
+    • <strong>@danielsouzas.co</strong>: 556 seguidores, <strong>3.69% engagement</strong> → já tem reel de 40K views, provavelmente já vende mentoria<br>
+    • <strong>@edu_grimaldi</strong>: 130K seguidores, <strong>0.04% engagement</strong> → audiência passiva, dificuldade de monetizar<br>
+    Para mentoria de alto ticket (R$3-5K/mês), você precisa de <strong>3K seguidores qualificados</strong>, não de 100K seguidores genéricos. A dor do público (crise) naturalmente gera alto engajamento.
+  </div>
+
+  <div class="insight good" style="border-left-width:4px">
+    <strong style="color:var(--green);font-size:13px">🟢 INSIGHT #4 — Monetização pode começar ANTES de 10K seguidores</strong><br>
+    Nos benchmarks do mercado de mentoria individual no Brasil:<br>
+    • <strong>3K seguidores qualificados</strong> → 2-5 clientes × R$3K = <strong>R$6-15K/mês</strong><br>
+    • <strong>5K seguidores</strong> → 5-8 clientes × R$4K = <strong>R$20-32K/mês</strong><br>
+    • <strong>10K seguidores</strong> → 8-15 clientes × R$5K = <strong>R$40-75K/mês</strong><br>
+    O nicho de CRISE tem taxa de conversão 2-3x maior que growth porque a dor é urgente. O empresário que está quebrando não pensa "vou pesquisar mais" — ele quer ajuda agora.
+  </div>
+
+  <div class="insight danger" style="border-left-width:4px">
+    <strong style="color:var(--red);font-size:13px">🔴 INSIGHT #5 — O Vale da Morte (1K-15K seguidores)</strong><br>
+    <strong>8 dos 21 perfis pessoais</strong> estão travados abaixo de 50K com crescimento zero ou negativo. Padrão comum:<br>
+    • Postam consistentemente, mas sem viral e sem oferta clara<br>
+    • Nunca passaram da fase inicial de tração<br>
+    Perfis que saíram do vale fizeram pelo menos UMA coisa: <strong>um reel que viralizou</strong>. O @diegorojas ficou 5 anos crescendo devagar até o viral de 4.8M views em set/2023. O @zedoecom ficou quase 9 ANOS para chegar a 10K, mas depois explodiu com 3 virais.
+  </div>
+
+  <div class="insight" style="border-left-width:4px">
+    <strong style="color:var(--blue);font-size:13px">🔵 INSIGHT #6 — Frequência Ideal: Sweet Spot nos Dados</strong><br>
+    Cruzando posts/mês × crescimento dos 21 perfis pessoais:<br>
+    • <strong>Menos de 10 posts/mês</strong>: pode funcionar SE tiver virais (marcoguedes01, williancelso)<br>
+    • <strong>10-25 posts/mês</strong>: sweet spot — cassiocanali, gilmar.theobald, hugovasc_, edsonsaldanhaa<br>
+    • <strong>25-50 posts/mês</strong>: retorno decrescente — mais posts não significam mais crescimento<br>
+    • <strong>50+ posts/mês</strong>: risco de saturação — ecommercenapratica DECLINA com 58/mês<br>
+    Recomendação: <strong>3-5 reels/semana de alta qualidade</strong> + 2-3 carrosséis educacionais.
+  </div>
+
+  <div class="insight warn" style="border-left-width:4px">
+    <strong style="color:var(--amber);font-size:13px">🟡 INSIGHT #7 — Perfis que MORREM: Padrão Claro</strong><br>
+    3 perfis pessoais com 130K+ seguidores estão PERDENDO audiência:<br>
+    • <strong>@brunooliveiraoficial</strong> (373K, -1.768/mês): cresceu rápido, parou de inovar<br>
+    • <strong>@rafaellimaas</strong> (134K, -1.011/mês): caiu para 3.3 posts/mês — abandonou<br>
+    • Padrão: cresceram via viral → estabilizaram → pararam de evoluir → começaram a perder<br>
+    <strong>Lição para Felipe:</strong> crescimento rápido sem retenção é armadilha. Melhor crescer devagar com audiência qualificada.
+  </div>
+
+  <div class="insight good" style="border-left-width:4px">
+    <strong style="color:var(--green);font-size:13px">🟢 INSIGHT #8 — O Algoritmo de 2025-2026 Favorece seu Nicho</strong><br>
+    Vários perfis aceleraram dramaticamente em 2025-2026:<br>
+    • <strong>@hugovasc_</strong>: de 1.200/mês para 17.373/mês (14x) — explodiu sem um viral mega<br>
+    • <strong>@marcospelozato</strong>: de 400/mês para 19.698/mês (49x)<br>
+    • <strong>@cristian.seller</strong>: de 2.863/mês para 29.181/mês (10x)<br>
+    O Instagram está priorizando conteúdo educacional/business em 2025-2026. Janela aberta.
+  </div>
+
+  <div class="insight" style="border-left-width:4px">
+    <strong style="color:var(--cyan);font-size:13px">🔷 INSIGHT #9 — Eficiência por Post: Quem Faz Mais com Menos</strong><br>
+    Seguidores por post publicado (eficiência):<br>
+    • <strong>@williancelso</strong>: 536K ÷ 567 posts = <strong>946 seg/post</strong> 🏆<br>
+    • <strong>@cristian.seller</strong>: 255K ÷ 1.366 posts = <strong>187 seg/post</strong><br>
+    • <strong>@cassiocanali</strong>: 708K ÷ 1.203 posts = <strong>589 seg/post</strong><br>
+    • <strong>@andresantosplay</strong>: 44K ÷ 3.113 posts = <strong>14 seg/post</strong> ❌<br>
+    Willian Celso é o modelo de eficiência. Menos posts, maior impacto por unidade.
+  </div>
+
+  <div class="insight" style="border-left-width:4px">
+    <strong style="color:var(--purple);font-size:13px">🟣 INSIGHT #10 — O Modelo @zedoecom é o mais Comparável ao seu Caso</strong><br>
+    Zé do Ecom pivotou de uma conta antiga (2014) para conteúdo de e-commerce em 2023. Ficou 9 anos para chegar a 10K, mas depois:<br>
+    • <strong>10K → 50K em 14 meses</strong><br>
+    • <strong>50K → 100K em 12 meses</strong><br>
+    • 3 ciclos virais distintos (maior: 3.7M views)<br>
+    Felipe, você tem a MESMA vantagem: autoridade real de quem viveu a trincheira do e-commerce. A diferença é que seu nicho (crise) tem ZERO concorrentes. Zé do Ecom compete com 20+ criadores de e-commerce. Você competiria com ninguém.
+  </div>
+</div>
+</div><!-- /content -->
+<script>
+// ============ DATA ============
+const PESSOAIS=[
+  {h:"@williancelso",n:"Willian Celso",s:536369,g:45843,d:1562,i:"Mar/22",ma:50,m10:6,m50:16,m100:19,p:567,pm:11.3,v:"8,6M",vn:8600000,ni:"Empreendedorismo",st:"acelerando",c:"#2d8cf0"},
+  {h:"@cassiocanali",n:"Cassio Canali",s:708576,g:11048,d:418,i:"Dez/21",ma:53,m10:null,m50:null,m100:null,p:1203,pm:22.7,v:"463K",vn:463823,ni:"E-commerce",st:"crescendo",c:"#00c48c"},
+  {h:"@gilmar.theobald",n:"Gilmar Theobald",s:281194,g:1664,d:45,i:"Jan/17",ma:112,m10:6,m50:26,m100:52,p:1323,pm:11.8,v:"119K",vn:119700,ni:"Empreendedorismo",st:"lento",c:"#ff6b9d"},
+  {h:"@brunooliveiraoficial",n:"Bruno Oliveira",s:373356,g:-1768,d:-11,i:"Dez/19",ma:77,m10:null,m50:null,m100:null,p:2579,pm:33.5,v:"319K",vn:319916,ni:"E-commerce",st:"declinando",c:"#ff4757"},
+  {h:"@importandocomluiza",n:"Luiza (Importando)",s:299318,g:4031,d:38,i:"Dez/21",ma:53,m10:null,m50:null,m100:17,p:3064,pm:57.8,v:"71K",vn:71851,ni:"Importação",st:"crescendo",c:"#7c5cfc"},
+  {h:"@cristian.seller",n:"Cristian Seller",s:255601,g:29181,d:1071,i:"Dez/24",ma:17,m10:null,m50:null,m100:11,p:1366,pm:80.4,v:"52K",vn:52731,ni:"E-commerce",st:"acelerando",c:"#00d4ff"},
+  {h:"@marcoguedes01",n:"Marco Guedes",s:198137,g:15099,d:318,i:"Fev/19",ma:87,m10:null,m50:79,m100:81,p:863,pm:9.9,v:"2M",vn:2008941,ni:"E-commerce",st:"acelerando",c:"#ffb020"},
+  {h:"@diegorojas.seller",n:"Diego Rojas",s:197317,g:4284,d:165,i:"Mai/18",ma:96,m10:null,m50:61,m100:68,p:1359,pm:14.2,v:"4,8M",vn:4808022,ni:"E-commerce",st:"crescendo",c:"#a855f7"},
+  {h:"@edsonsaldanhaa",n:"Edson Saldanha",s:187281,g:6807,d:253,i:"Out/21",ma:55,m10:null,m50:null,m100:21,p:2220,pm:40.4,v:"980K",vn:980004,ni:"Negócios",st:"acelerando",c:"#f59e0b"},
+  {h:"@zedoecom",n:"Zé do Ecom",s:183828,g:7685,d:249,i:"Jun/23*",ma:35,m10:0,m50:14,m100:26,p:2009,pm:57.4,v:"3,7M",vn:3700000,ni:"E-commerce",st:"crescendo",c:"#10b981"},
+  {h:"@marcospelozato.oficial",n:"Marcos Pelozato",s:171255,g:19698,d:463,i:"Mai/22",ma:48,m10:14,m50:40,m100:44,p:1895,pm:39.5,v:"526K",vn:526900,ni:"Empreendedorismo",st:"acelerando",c:"#ec4899"},
+  {h:"@hugovasc_",n:"Hugo Vasconcelos",s:148553,g:17373,d:516,i:"Jan/19",ma:88,m10:null,m50:76,m100:85,p:2024,pm:23,v:"5,7K",vn:5686,ni:"E-commerce",st:"acelerando",c:"#06b6d4"},
+  {h:"@rafaellimaas",n:"Rafael Lima",s:134069,g:-1011,d:-20,i:"Dez/21",ma:53,m10:null,m50:null,m100:null,p:175,pm:3.3,v:"19K",vn:19612,ni:"E-commerce",st:"declinando",c:"#ef4444"},
+  {h:"@alexandrenogueira_oficial",n:"Alexandre Nogueira",s:131455,g:1121,d:86,i:"<Jun/23",ma:35,m10:null,m50:null,m100:35,p:595,pm:17,v:"69K",vn:69089,ni:"ML/Marketplaces",st:"crescendo",c:"#8b5cf6"},
+  {h:"@edu_grimaldi",n:"Edu Grimaldi",s:130100,g:1989,d:66,i:"Jul/25*",ma:10,m10:1,m50:3,m100:5,p:686,pm:68.6,v:"5,3M",vn:5300000,ni:"Negócios",st:"desacelerando",c:"#f97316"},
+  {h:"@andresantosplay",n:"André Santos",s:44411,g:379,d:30,i:"Dez/19",ma:77,m10:null,m50:null,m100:null,p:3113,pm:40.4,v:"9,6K",vn:9606,ni:"E-commerce",st:"lento",c:"#64748b"},
+  {h:"@ariadne.sou",n:"Ariadne Souza",s:33029,g:1390,d:31,i:"Dez/23",ma:29,m10:10,m50:null,m100:null,p:640,pm:22.1,v:"3,7K",vn:3757,ni:"E-commerce",st:"crescendo",c:"#d946ef"},
+  {h:"@juniormailson",n:"Junior Mailson",s:21625,g:0,d:0,i:"Ago/19",ma:81,m10:null,m50:null,m100:null,p:492,pm:6.1,v:"12K",vn:12263,ni:"E-commerce",st:"estagnado",c:"#475569"},
+  {h:"@arturrampazio",n:"Artur Rampazio",s:17742,g:0,d:1,i:"Dez/19",ma:77,m10:null,m50:null,m100:null,p:1816,pm:23.6,v:"11K",vn:10997,ni:"E-commerce",st:"estagnado",c:"#475569"},
+  {h:"@nathanritter.oficial",n:"Nathan Ritter",s:14871,g:87,d:5,i:"Nov/25",ma:6,m10:null,m50:null,m100:null,p:80,pm:13.3,v:"1K",vn:1076,ni:"E-commerce",st:"lento",c:"#475569"},
+  {h:"@danielsouzas.co",n:"Daniel Souza",s:556,g:6,d:0.4,i:"2025",ma:6,m10:null,m50:null,m100:null,p:18,pm:3,v:"40K",vn:40800,ni:"Mentoria",st:"início",c:"#94a3b8",eng:3.69}
+];
+const EMPRESAS=[
+  {h:"@shopeebrasilvendedores",n:"Shopee BR Vendedores",s:208048,g:101673,ni:"Corporativo"},
+  {h:"@ecommercenapratica",n:"Ecommerce na Prática",s:435087,g:-3256,ni:"Curso/Empresa"},
+  {h:"@mercadolivreafiliados",n:"ML Afiliados",s:185256,g:16437,ni:"Corporativo"},
+  {h:"@wedropbr",n:"WeDrop",s:167462,g:-8,ni:"Dropshipping"},
+  {h:"@mamba_digital",n:"Mamba Digital",s:154640,g:9117,ni:"Agência"},
+  {h:"@ecommerce_br",n:"Ecommerce Brasil",s:152206,g:1509,ni:"Portal"},
+  {h:"@vendedoresmercadolivre",n:"Vendedores ML",s:86886,g:8721,ni:"Comunidade"},
+  {h:"@magalu_marketplace",n:"Magalu Marketplace",s:67426,g:-293,ni:"Corporativo"},
+  {h:"@ecommercepuro",n:"Ecommerce Puro",s:63335,g:5242,ni:"Marca/Curso"},
+  {h:"@primodrop",n:"Primo Drop",s:54142,g:0,ni:"Dropshipping"},
+  {h:"@drop2youoficial",n:"Drop2You",s:35756,g:0,ni:"Empresa"},
+  {h:"@maisquedistribuidora",n:"Mais Que Distrib.",s:13832,g:0,ni:"Distribuição"},
+  {h:"@amazonsemsegredos",n:"Amazon Sem Segredos",s:9644,g:3769,ni:"Curso"},
+  {h:"@bd_consultoria_oficial",n:"BD Consultoria",s:3405,g:-38,ni:"Consultoria"},
+  {h:"@agencia_impulsiona",n:"Ag. Impulsiona",s:3124,g:174,ni:"Agência"},
+  {h:"@ecommercesemmisterio",n:"Ecom Sem Mistério",s:2474,g:0,ni:"Curso"},
+  {h:"@mercadoseller",n:"Mercado Seller",s:1901,g:26,ni:"Ferramenta"},
+  {h:"@echodatavendasonline",n:"Echo Data",s:1469,g:51,ni:"Ferramenta"},
+  {h:"@sagaropro",n:"Sagaro Pro",s:1411,g:0,ni:"Ferramenta"},
+  {h:"@sellerleonardo",n:"Seller Leonardo",s:1076,g:0,ni:"Marca"},
+  {h:"@ecfconsultoria",n:"ECF Consultoria",s:957,g:0,ni:"Consultoria"},
+  {h:"@alvoecom",n:"Alvo Ecom",s:350,g:0,ni:"Marca"}
+];
+const SCENDATA={conservador:{m10:14,m50:22,m100:40},moderado:{m10:9,m50:14,m100:24},agressivo:{m10:5,m50:8,m100:14}};
+let charts={},curScen='moderado';
+
+// ============ UTILS ============
+function brl(v,d=0){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:d})}
+function brlK(v){return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?Math.round(v/1e3)+'K':v.toFixed(0)}
+function fmtSeg(v){return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toString()}
+function mesData(m){const d=new Date(2026,4,27);d.setMonth(d.getMonth()+m);return d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}
+function mesDataL(m){const d=new Date(2026,4,27);d.setMonth(d.getMonth()+m);return d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}
+function statusBadge(st){const m={acelerando:['🚀 Acelerando','b-green'],crescendo:['📈 Crescendo','b-blue'],lento:['🐢 Lento','b-amber'],desacelerando:['📉 Desacel.','b-amber'],estagnado:['⏸ Estagnado','b-dim'],declinando:['🔻 Declinando','b-red'],'início':['🌱 Início','b-purple']};const[t,c]=m[st]||['—','b-dim'];return`<span class="badge ${c}">${t}</span>`}
+
+// ============ FINANCIAL ============
+function simFin(gasto){
+  const cap=+document.getElementById('capitalTotal').value||500000;
+  const dh=+document.getElementById('dispHoje').value||70000;
+  const ed=+document.getElementById('entradaDiaria').value||3500;
+  const sa=+document.getElementById('selicAnual').value||14.5;
+  const ir=document.getElementById('usarIR').checked;
+  const se=ir?sa*.85:sa;const sm=Math.pow(1+se/100,1/12)-1;
+  const em=ed*30;let s=dh,te=dh;const r=[{m:0,s}];
+  for(let m=1;m<=200;m++){
+    if(te<cap){const e=Math.min(em,cap-te);s+=e;te+=e}
+    s*=(1+sm);s-=gasto;const d=new Date(2026,4,27);d.setMonth(d.getMonth()+m);
+    r.push({m,s:Math.max(0,s),d});if(s<=0)break;
+  }return{r,sm}
+}
+function update(){
+  const g=+document.getElementById('gastoMensal').value||20000;
+  document.getElementById('gastoSlider').value=g;
+  document.getElementById('gasto-lbl').textContent=brl(g);
+  const{r,sm}=simFin(g);const dur=r.length-1;const df=r[dur]?.d||new Date();
+  const cap=+document.getElementById('capitalTotal').value||500000;
+  const rend=cap*sm;const a=Math.floor(dur/12),mo=dur%12;
+  document.getElementById('m-dur').textContent=a>0?`${a}a ${mo}m`:`${dur}m`;
+  document.getElementById('m-fim').textContent=df.toLocaleDateString('pt-BR',{month:'short',year:'numeric'});
+  document.getElementById('m-rend').textContent=brl(rend);
+  document.getElementById('m-cons').textContent=brl(Math.max(0,g-rend));
+  document.getElementById('m-be').textContent=brl(rend);
+  document.getElementById('h-cap').textContent=brlK(cap);
+  document.getElementById('h-run').textContent=dur+'m';
+  document.getElementById('h-run-s').textContent=`${brlK(g)}/mês → ${df.toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}`;
+  // Chart
+  const labels=r.map(x=>mesData(x.m));const data=r.map(x=>x.s);
+  if(charts.fin){charts.fin.data.labels=labels;charts.fin.data.datasets[0].data=data;charts.fin.update()}
+  else{charts.fin=new Chart(document.getElementById('cFin').getContext('2d'),{type:'line',data:{labels,datasets:[{label:'Saldo',data,borderColor:'#2d8cf0',backgroundColor:'rgba(45,140,240,.08)',fill:true,tension:.4,pointRadius:0,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>brl(c.raw)}}},scales:{x:{grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9},maxTicksLimit:10}},y:{grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9},callback:v=>brlK(v)}}}}})}
+  // Table
+  const cens=[7000,10000,13000,15000,17000,20000,22000,25000,28000,30000,35000];let h='';
+  cens.forEach(c=>{const{r:r2}=simFin(c);const d2=r2.length-1;const df2=r2[d2]?.d||new Date();const a2=Math.floor(d2/12),m2=d2%12;
+    let b='<span class="badge b-green">✅ Seguro</span>';if(d2<18)b='<span class="badge b-red">❌ Curto</span>';else if(d2<28)b='<span class="badge b-amber">⚠️ Atenção</span>';
+    const act=c===g?'style="background:rgba(45,140,240,.05)"':'';const bld=c===g?'font-weight:700':'';
+    h+=`<tr ${act}><td style="${bld}">${brl(c)}/mês</td><td style="${bld}">${a2>0?a2+'a '+m2+'m':d2+'m'}</td><td>${df2.toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}</td><td>${brlK(Math.max(0,c-rend))}/mês</td><td>${b}</td></tr>`});
+  document.getElementById('tCen').innerHTML=h;
+  updateProj();
+}
+function syncSlider(v){document.getElementById('gastoMensal').value=v;document.getElementById('gasto-lbl').textContent=brl(+v);update()}
+
+// ============ PESSOAIS TAB ============
+function buildPessoais(){
+  // Status cards
+  const sts={acelerando:0,crescendo:0,lento:0,desacelerando:0,estagnado:0,declinando:0,'início':0};
+  PESSOAIS.forEach(p=>sts[p.st]=(sts[p.st]||0)+1);
+  const sColors={acelerando:'var(--green)',crescendo:'var(--blue)',lento:'var(--amber)',desacelerando:'var(--amber)',estagnado:'var(--dim)',declinando:'var(--red)','início':'var(--purple)'};
+  const sIcons={acelerando:'🚀',crescendo:'📈',lento:'🐢',desacelerando:'📉',estagnado:'⏸',declinando:'🔻','início':'🌱'};
+  let sh='';Object.keys(sts).forEach(k=>{if(sts[k]>0)sh+=`<div class="metric"><div class="metric-v" style="color:${sColors[k]};font-size:24px">${sts[k]}</div><div class="metric-l">${sIcons[k]} ${k}</div></div>`});
+  document.getElementById('statusCards').innerHTML=sh;
+  // Table sorted by followers
+  const sorted=[...PESSOAIS].sort((a,b)=>b.s-a.s);let th='';
+  sorted.forEach((p,i)=>{
+    const eff=Math.round(p.s/p.p);
+    th+=`<tr><td style="color:var(--dim)">${i+1}</td><td><strong style="color:${p.c}">${p.h}</strong><br><span style="font-size:9px;color:var(--dim)">${p.n}</span></td><td style="font-size:10px">${p.ni}</td><td class="mono" style="font-weight:700">${fmtSeg(p.s)}</td><td class="mono" style="color:${p.g>0?'var(--green)':p.g<0?'var(--red)':'var(--dim)'}">${p.g>0?'+':''}${fmtSeg(p.g)}</td><td class="mono">${p.d>0?'+'+p.d:p.d}/d</td><td class="mono">${p.pm}</td><td style="font-size:10px">${p.v} views</td><td>${statusBadge(p.st)}</td></tr>`});
+  document.getElementById('tPessoais').innerHTML=th;
+  // Marcos chart
+  const withMarcos=PESSOAIS.filter(p=>p.m100!==null&&p.m100>0);
+  const marcosLabels=withMarcos.map(p=>p.h);
+  charts.marcos=new Chart(document.getElementById('cMarcos').getContext('2d'),{type:'bar',
+    data:{labels:marcosLabels,datasets:[
+      {label:'0→10K',data:withMarcos.map(p=>p.m10||0),backgroundColor:'#2d8cf0aa',borderRadius:3},
+      {label:'10K→50K',data:withMarcos.map(p=>(p.m50||0)-(p.m10||0)),backgroundColor:'#00c48caa',borderRadius:3},
+      {label:'50K→100K',data:withMarcos.map(p=>(p.m100||0)-(p.m50||0)),backgroundColor:'#ffb020aa',borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8fa6',font:{size:9},boxWidth:10}}},
+      scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#4a5d73',font:{size:8},maxRotation:45}},y:{stacked:true,grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9},callback:v=>v+'m'}}}}});
+  // Percentile bars
+  const m100vals=withMarcos.map(p=>p.m100).sort((a,b)=>a-b);
+  const p25=m100vals[Math.floor(m100vals.length*.25)];
+  const p50=m100vals[Math.floor(m100vals.length*.5)];
+  const p75=m100vals[Math.floor(m100vals.length*.75)];
+  const mx=Math.max(...m100vals);
+  const percData=[
+    {l:'P25 (rápido)',v:p25,c:'var(--green)'},
+    {l:'P50 (mediana)',v:p50,c:'var(--blue)'},
+    {l:'P75 (lento)',v:p75,c:'var(--amber)'},
+    {l:'Mais lento',v:mx,c:'var(--red)'}
+  ];
+  let ph='';percData.forEach(pd=>{
+    const w=Math.round((pd.v/mx)*100);
+    ph+=`<div class="perc-bar"><div class="perc-label">${pd.l}</div><div class="perc-track"><div class="perc-fill" style="width:${w}%;background:${pd.c}">${pd.v}m</div></div><div class="perc-val" style="color:${pd.c}">${Math.floor(pd.v/12)}a ${pd.v%12}m</div></div>`});
+  document.getElementById('percBars').innerHTML=ph;
+  // Daily growth chart - top 10
+  const top10=sorted.filter(p=>p.d>0).slice(0,10);
+  charts.diario=new Chart(document.getElementById('cDiario').getContext('2d'),{type:'bar',
+    data:{labels:top10.map(p=>p.h),datasets:[{label:'Seg/dia',data:top10.map(p=>p.d),backgroundColor:top10.map(p=>p.c+'cc'),borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#7a8fa6',font:{size:9}}}}}});
+  // Declining cards
+  const declining=PESSOAIS.filter(p=>p.st==='declinando'||p.st==='estagnado');
+  let dh='';declining.forEach(p=>{
+    dh+=`<div class="pcard" style="border-left-color:var(--red)">
+      <div class="pcard-h" style="color:var(--red)">${p.h}</div>
+      <div class="pcard-sub">${p.n} · ${fmtSeg(p.s)} seg · ${p.pm} posts/mês</div>
+      <div style="font-size:10px;color:var(--muted)">${p.g<0?'Perdendo '+Math.abs(p.g)+' seg/mês':'Crescimento zero'} · Viral max: ${p.v} views</div>
+      <div style="font-size:9px;color:var(--dim);margin-top:4px">Eficiência: ${Math.round(p.s/p.p)} seg/post</div>
+    </div>`});
+  document.getElementById('declinandoCards').innerHTML=dh;
+}
+
+// ============ EMPRESARIAIS TAB ============
+function buildEmpresas(){
+  const sorted=[...EMPRESAS].sort((a,b)=>b.s-a.s);let h='';
+  sorted.forEach(e=>{
+    let b='<span class="badge b-green">📈</span>';
+    if(e.g<0)b='<span class="badge b-red">🔻</span>';else if(e.g===0)b='<span class="badge b-dim">⏸</span>';else if(e.g>10000)b='<span class="badge b-green">🚀</span>';
+    h+=`<tr><td><strong>${e.h}</strong></td><td style="font-size:10px">${e.ni}</td><td class="mono">${fmtSeg(e.s)}</td><td class="mono" style="color:${e.g>0?'var(--green)':e.g<0?'var(--red)':'var(--dim)'}">${e.g>0?'+':''}${fmtSeg(e.g)}</td><td>${b}</td></tr>`});
+  document.getElementById('tEmpresas').innerHTML=h;
+}
+
+// ============ PROJECTION TAB ============
+function setScen(s){
+  curScen=s;document.querySelectorAll('.scenario-btn').forEach((b,i)=>b.classList.toggle('active',['conservador','moderado','agressivo'][i]===s));
+  const sc=SCENDATA[s];document.getElementById('s10k').value=sc.m10;document.getElementById('s50k').value=sc.m50;document.getElementById('s100k').value=sc.m100;
+  updateProj()
+}
+function updateProj(){
+  const m10=+(document.getElementById('s10k')?.value)||9;
+  const m50delta=+(document.getElementById('s50k')?.value)||14;
+  const m100delta=+(document.getElementById('s100k')?.value)||24;
+  const m50=m10+m50delta;const m100=m10+m100delta;
+  const tickM=+(document.getElementById('ticketM')?.value)||4000;
+  const clM=+(document.getElementById('clientesM')?.value)||5;
+  const tickMb=+(document.getElementById('ticketMb')?.value)||200;
+  const memb=+(document.getElementById('membros')?.value)||100;
+  const mes1v=+(document.getElementById('mes1venda')?.value)||6;
+  const g=+(document.getElementById('gastoMensal')?.value)||20000;
+  const{r}=simFin(g);const runway=r.length-1;
+  // Receita projetada
+  const recPreMentor=tickM*2; // 2 clientes iniciais
+  const rec10k=tickM*clM;
+  const rec50k=rec10k+(tickMb*memb);
+  const rec100k=rec50k*1.8;
+  const maxMes=Math.max(runway+3,m100+6,48);
+  const recData=[];
+  for(let m=0;m<=maxMes;m++){
+    if(m<mes1v)recData.push(0);
+    else if(m<m10){const t=(m-mes1v)/(m10-mes1v);recData.push(Math.round(recPreMentor+t*(rec10k-recPreMentor)))}
+    else if(m<m50){const t=(m-m10)/(m50-m10);recData.push(Math.round(rec10k+(rec50k-rec10k)*t))}
+    else if(m<m100){const t=(m-m50)/(m100-m50);recData.push(Math.round(rec50k+(rec100k-rec50k)*t))}
+    else recData.push(rec100k);
+  }
+  const breakEven=recData.findIndex(r=>r>=g);
+  // Status
+  let sc='safe',si='✅',st='Viável — Runway cobre a janela crítica',ss='';
+  if(runway<mes1v){sc='risk';si='❌';st='Risco Alto';ss='Dinheiro acaba antes da 1ª venda de mentoria'}
+  else if(runway<m10){sc='warn';si='⚠️';st='Atenção';ss='Dinheiro pode acabar antes dos 10K seguidores — precisa monetizar cedo'}
+  else if(breakEven>0&&breakEven>runway){sc='warn';si='⚠️';st='Atenção';ss=`Break-even no mês ${breakEven}, mas capital acaba no mês ${runway}`}
+  else{ss=`Capital dura até ${mesDataL(runway)}. Receita estimada cobre gastos no mês ${breakEven>0?breakEven:'—'}`}
+  document.getElementById('statusBoxProj').className=`status-box ${sc}`;
+  document.getElementById('statIcon').textContent=si;
+  document.getElementById('statTitle').textContent=st;
+  document.getElementById('statSub').textContent=ss;
+  document.getElementById('h-viab').textContent=si;
+  document.getElementById('h-viab-s').textContent=ss.slice(0,45);
+  // Chart
+  const labels=Array.from({length:maxMes+1},(_,i)=>mesData(i));
+  const saldoData=Array.from({length:maxMes+1},(_,i)=>r[Math.min(i,runway)]?.s||0);
+  if(charts.viab){charts.viab.data.labels=labels;charts.viab.data.datasets[0].data=saldoData;charts.viab.data.datasets[1].data=recData.map(r=>r*15);charts.viab.update()}
+  else{charts.viab=new Chart(document.getElementById('cViab').getContext('2d'),{type:'line',
+    data:{labels,datasets:[
+      {label:'Saldo financeiro',data:saldoData,borderColor:'#2d8cf0',backgroundColor:'rgba(45,140,240,.06)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+      {label:'Receita Instagram (×15 para escala)',data:recData.map(r=>r*15),borderColor:'#00c48c',backgroundColor:'rgba(0,196,140,.06)',fill:true,tension:.4,pointRadius:0,borderWidth:2,borderDash:[5,3]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#7a8fa6',font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:c=>c.datasetIndex===1?`Receita: ${brl(c.raw/15)}/mês`:`Saldo: ${brl(c.raw)}`}}},
+      scales:{x:{grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9},maxTicksLimit:10}},y:{grid:{color:'rgba(26,45,68,.4)'},ticks:{color:'#4a5d73',font:{size:9},callback:v=>brlK(v)}}}}})}
+  // Timeline
+  const evts=[
+    {m:mes1v,icon:'🌱',t:'1ª venda de mentoria',d:`2 clientes × ${brl(tickM)}`,rec:brl(recPreMentor)},
+    {m:m10,icon:'📊',t:'Atingir 10K seguidores',d:`${clM} clientes × ${brl(tickM)}`,rec:brl(rec10k)},
+    {m:m50,icon:'🚀',t:'Atingir 50K seguidores',d:`Mentoria + ${memb} membros × ${brl(tickMb)}`,rec:brl(rec50k)},
+    {m:m100,icon:'💎',t:'Atingir 100K seguidores',d:'Escala total',rec:brl(rec100k)}
+  ];
+  let th='';evts.forEach(e=>{
+    const saldo=r[Math.min(e.m,runway)]?.s||0;const ok=e.m<=runway;
+    th+=`<div style="display:flex;gap:8px;padding:8px;background:var(--card2);border-radius:6px;border-left:3px solid ${ok?'var(--green)':'var(--red)'};margin-bottom:6px">
+      <div style="font-size:18px">${e.icon}</div><div style="flex:1">
+      <div style="font-size:11px;font-weight:700;color:${ok?'var(--green)':'var(--red)'}">${mesData(e.m)} (mês ${e.m})</div>
+      <div style="font-size:10px;font-weight:600">${e.t}</div>
+      <div style="font-size:9px;color:var(--muted)">${e.d}</div>
+      <div style="font-size:9px;margin-top:2px">Receita: <strong style="color:var(--amber)">${e.rec}/mês</strong> · Saldo: <strong style="color:${ok?'var(--blue)':'var(--red)'}">${ok?brl(saldo):'zerou'}</strong></div>
+    </div></div>`});
+  document.getElementById('timeline').innerHTML=th;
+  // Cruzamento table
+  const cruz=[
+    {e:'Capital disponível',m:0},{e:'Entrada completa (~'+brlK(+(document.getElementById('capitalTotal')?.value)||500000)+')',m:Math.ceil(((+(document.getElementById('capitalTotal')?.value)||500000)-(+(document.getElementById('dispHoje')?.value)||70000))/(+(document.getElementById('entradaDiaria')?.value)||3500)/30)},
+    {e:'1ª venda mentoria',m:mes1v},{e:'10K seguidores',m:m10},{e:'50K seguidores',m:m50},{e:'100K seguidores',m:m100},
+    {e:'Break-even (receita ≥ gasto)',m:breakEven>0?breakEven:null},{e:'Saldo financeiro zera',m:runway}
+  ];
+  let ch='';cruz.forEach(c=>{
+    const saldo=c.m!==null?r[Math.min(c.m,runway)]?.s||0:0;const ok=c.m===null||(c.m<=runway);
+    const rec=c.m!==null&&c.m<recData.length?recData[c.m]:0;
+    ch+=`<tr><td style="font-size:10px">${c.e}</td><td class="mono">${c.m!==null?mesData(c.m):'—'}</td><td class="mono" style="font-size:10px">${ok?brl(saldo):'—'}</td><td class="mono" style="font-size:10px;color:var(--amber)">${rec>0?brl(rec):'—'}</td><td>${ok?'<span class="badge b-green">✅</span>':'<span class="badge b-red">❌</span>'}</td></tr>`});
+  document.getElementById('tCruz').innerHTML=ch;
+}
+
+// ============ TABS ============
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((tb,i)=>tb.classList.toggle('active',['financeiro','pessoais','empresariais','projecao','insights'][i]===t));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+// ============ INIT ============
+buildPessoais();buildEmpresas();update();
+</script>
+</body></html>

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Brastanques — Dashboard v4</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#070a11;--bg2:#0d1117;--bg3:#151b28;--card:#0f1521;--border:#1a2438;--text:#e1e7ef;--muted:#6e7a91;--dim:#3d4860;--accent:#3b82f6;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--teal:#14b8a6;--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+::selection{background:rgba(59,130,246,.25)}
+.w{max-width:1360px;margin:0 auto;padding:1.25rem 1.5rem 3rem}
+/* TOP */
+.top{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0 1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem}
+.br{display:flex;align-items:center;gap:.5rem}.lo{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:7px;display:grid;place-items:center;font:700 .75rem var(--mono);color:#fff}
+.br h1{font-size:1.25rem;font-weight:700;letter-spacing:-.02em}.br small{font-size:.6rem;color:var(--muted)}
+.pills{display:flex;gap:4px;flex-wrap:wrap}.pill{font-size:.55rem;padding:2px 7px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.pb{background:rgba(59,130,246,.1);color:var(--accent)}.pg{background:rgba(16,185,129,.1);color:var(--green)}.pa{background:rgba(245,158,11,.1);color:var(--amber)}.pr{background:rgba(239,68,68,.1);color:var(--red)}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.55rem;margin-bottom:1.25rem}
+/* CARD */
+.c{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem}
+.ct{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;gap:.4rem}.ct h3{font-size:.88rem;font-weight:600}
+.badge{font-size:.5rem;padding:2px 7px;border-radius:99px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.bb{background:rgba(59,130,246,.1);color:var(--accent)}.bg{background:rgba(16,185,129,.1);color:var(--green)}.ba{background:rgba(245,158,11,.1);color:var(--amber)}.brd{background:rgba(239,68,68,.1);color:var(--red)}.bp{background:rgba(139,92,246,.1);color:var(--purple)}.bgr{background:rgba(110,122,145,.1);color:var(--muted)}
+/* KPI */
+.k{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:.7rem .9rem;overflow:hidden;transition:border-color .15s}
+.k:hover{border-color:rgba(59,130,246,.2)}.k .l{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem}
+.k .v{font-size:1.15rem;font-weight:700;font-family:var(--mono);line-height:1.1}.k .s{font-size:.57rem;color:var(--dim);margin-top:.15rem}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.74rem}
+.tbl th{text-align:left;padding:.38rem .55rem;color:var(--muted);font-weight:500;font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.tbl td{padding:.38rem .55rem;border-bottom:1px solid rgba(26,36,56,.45)}.tbl tr:last-child td{border-bottom:none}
+.tt td{font-weight:600;background:rgba(59,130,246,.04)}.tg td{color:var(--green)}.tre td{color:var(--red)}.tam td{color:var(--amber)}
+.mono{font-family:var(--mono)}.fw{font-weight:700}
+.tc{color:var(--green)}.tr2{color:var(--red)}.ta{color:var(--amber)}.tb{color:var(--accent)}.tp{color:var(--purple)}.tt2{color:var(--teal)}.tm{color:var(--muted)}
+/* SECTION */
+.sec{border:none;border-top:1px solid var(--border);margin:1.75rem 0 1.35rem}
+.sh{font-size:1rem;font-weight:700;margin-bottom:1rem}
+/* SCENARIO */
+.sc3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.sc{border-radius:var(--r);padding:1rem;border:1px solid var(--border);transition:transform .12s,box-shadow .12s}
+.sc:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.s30{background:linear-gradient(155deg,rgba(245,158,11,.04),transparent);border-color:rgba(245,158,11,.14)}
+.s50{background:linear-gradient(155deg,rgba(59,130,246,.04),transparent);border-color:rgba(59,130,246,.14)}
+.s70{background:linear-gradient(155deg,rgba(16,185,129,.04),transparent);border-color:rgba(16,185,129,.14)}
+.st{font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.sb{font-size:1.35rem;font-weight:700;font-family:var(--mono);margin-bottom:.35rem}
+.si{display:flex;justify-content:space-between;font-size:.68rem;padding:.2rem 0;border-bottom:1px solid rgba(255,255,255,.022)}.si:last-child{border:none}
+/* PRODUCT ROW */
+.prod{display:grid;grid-template-columns:38px 1fr auto;gap:.7rem;align-items:center;padding:.65rem .75rem;border-radius:7px;background:rgba(255,255,255,.012);border:1px solid transparent;transition:border-color .12s;margin-bottom:.35rem}
+.prod:hover{border-color:var(--border)}
+.pi{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;font:700 .7rem var(--mono);color:#fff;flex-shrink:0}
+.p5{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}.p3{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}.p2{background:linear-gradient(135deg,#14b8a6,#0d9488)}
+.pn{font-weight:600;font-size:.78rem}.pd{font-size:.6rem;color:var(--muted)}
+/* SLIDER */
+.sl{margin-bottom:.8rem}.sl label{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:.28rem}
+.sl label span{font-family:var(--mono);color:var(--text);font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--bg3);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+/* EDITABLE INPUTS */
+.inp{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.32rem .5rem;color:var(--text);font-family:var(--mono);font-size:.78rem;text-align:right;outline:none;-moz-appearance:textfield;transition:border-color .15s;width:100%}
+.inp::-webkit-inner-spin-button{-webkit-appearance:none}
+.inp:focus{border-color:var(--accent)}
+.inp-label{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:.32rem .5rem;color:var(--text);font-family:var(--font);font-size:.72rem;outline:none;transition:border-color .15s;width:100%}
+.inp-label:focus{border-color:var(--accent)}
+.inp-price{width:96px;background:var(--bg3);border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:4px 8px;color:var(--text);font-family:var(--mono);font-size:.88rem;font-weight:700;text-align:right;outline:none;-moz-appearance:textfield;transition:border-color .15s}
+.inp-price::-webkit-inner-spin-button{-webkit-appearance:none}
+.inp-price:focus{border-color:var(--accent)}
+.inp-cost{width:80px;background:var(--bg3);border:1px solid rgba(245,158,11,.25);border-radius:5px;padding:3px 6px;color:var(--amber);font-family:var(--mono);font-size:.72rem;font-weight:600;text-align:right;outline:none;-moz-appearance:textfield;transition:border-color .15s}
+.inp-cost::-webkit-inner-spin-button{-webkit-appearance:none}
+.inp-cost:focus{border-color:var(--amber)}
+/* INVEST ROW */
+.ir{display:grid;grid-template-columns:1fr 120px 28px;gap:.4rem;align-items:center;margin-bottom:.32rem}
+.bx{width:24px;height:24px;border-radius:5px;border:1px solid rgba(239,68,68,.18);background:rgba(239,68,68,.04);color:var(--red);cursor:pointer;font-size:.6rem;display:grid;place-items:center;transition:background .12s}
+.bx:hover{background:rgba(239,68,68,.12)}
+.badd{display:inline-flex;align-items:center;gap:.25rem;padding:.32rem .65rem;border-radius:5px;border:1px solid rgba(59,130,246,.18);background:rgba(59,130,246,.05);color:var(--accent);cursor:pointer;font-size:.64rem;font-weight:500;font-family:var(--font);transition:background .12s;margin-top:.2rem}
+.badd:hover{background:rgba(59,130,246,.1)}
+.inv-total{display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;border-radius:7px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.12);margin-top:.55rem;font-size:.78rem;font-weight:600}
+.inv-total .v{font-family:var(--mono);font-size:1rem;color:var(--accent)}
+/* ALERTS */
+.al{border-radius:7px;padding:.65rem .85rem;font-size:.7rem;line-height:1.6;margin-bottom:.65rem}
+.al strong{font-weight:600}
+.ab{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.12);color:#93c5fd}
+.ag{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.12);color:#6ee7b7}
+.aa{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.12);color:#fcd34d}
+.ar{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);color:#fca5a5}
+/* CHART */
+.cht{position:relative;height:240px}.cht-l{position:relative;height:300px}
+/* RISK */
+.rk{display:flex;gap:.4rem;padding:.32rem 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:.7rem;align-items:flex-start}.rk:last-child{border:none}
+.ri{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;font-size:.48rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.rr{background:rgba(239,68,68,.1);color:var(--red)}.ra{background:rgba(245,158,11,.1);color:var(--amber)}.rg{background:rgba(16,185,129,.1);color:var(--green)}
+/* COST EDITOR TABLE */
+.cost-ed{width:100%;border-collapse:collapse;font-size:.74rem}
+.cost-ed th{text-align:left;padding:.38rem .55rem;color:var(--muted);font-weight:500;font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.cost-ed td{padding:.32rem .45rem;border-bottom:1px solid rgba(26,36,56,.4);vertical-align:middle}
+.cost-ed tr:last-child td{border-bottom:none}
+.cost-ed .tt td{font-weight:600;background:rgba(59,130,246,.04)}
+.cost-ed .tg td{color:var(--green)}
+/* PRODUCTION BOOST */
+.boost-box{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.12);border-radius:var(--r);padding:.85rem 1rem;margin-top:.75rem}
+.boost-box .bt{font-size:.72rem;font-weight:600;color:var(--green);margin-bottom:.65rem}
+.boost-row{display:grid;grid-template-columns:1fr 130px 28px;gap:.4rem;align-items:center;margin-bottom:.32rem}
+@media(max-width:820px){.g2,.g3,.sc3{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<!-- TOPBAR -->
+<div class="top">
+  <div class="br"><div class="lo">BT</div><div><h1>Brastanques</h1><small>Dashboard v4 · Produto pesado · Ciclo 30min confirmado</small></div></div>
+  <div class="pills"><span class="pill pr">Peso real 75–90 kg</span><span class="pill pg">ArtCaixa dados reais</span><span class="pill pa">Mai/2026</span></div>
+</div>
+
+<!-- KPI ROW -->
+<div class="g4" id="kR">
+  <div class="k"><div class="l">Investimento total</div><div class="v tb" id="kI">—</div><div class="s">Editável abaixo</div></div>
+  <div class="k"><div class="l">Fixo mensal</div><div class="v" id="kF">—</div><div class="s" id="kFSub">R$20.000 pessoal + ops</div></div>
+  <div class="k"><div class="l">MC média ponderada</div><div class="v ta" id="kMC">—</div><div class="s" id="kMCSub">por unidade (mix ArtCaixa)</div></div>
+  <div class="k"><div class="l">Break-even</div><div class="v tp" id="kBE">—</div><div class="s">Unidades/mês c/ fixo atual</div></div>
+  <div class="k"><div class="l">Payback (cen. 50%)</div><div class="v" id="kPB">—</div><div class="s">Cenário 50% do vol. ArtCaixa</div></div>
+</div>
+
+<!-- ═══ INVESTIMENTO ═══ -->
+<hr class="sec"><div class="sh">💰 Investimento — Editor interativo</div>
+<div class="g2" style="margin-bottom:1rem">
+  <div class="c">
+    <div class="ct"><h3>Componentes do investimento</h3><span class="badge ba">Editável</span></div>
+    <div id="iL"></div>
+    <button class="badd" onclick="aI()">+ Adicionar item</button>
+    <div class="inv-total"><span>Investimento total</span><span class="v" id="iT">—</span></div>
+  </div>
+  <div class="c">
+    <div class="ct"><h3>Custo fixo mensal</h3><span class="badge bb">Editável</span></div>
+    <div id="fL"></div>
+    <button class="badd" onclick="aF()">+ Adicionar custo fixo</button>
+    <div class="inv-total"><span>Fixo mensal total</span><span class="v" id="fT">—</span></div>
+    <!-- PRODUCTION BOOST -->
+    <div class="boost-box">
+      <div class="bt">⚡ Aumentar produção diária</div>
+      <div style="font-size:.66rem;color:var(--muted);margin-bottom:.65rem">Adicione turnos extras ou colaboradores adicionais. O custo entra automaticamente no fixo mensal e o limite de peças/dia sobe.</div>
+      <div id="boostList"></div>
+      <button class="badd" style="border-color:rgba(16,185,129,.2);background:rgba(16,185,129,.05);color:var(--green)" onclick="addBoost()">+ Adicionar turno / colaborador</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.55rem;font-size:.72rem">
+        <span style="color:var(--muted)">Peças/dia total</span>
+        <span class="mono fw tc" id="boostPpd">16</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRODUTOS ═══ -->
+<hr class="sec"><div class="sh">🏷️ Produtos — Preço de venda e margem</div>
+<div class="c" style="margin-bottom:.75rem">
+  <div class="al ab" style="margin-bottom:.75rem">
+    <strong>Preço de venda editável:</strong> clique no valor para alterar. Todas as cascatas, cenários, simulador e gráficos atualizam em tempo real.
+  </div>
+  <div id="prodRows"></div>
+</div>
+<div id="cascCards" class="g3" style="margin-bottom:.85rem"></div>
+
+<!-- ═══ CUSTO DIRETO EDITÁVEL ═══ -->
+<hr class="sec"><div class="sh">🔬 Custo direto unitário — Editor completo</div>
+<div class="al aa"><strong>Edite qualquer componente de custo.</strong> Os totais, margens, cascatas, cenários e simulador recalculam automaticamente.</div>
+<div id="costEditorWrap" class="g3" style="margin-bottom:1rem"></div>
+
+<!-- ═══ ARTCAIXA ═══ -->
+<hr class="sec"><div class="sh">🎯 ArtCaixa — Dados reais (último ano)</div>
+<div class="g2" style="margin-bottom:1rem">
+  <div class="c">
+    <div class="ct"><h3>Vendas ArtCaixa por produto</h3><span class="badge ba">PANDA</span></div>
+    <table class="tbl"><thead><tr><th>Produto</th><th style="text-align:right">Un/ano</th><th style="text-align:right">Un/mês</th><th style="text-align:right">Fat. anual</th></tr></thead><tbody>
+      <tr><td>5.000 Litros (5 listings)</td><td style="text-align:right" class="mono">2.040</td><td style="text-align:right" class="mono">170</td><td style="text-align:right" class="mono">R$4.686.000</td></tr>
+      <tr><td>3.000 Litros (2 listings)</td><td style="text-align:right" class="mono">1.020</td><td style="text-align:right" class="mono">85</td><td style="text-align:right" class="mono">R$1.592.280</td></tr>
+      <tr><td>2.000 Litros (3 listings)</td><td style="text-align:right" class="mono">530</td><td style="text-align:right" class="mono">44</td><td style="text-align:right" class="mono">R$611.090</td></tr>
+      <tr class="tt"><td>Total 2.000L + 3.000L + 5.000L</td><td style="text-align:right" class="mono fw">3.590</td><td style="text-align:right" class="mono fw">299</td><td style="text-align:right" class="mono fw">R$6.889.370</td></tr>
+    </tbody></table>
+    <div style="font-size:.55rem;color:var(--dim);margin-top:.4rem">0 ADS pagos · 100% orgânico · oportunidade para quem ativar ADS primeiro</div>
+  </div>
+  <div class="c"><div class="ct"><h3>Volume e faturamento ArtCaixa</h3></div><div class="cht"><canvas id="cA"></canvas></div></div>
+</div>
+
+<!-- ═══ CENÁRIOS ═══ -->
+<hr class="sec"><div class="sh">📊 Cenários — % do volume ArtCaixa</div>
+<p style="font-size:.66rem;color:var(--muted);margin-bottom:.85rem">Capturando 30%, 50% ou 70% do volume da ArtCaixa. Usa os preços de venda e custos editados acima. Payback usa o investimento total editável.</p>
+<div class="sc3" style="margin-bottom:.75rem" id="sC"></div>
+<div class="al aa" id="capAlert">Ciclo 30min: capacidade base 16 pçs/dia × 22 dias = 352 pçs/mês em 1 turno.</div>
+
+<!-- ═══ BREAK-EVEN ═══ -->
+<hr class="sec"><div class="sh">⚖️ Break-even</div>
+<div class="g2" style="margin-bottom:1rem">
+  <div class="c">
+    <div class="ct"><h3>Ponto de equilíbrio</h3></div>
+    <table class="tbl" id="bT"><thead><tr><th>Cenário</th><th style="text-align:right">Fixo/mês</th><th style="text-align:right">Unidades</th></tr></thead><tbody></tbody></table>
+    <div style="font-size:.56rem;color:var(--dim);margin-top:.4rem" id="beNote">MC mix calculada com preços e custos editados</div>
+  </div>
+  <div class="c"><div class="ct"><h3>Break-even visual</h3></div><div class="cht"><canvas id="cB"></canvas></div></div>
+</div>
+
+<!-- ═══ SIMULADOR ═══ -->
+<hr class="sec"><div class="sh">🎛️ Simulador de vendas</div>
+<div class="g2" style="margin-bottom:1rem">
+  <div class="c">
+    <div class="ct"><h3>Vendas mensais</h3></div>
+    <div class="sl"><label>Caixas 5.000 Litros/mês <span id="o5">85</span></label><input type="range" min="0" max="200" value="85" id="s5" oninput="sim()"></div>
+    <div class="sl"><label>Caixas 3.000 Litros/mês <span id="o3">43</span></label><input type="range" min="0" max="150" value="43" id="s3" oninput="sim()"></div>
+    <div class="sl"><label>Caixas 2.000 Litros/mês <span id="o2">22</span></label><input type="range" min="0" max="100" value="22" id="s2" oninput="sim()"></div>
+    <div class="sl"><label>Custo do PE R$/kg <span id="oP">R$10,50</span></label><input type="range" min="7" max="16" value="10.5" step="0.5" id="sP" oninput="sim()"></div>
+    <div style="padding:.55rem .6rem;background:rgba(255,255,255,.02);border-radius:6px;border:1px solid var(--border);font-size:.66rem;margin-top:.5rem">
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Peças/mês total</span><span class="mono fw" id="simTot">150</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:3px"><span style="color:var(--muted)">Horas necessárias</span><span class="mono" id="simHrs">75h</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:3px"><span style="color:var(--muted)">Capacidade disponível</span><span class="mono tc" id="simCap">352 pçs/mês</span></div>
+    </div>
+  </div>
+  <div class="c">
+    <div class="ct"><h3>Resultado mensal</h3></div>
+    <table class="tbl" style="margin-bottom:.65rem">
+      <tbody>
+        <tr><td style="color:var(--muted)">Faturamento bruto</td><td style="text-align:right" class="mono fw" id="xF">—</td></tr>
+        <tr><td style="color:var(--muted)">Receita líquida (após ML+imp+ads)</td><td style="text-align:right" class="mono fw" id="xR">—</td></tr>
+        <tr><td style="color:var(--muted)">Custo variável (matéria-prima + diretos)</td><td style="text-align:right" class="mono" id="xCV">—</td></tr>
+        <tr><td style="color:var(--muted)">Margem de contribuição</td><td style="text-align:right" class="mono fw tc" id="xMC">—</td></tr>
+        <tr><td style="color:var(--muted)">Custos fixos mensais</td><td style="text-align:right" class="mono tr2" id="xFix">—</td></tr>
+        <tr class="tt"><td>Lucro operacional</td><td style="text-align:right" class="mono fw" id="xL">—</td></tr>
+        <tr><td style="color:var(--muted)">Margem sobre faturamento</td><td style="text-align:right" class="mono" id="xM">—</td></tr>
+        <tr><td style="color:var(--muted)">Lucro anual projetado</td><td style="text-align:right" class="mono fw" id="xA">—</td></tr>
+        <tr><td style="color:var(--muted)">Payback do investimento</td><td style="text-align:right" class="mono fw" id="xPB">—</td></tr>
+      </tbody>
+    </table>
+    <div class="cht" style="height:165px"><canvas id="cS"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══ PAYBACK TIMELINE ═══ -->
+<hr class="sec"><div class="sh">📈 Timeline de payback — 24 meses</div>
+<div class="c" style="margin-bottom:1rem"><div class="cht-l"><canvas id="cP"></canvas></div></div>
+
+<!-- ═══ RISCOS ═══ -->
+<hr class="sec"><div class="sh">⚡ Riscos e ações</div>
+<div class="g2" style="margin-bottom:1rem">
+  <div class="c"><div class="ct"><h3>Riscos por gravidade</h3></div>
+    <div class="rk"><div class="ri rr">!</div><div><strong>Preço real do PE</strong> — Use o slider do simulador. A R$13,00/kg a MC da caixa de 5.000 Litros cai de R$488 para R$283. A caixa de 2.000 Litros vai a zero com PE acima de R$13,00/kg.</div></div>
+    <div class="rk"><div class="ri rr">!</div><div><strong>ArtCaixa pode produzir produto leve</strong> — Se usam ~25 kg de PE na caixa de 5.000 Litros, o custo deles é ~R$597 vs. R$1.239 nosso. Concorrência de preço muito difícil no ML.</div></div>
+    <div class="rk"><div class="ri rr">!</div><div><strong>Break-even elevado</strong> — 74 unidades/mês para cobrir R$28.000 fixo. Toda variação negativa de custo eleva esse número.</div></div>
+    <div class="rk"><div class="ri ra">!</div><div><strong>Margem de 2.000 Litros</strong> — R$189 de MC (16,4%). Qualquer variação de custo pode zerar. Priorize volume na caixa de 5.000 Litros.</div></div>
+    <div class="rk"><div class="ri ra">!</div><div><strong>Frete</strong> — Produto volumoso. Se incluir frete no preço, retire do MC. Se o cliente paga, não impacta. Defina isso antes de precificar.</div></div>
+    <div class="rk"><div class="ri rg">✓</div><div><strong>Produto pesado = qualidade superior</strong> — Paredes 4–5 mm, atende NBR 15682. Argumento de venda forte para B2B, construtoras e prefeituras, onde o canal direto elimina os 28% do ML.</div></div>
+  </div>
+  <div class="c"><div class="ct"><h3>Ações prioritárias</h3></div>
+    <div class="rk"><div class="ri rr">1</div><div><strong>Cotar PE com 3 fornecedores</strong> — Braskem, Icorene, distribuidores. O custo do PE é 66% do custo direto da caixa de 5.000 Litros.</div></div>
+    <div class="rk"><div class="ri rr">2</div><div><strong>Testar preço R$2.599–R$2.799</strong> — Produto pesado justifica premium. Cada R$200 a mais = R$144 de MC adicional (após 28% ML).</div></div>
+    <div class="rk"><div class="ri rr">3</div><div><strong>Canal B2B direto</strong> — Construtoras, prefeituras pagam sem os 28% do ML. A MC da caixa de 5.000 Litros sobe de R$488 para ~R$866 na venda direta.</div></div>
+    <div class="rk"><div class="ri ra">4</div><div><strong>Definir galpão</strong> — ~300m² + pátio. Ponte rolante de R$50.000 é crítica para manejar 82 kg.</div></div>
+    <div class="rk"><div class="ri ra">5</div><div><strong>Registrar marca + listings ML</strong> — ADS ativados no dia 1. Zero concorrência paga hoje.</div></div>
+    <div class="rk"><div class="ri rg">6</div><div><strong>Avaliar peso intermediário</strong> — Caixa de 5.000 Litros com 55 kg de PE teria MC ~R$750, payback ~8 meses no cenário 50%.</div></div>
+  </div>
+</div>
+
+<!-- ═══ MERCADO ═══ -->
+<hr class="sec"><div class="sh">🔍 Mercado ML</div>
+<div class="g4" style="grid-template-columns:repeat(3,1fr)">
+  <div class="k"><div class="l">SKUs no segmento</div><div class="v">29</div><div class="s">61 anúncios · mercado ralo</div></div>
+  <div class="k"><div class="l">ADS pagos hoje</div><div class="v tc">R$0,00</div><div class="s">1º a ativar domina o topo</div></div>
+  <div class="k"><div class="l">Faixa P25–P75</div><div class="v">R$2.580–R$4.104</div><div class="s">50% dos produtos no segmento</div></div>
+</div>
+<div class="al ag" style="margin-top:.75rem"><strong>💡 Oportunidade:</strong> Todo o segmento opera com R$0,00 em ADS. Com 3% do faturamento em anúncios (já incluso nos cálculos como dedução), é possível dominar as primeiras posições sem concorrência paga.</div>
+
+<div style="text-align:center;padding:1.5rem 0 .5rem;color:var(--dim);font-size:.52rem;border-top:1px solid var(--border);margin-top:1.5rem">
+  Brastanques · Dashboard v4 · Produto pesado (peso real confirmado 75–90 kg) · Ciclo 30min confirmado · Mai/2026<br>
+  <strong style="color:var(--red)">Cotar PE antes de qualquer decisão final de preço.</strong>
+</div>
+</div>
+<script>
+// ═══════════════════════════════════════════════
+// STATE — tudo editável
+// ═══════════════════════════════════════════════
+let PRICES = { 5000: 2399, 3000: 1599, 2000: 1149 };
+
+// Custo direto por componente, por produto
+let COST_ITEMS = {
+  5000: [
+    { n: 'Polietileno (82 kg × R$10,50/kg)', v: 861 },
+    { n: 'Pigmento / UV masterbatch', v: 34 },
+    { n: 'GLP (30 kg × R$5,75 — ciclo 30min)', v: 173 },
+    { n: 'Energia elétrica', v: 18 },
+    { n: 'Mão de obra direta (2 oper.)', v: 19 },
+    { n: 'Tampa injetada', v: 45 },
+    { n: 'Flange + acessórios', v: 20 },
+    { n: 'Embalagem', v: 10 },
+    { n: 'Desmoldante', v: 5 },
+    { n: 'Refugo / perdas (3%)', v: 26 },
+    { n: 'Manutenção rateio', v: 28 },
+  ],
+  3000: [
+    { n: 'Polietileno (52 kg × R$10,50/kg)', v: 546 },
+    { n: 'Pigmento / UV masterbatch', v: 22 },
+    { n: 'GLP (30 kg × R$5,75 — ciclo 30min)', v: 173 },
+    { n: 'Energia elétrica', v: 14 },
+    { n: 'Mão de obra direta (2 oper.)', v: 19 },
+    { n: 'Tampa injetada', v: 40 },
+    { n: 'Flange + acessórios', v: 16 },
+    { n: 'Embalagem', v: 8 },
+    { n: 'Desmoldante', v: 4 },
+    { n: 'Refugo / perdas (3%)', v: 16 },
+    { n: 'Manutenção rateio', v: 24 },
+  ],
+  2000: [
+    { n: 'Polietileno (32 kg × R$10,50/kg)', v: 336 },
+    { n: 'Pigmento / UV masterbatch', v: 13 },
+    { n: 'GLP (30 kg × R$5,75 — ciclo 30min)', v: 173 },
+    { n: 'Energia elétrica', v: 12 },
+    { n: 'Mão de obra direta (2 oper.)', v: 19 },
+    { n: 'Tampa injetada', v: 35 },
+    { n: 'Flange + acessórios', v: 12 },
+    { n: 'Embalagem', v: 6 },
+    { n: 'Desmoldante', v: 3 },
+    { n: 'Refugo / perdas (3%)', v: 10 },
+    { n: 'Manutenção rateio', v: 20 },
+  ],
+};
+
+let INVEST = [
+  { n: 'Máquina rotomoldagem até 5.000 Litros', v: 150000 },
+  { n: 'Molde caixa 2.000L / 3.000L / 5.000L (base + 2 anéis)', v: 58000 },
+  { n: 'Molde lixeira 1.000 Litros', v: 35000 },
+  { n: 'Setup, instalação, ajustes', v: 7000 },
+  { n: 'Ponte rolante de movimentação', v: 50000 },
+  { n: 'Material inicial (PE + pigmento)', v: 40000 },
+  { n: 'Caminhão para entregas', v: 70000 },
+];
+
+let FIXED = [
+  { n: 'Pró-labore / custo pessoal', v: 20000 },
+  { n: 'Aluguel galpão (~300m²)', v: 3500 },
+  { n: 'Energia elétrica geral', v: 1200 },
+  { n: 'Manutenção reserva', v: 1500 },
+  { n: 'Seguros, licenças, AVCB', v: 800 },
+  { n: 'Água, telefone, limpeza', v: 1000 },
+];
+
+// Boost: extra production capacity entries
+let BOOST = [];
+const BASE_PPD = 16; // base pieces/day (1 shift, 30min cycle, 8h)
+
+const ART = { 5000: 2040, 3000: 1020, 2000: 530 };
+const MIX = { 5000: 2040/3590, 3000: 1020/3590, 2000: 530/3590 };
+const PE_KG = { 5000: 82, 3000: 52, 2000: 32 };
+
+let chartBE, chartSim, chartPB;
+
+// ═══════════════════════════════════════════════
+// PURE HELPERS
+// ═══════════════════════════════════════════════
+function totalCost(k) {
+  return COST_ITEMS[k].reduce((s, i) => s + i.v, 0);
+}
+function calcDeductions(p) {
+  const com = Math.round(p * 0.16);
+  const imp = Math.round(p * 0.09);
+  const ads = Math.round(p * 0.03);
+  return { com, imp, ads, net: p - com - imp - ads };
+}
+function calcProd(k) {
+  const p = PRICES[k], cost = totalCost(k);
+  const d = calcDeductions(p);
+  const mc = d.net - cost;
+  return {
+    p, cost, mc, net: d.net,
+    com: d.com, imp: d.imp, ads: d.ads,
+    pctCost: Math.round(cost / p * 100),
+    pctNet: Math.round(d.net / p * 100),
+    pctMC: (mc / p * 100).toFixed(1),
+  };
+}
+function calcMCAvg() {
+  return Math.round(Object.keys(MIX).reduce((s, k) => s + MIX[k] * calcProd(+k).mc, 0));
+}
+function getInv() { return INVEST.reduce((s, i) => s + i.v, 0); }
+function getFix() { return FIXED.reduce((s, i) => s + i.v, 0); }
+function getBoostCost() { return BOOST.reduce((s, b) => s + b.v, 0); }
+function getBoostPpd() { return BOOST.reduce((s, b) => s + (b.ppd || 0), 0); }
+function getTotalPpd() { return BASE_PPD + getBoostPpd(); }
+function getTotalCapMonth() { return getTotalPpd() * 22; }
+function getTotalFixed() { return getFix() + getBoostCost(); }
+
+// ═══════════════════════════════════════════════
+// FORMAT — always exact for currency
+// ═══════════════════════════════════════════════
+function fR(n) {
+  // Always exact R$ value
+  const abs = Math.abs(Math.round(n));
+  const s = abs.toLocaleString('pt-BR');
+  return (n < 0 ? '-' : '') + 'R$' + s;
+}
+function fRshort(n) {
+  // Short for axis labels only
+  if (Math.abs(n) >= 1e6) return 'R$' + (n/1e6).toFixed(1).replace('.',',') + 'M';
+  if (Math.abs(n) >= 1e3) return 'R$' + Math.round(n/1e3) + 'k';
+  return 'R$' + Math.round(n);
+}
+function fN(n) { return Math.round(n).toLocaleString('pt-BR'); }
+
+// ═══════════════════════════════════════════════
+// RENDER PRODUCT ROWS
+// ═══════════════════════════════════════════════
+function renderProducts() {
+  const cfg = [
+    { k: 5000, cls: 'p5', col: 'tb', lbl: 'Caixa d\'Água 5.000 Litros', ml: 'https://www.mercadolivre.com.br/caixa-dagua-5000-polietileno-sem-juros/up/MLBU1757906770', ref: 'ArtCaixa R$2.350' },
+    { k: 3000, cls: 'p3', col: 'tp', lbl: 'Caixa d\'Água 3.000 Litros Vertical', ml: 'https://www.mercadolivre.com.br/tanque-de-agua-artcaixa-box-vertical-polietileno-3000l/p/MLB38130061', ref: 'ArtCaixa R$1.564' },
+    { k: 2000, cls: 'p2', col: 'tt2', lbl: 'Caixa d\'Água 2.000 Litros Vertical', ml: 'https://www.mercadolivre.com.br/tanque-de-agua-artcaixa-box-vertical-polietileno-2000l-azul/p/MLB15268143', ref: 'ArtCaixa R$1.125' },
+  ];
+  document.getElementById('prodRows').innerHTML = cfg.map(({ k, cls, lbl, ml, ref }) => {
+    const d = calcProd(k);
+    const mc_ok = d.mc > 0;
+    const short = k === 5000 ? '5.000L' : k === 3000 ? '3.000L' : '2.000L';
+    return `<div class="prod">
+      <div class="pi ${cls}">${short}</div>
+      <div>
+        <div class="pn">${lbl}</div>
+        <div class="pd"><strong>${PE_KG[k]} kg PE</strong> · Ciclo 30min · ${getTotalPpd()} pçs/dia · ${ref} · <a href="${ml}" style="color:var(--accent)" target="_blank">ML ↗</a></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.6rem;color:var(--muted)">R$</span>
+          <input type="number" class="inp-price" value="${d.p}" min="100" step="50"
+            onchange="updatePrice(${k}, this.value)"
+            onfocus="this.select()"
+            title="Clique para editar o preço de venda">
+        </div>
+        <div style="font-size:.62rem;color:${mc_ok ? 'var(--green)' : 'var(--red)'}">
+          MC ${fR(d.mc)} (${d.pctMC}%)
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CASCATA CARDS
+// ═══════════════════════════════════════════════
+function renderCascatas() {
+  const cfg = [
+    { k: 5000, cls: 'bb', kg: '82 kg', lbl: '5.000 Litros' },
+    { k: 3000, cls: 'bp', kg: '52 kg', lbl: '3.000 Litros' },
+    { k: 2000, cls: 'bg', kg: '32 kg', lbl: '2.000 Litros' },
+  ];
+  document.getElementById('cascCards').innerHTML = cfg.map(({ k, cls, kg, lbl }) => {
+    const d = calcProd(k);
+    return `<div class="c" style="margin-bottom:0">
+      <div class="ct"><h3>Cascata ${lbl}</h3><span class="badge ${cls}">${kg}</span></div>
+      <table class="tbl"><thead><tr><th>Etapa</th><th style="text-align:right">Valor</th><th style="text-align:right">%</th></tr></thead><tbody>
+        <tr><td>Preço ML</td><td style="text-align:right" class="mono fw">${fR(d.p)}</td><td style="text-align:right">100%</td></tr>
+        <tr class="tre"><td>− Comissão ML 16%</td><td style="text-align:right" class="mono">-${fR(d.com)}</td><td style="text-align:right">16%</td></tr>
+        <tr class="tre"><td>− Impostos 9%</td><td style="text-align:right" class="mono">-${fR(d.imp)}</td><td style="text-align:right">9%</td></tr>
+        <tr class="tre"><td>− ADS 3%</td><td style="text-align:right" class="mono">-${fR(d.ads)}</td><td style="text-align:right">3%</td></tr>
+        <tr class="tt"><td>= Receita líquida</td><td style="text-align:right" class="mono fw">${fR(d.net)}</td><td style="text-align:right">${d.pctNet}%</td></tr>
+        <tr class="tre"><td>− Custo direto</td><td style="text-align:right" class="mono">-${fR(d.cost)}</td><td style="text-align:right">${d.pctCost}%</td></tr>
+        <tr class="${d.mc >= 0 ? 'tg' : 'tre'}"><td><strong>= MC unitária</strong></td><td style="text-align:right" class="mono fw">${fR(d.mc)}</td><td style="text-align:right fw">${d.pctMC}%</td></tr>
+      </tbody></table>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER COST EDITOR
+// ═══════════════════════════════════════════════
+function renderCostEditor() {
+  const prods = [
+    { k: 5000, lbl: 'Caixa 5.000 Litros', cls: 'bb' },
+    { k: 3000, lbl: 'Caixa 3.000 Litros', cls: 'bp' },
+    { k: 2000, lbl: 'Caixa 2.000 Litros', cls: 'bg' },
+  ];
+  document.getElementById('costEditorWrap').innerHTML = prods.map(({ k, lbl, cls }) => {
+    const items = COST_ITEMS[k];
+    const cost = totalCost(k);
+    const d = calcProd(k);
+    return `<div class="c" style="margin-bottom:0">
+      <div class="ct"><h3>${lbl}</h3><span class="badge ${cls}">Custo ${fR(cost)}</span></div>
+      <table class="cost-ed">
+        <thead><tr><th>Componente</th><th style="text-align:right;color:var(--amber)">R$ unit.</th><th style="width:24px"></th></tr></thead>
+        <tbody id="costRows_${k}">
+          ${items.map((it, i) => `
+          <tr>
+            <td><input class="inp-label" value="${it.n}" onchange="COST_ITEMS[${k}][${i}].n=this.value" style="width:100%"></td>
+            <td style="text-align:right"><input type="number" class="inp-cost" value="${it.v}" step="1" min="0"
+              onchange="COST_ITEMS[${k}][${i}].v=+this.value;rc()"
+              onfocus="this.select()"></td>
+            <td><button class="bx" onclick="COST_ITEMS[${k}].splice(${i},1);renderCostEditor();rc()" title="Remover">✕</button></td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot>
+          <tr class="tt">
+            <td><strong>Custo direto total</strong></td>
+            <td style="text-align:right" class="mono fw" id="ctot_${k}">${fR(cost)}</td>
+            <td></td>
+          </tr>
+          <tr class="tg">
+            <td><strong>MC unitária</strong></td>
+            <td style="text-align:right" class="mono fw" id="cmc_${k}">${fR(d.mc)}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+      <button class="badd" style="margin-top:.35rem" onclick="COST_ITEMS[${k}].push({n:'Novo componente',v:0});renderCostEditor();rc()">+ Componente</button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// INVEST / FIXED / BOOST EDITORS
+// ═══════════════════════════════════════════════
+function rI() {
+  document.getElementById('iL').innerHTML = INVEST.map((it, i) =>
+    `<div class="ir">
+      <input class="inp-label" value="${it.n}" onchange="INVEST[${i}].n=this.value">
+      <input type="number" class="inp" value="${it.v}" onchange="INVEST[${i}].v=+this.value;rc()" onfocus="this.select()">
+      <button class="bx" onclick="INVEST.splice(${i},1);rI();rc()">✕</button>
+    </div>`).join('');
+  rc();
+}
+function aI() { INVEST.push({ n: 'Novo item', v: 0 }); rI(); }
+
+function rF() {
+  document.getElementById('fL').innerHTML = FIXED.map((it, i) =>
+    `<div class="ir">
+      <input class="inp-label" value="${it.n}" onchange="FIXED[${i}].n=this.value">
+      <input type="number" class="inp" value="${it.v}" onchange="FIXED[${i}].v=+this.value;rc()" onfocus="this.select()">
+      <button class="bx" onclick="FIXED.splice(${i},1);rF();rc()">✕</button>
+    </div>`).join('');
+  rc();
+}
+function aF() { FIXED.push({ n: 'Novo custo fixo', v: 0 }); rF(); }
+
+function renderBoost() {
+  const el = document.getElementById('boostList');
+  el.innerHTML = BOOST.map((b, i) =>
+    `<div class="boost-row">
+      <input class="inp-label" value="${b.n}" onchange="BOOST[${i}].n=this.value" style="font-size:.65rem">
+      <div style="display:flex;gap:4px">
+        <input type="number" class="inp" value="${b.v}" placeholder="R$/mês" title="Custo mensal (R$)"
+          onchange="BOOST[${i}].v=+this.value;rc()" onfocus="this.select()" style="width:70px;font-size:.65rem">
+        <input type="number" class="inp" value="${b.ppd||0}" placeholder="+pçs/dia" title="Peças/dia adicionais"
+          onchange="BOOST[${i}].ppd=+this.value;rc()" onfocus="this.select()" style="width:52px;font-size:.65rem">
+      </div>
+      <button class="bx" onclick="BOOST.splice(${i},1);renderBoost();rc()">✕</button>
+    </div>`).join('');
+  document.getElementById('boostPpd').textContent = getTotalPpd();
+}
+function addBoost() {
+  BOOST.push({ n: 'Turno extra / colaborador', v: 4500, ppd: 8 });
+  renderBoost(); rc();
+}
+
+// ═══════════════════════════════════════════════
+// UPDATE PRICE (from product row inputs)
+// ═══════════════════════════════════════════════
+function updatePrice(k, val) {
+  const v = Math.max(100, Math.round(+val) || PRICES[k]);
+  PRICES[k] = v;
+  renderProducts();
+  renderCascatas();
+  updateCostTotals();
+  rc();
+}
+
+function updateCostTotals() {
+  [5000, 3000, 2000].forEach(k => {
+    const cost = totalCost(k);
+    const d = calcProd(k);
+    const ct = document.getElementById('ctot_' + k);
+    const cm = document.getElementById('cmc_' + k);
+    if (ct) ct.textContent = fR(cost);
+    if (cm) {
+      cm.textContent = fR(d.mc);
+      cm.style.color = d.mc >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SCENARIOS
+// ═══════════════════════════════════════════════
+function rSc() {
+  const iv = getInv(), fx = getTotalFixed(), cap = getTotalCapMonth();
+  const el = document.getElementById('sC');
+  const cfgs = [
+    { pct: 30, cls: 's30', col: 'ta', lbl: '🔸 Conservador' },
+    { pct: 50, cls: 's50', col: 'tb', lbl: '🔷 Realista' },
+    { pct: 70, cls: 's70', col: 'tc', lbl: '🔹 Otimista' },
+  ];
+  el.innerHTML = cfgs.map(c => {
+    const u5 = Math.round(ART[5000] / 12 * c.pct / 100);
+    const u3 = Math.round(ART[3000] / 12 * c.pct / 100);
+    const u2 = Math.round(ART[2000] / 12 * c.pct / 100);
+    const tot = u5 + u3 + u2;
+    const d5 = calcProd(5000), d3 = calcProd(3000), d2 = calcProd(2000);
+    const fat = u5 * d5.p + u3 * d3.p + u2 * d2.p;
+    const rl = u5 * d5.net + u3 * d3.net + u2 * d2.net;
+    const cv = u5 * totalCost(5000) + u3 * totalCost(3000) + u2 * totalCost(2000);
+    const mc = rl - cv;
+    const hrs = tot * 0.5;
+    const lucro = mc - fx;
+    const pb = lucro > 0 ? Math.ceil(iv / lucro) : 999;
+    const capOk = tot <= cap;
+    return `<div class="sc ${c.cls}">
+      <div class="st ${c.col}">${c.lbl} — ${c.pct}%</div>
+      <div class="sb ${c.col}">${fR(lucro)}<span style="font-size:.62rem;color:var(--muted)"> lucro/mês</span></div>
+      <div class="si"><span>5.000 Litros</span><span class="mono">${u5} un × ${fR(d5.p)}</span></div>
+      <div class="si"><span>3.000 Litros</span><span class="mono">${u3} un × ${fR(d3.p)}</span></div>
+      <div class="si"><span>2.000 Litros</span><span class="mono">${u2} un × ${fR(d2.p)}</span></div>
+      <div class="si fw"><span>Total unidades</span><span class="mono">${tot} un</span></div>
+      <div class="si"><span>Horas necessárias</span><span class="mono ${!capOk ? 'tr2' : ''}">${hrs.toFixed(0)}h ${!capOk ? '⚠️' : '/ 176h'}</span></div>
+      <div class="si"><span>Faturamento bruto</span><span class="mono">${fR(fat)}</span></div>
+      <div class="si"><span>Receita líquida</span><span class="mono fw">${fR(rl)}</span></div>
+      <div class="si"><span>Custo variável</span><span class="mono">-${fR(cv)}</span></div>
+      <div class="si"><span>Margem contrib.</span><span class="mono fw ${c.col}">${fR(mc)}</span></div>
+      <div class="si"><span>Custos fixos</span><span class="mono">-${fR(fx)}</span></div>
+      <div class="si fw" style="border-top:1px solid rgba(255,255,255,.05);padding-top:.3rem">
+        <span>Lucro operacional</span>
+        <span class="mono ${lucro >= 0 ? 'tc' : 'tr2'}">${fR(lucro)}/mês</span>
+      </div>
+      <div class="si"><span>Lucro anual</span><span class="mono fw">${fR(lucro * 12)}</span></div>
+      <div class="si"><span>Payback</span><span class="mono fw ${pb <= 6 ? 'tc' : pb <= 18 ? 'ta' : 'tr2'}">${pb < 999 ? pb + ' meses' : 'N/A'}</span></div>
+    </div>`;
+  }).join('');
+
+  // Update capacity alert
+  document.getElementById('capAlert').textContent =
+    `Ciclo 30min: capacidade total ${getTotalPpd()} pçs/dia × 22 dias = ${getTotalCapMonth()} pçs/mês.`;
+}
+
+// ═══════════════════════════════════════════════
+// BREAK-EVEN
+// ═══════════════════════════════════════════════
+function rBE() {
+  const fx = getTotalFixed(), mc_avg = calcMCAvg(), iv = getInv();
+  const base = FIXED.filter(i => !i.n.toLowerCase().includes('pró') && !i.n.toLowerCase().includes('pessoal')).reduce((s, i) => s + i.v, 0);
+  const sc = [
+    { l: 'Sem pró-labore (operação pura)', v: base + getBoostCost() },
+    { l: 'Seu cenário atual', v: fx },
+    { l: 'Conservador (+R$8.000 reserva)', v: fx + 8000 },
+  ];
+  const tb = document.querySelector('#bT tbody');
+  tb.innerHTML = sc.map((r, i) => {
+    const be = Math.ceil(r.v / mc_avg);
+    const cl = i === 1 ? 'tt' : '';
+    return `<tr class="${cl}">
+      <td>${r.l}</td>
+      <td style="text-align:right" class="mono">${fR(r.v)}</td>
+      <td style="text-align:right" class="mono fw ${be <= 30 ? 'tc' : be <= 80 ? 'ta' : 'tr2'}">${be} unidades/mês</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('kBE').textContent = Math.ceil(fx / mc_avg) + ' un';
+  document.getElementById('kMC').textContent = fR(mc_avg);
+  const d5 = calcProd(5000), d3 = calcProd(3000), d2 = calcProd(2000);
+  document.getElementById('kMCSub').textContent = `5.000L ${fR(d5.mc)} · 3.000L ${fR(d3.mc)} · 2.000L ${fR(d2.mc)}`;
+  document.getElementById('beNote').textContent =
+    `MC ponderada: 56,8%×${fR(d5.mc)} + 28,4%×${fR(d3.mc)} + 14,8%×${fR(d2.mc)} = ${fR(mc_avg)}/unidade`;
+  if (chartBE) {
+    chartBE.data.datasets[0].data = Array.from({ length: 101 }, (_, i) => Math.round(i * mc_avg));
+    chartBE.data.datasets[1].data = Array(101).fill(fx);
+    chartBE.update('none');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SIMULATOR
+// ═══════════════════════════════════════════════
+function sim() {
+  const u5 = +document.getElementById('s5').value;
+  const u3 = +document.getElementById('s3').value;
+  const u2 = +document.getElementById('s2').value;
+  const peAdj = +document.getElementById('sP').value - 10.5;
+  document.getElementById('o5').textContent = u5;
+  document.getElementById('o3').textContent = u3;
+  document.getElementById('o2').textContent = u2;
+  document.getElementById('oP').textContent = 'R$' + (+document.getElementById('sP').value).toFixed(1).replace('.', ',');
+
+  // Adjust PE cost
+  const c5 = totalCost(5000) + peAdj * PE_KG[5000];
+  const c3 = totalCost(3000) + peAdj * PE_KG[3000];
+  const c2 = totalCost(2000) + peAdj * PE_KG[2000];
+
+  const d5 = calcProd(5000), d3 = calcProd(3000), d2 = calcProd(2000);
+  const iv = getInv(), fx = getTotalFixed();
+  const tot = u5 + u3 + u2;
+  const hrs = tot * 0.5;
+  const cap = getTotalCapMonth();
+
+  // Use ACTUAL PRICES from state (not hardcoded)
+  const fat = u5 * d5.p + u3 * d3.p + u2 * d2.p;
+  const rl = u5 * d5.net + u3 * d3.net + u2 * d2.net;
+  const cv = u5 * c5 + u3 * c3 + u2 * c2;
+  const mcTotal = rl - cv;
+  const lucro = mcTotal - fx;
+  const marg = fat > 0 ? lucro / fat * 100 : 0;
+  const pb = lucro > 0 ? Math.ceil(iv / lucro) : 999;
+
+  document.getElementById('simTot').textContent = tot;
+  document.getElementById('simHrs').textContent = hrs.toFixed(1) + 'h';
+  const capEl = document.getElementById('simCap');
+  capEl.textContent = cap + ' pçs/mês';
+  capEl.style.color = tot > cap ? 'var(--red)' : 'var(--green)';
+
+  document.getElementById('xF').textContent = fR(fat);
+  document.getElementById('xR').textContent = fR(rl);
+  document.getElementById('xCV').textContent = '-' + fR(cv);
+  document.getElementById('xMC').textContent = fR(mcTotal);
+  document.getElementById('xFix').textContent = '-' + fR(fx);
+  const el = document.getElementById('xL');
+  el.textContent = fR(lucro);
+  el.style.color = lucro >= 0 ? 'var(--green)' : 'var(--red)';
+  const em = document.getElementById('xM');
+  em.textContent = marg.toFixed(1) + '%';
+  em.style.color = marg >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('xA').textContent = fR(lucro * 12);
+  const ep = document.getElementById('xPB');
+  ep.textContent = pb < 999 ? pb + ' meses' : 'N/A';
+  ep.style.color = pb <= 6 ? 'var(--green)' : pb <= 18 ? 'var(--amber)' : 'var(--red)';
+
+  // Update KPI payback
+  document.getElementById('kPB').textContent = pb < 999 ? pb + ' meses' : 'N/A';
+  document.getElementById('kPB').style.color = pb <= 6 ? 'var(--green)' : pb <= 18 ? 'var(--amber)' : 'var(--red)';
+
+  if (chartSim) {
+    chartSim.data.datasets[0].data = [rl, cv, fx, Math.max(lucro, 0)];
+    chartSim.data.datasets[0].backgroundColor = [
+      'rgba(59,130,246,.6)', 'rgba(239,68,68,.6)', 'rgba(245,158,11,.6)',
+      lucro >= 0 ? 'rgba(16,185,129,.6)' : 'rgba(239,68,68,.6)',
+    ];
+    chartSim.update('none');
+  }
+  if (chartPB) {
+    const d = []; let cm = -iv;
+    for (let i = 0; i <= 24; i++) { d.push(Math.round(cm)); cm += lucro; }
+    chartPB.data.datasets[0].data = d;
+    chartPB.data.datasets[0].pointBackgroundColor = d.map(v => v >= 0 ? '#10b981' : '#ef4444');
+    chartPB.update('none');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// MASTER RECALC — called whenever anything changes
+// ═══════════════════════════════════════════════
+function rc() {
+  const iv = getInv(), fx = getTotalFixed();
+  document.getElementById('iT').textContent = fR(iv);
+  document.getElementById('fT').textContent = fR(fx);
+  document.getElementById('kI').textContent = fR(iv);
+  document.getElementById('kF').textContent = fR(fx);
+  renderProducts();
+  renderCascatas();
+  updateCostTotals();
+  rSc();
+  rBE();
+  sim();
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  renderProducts();
+  renderCascatas();
+  renderCostEditor();
+  renderBoost();
+  rI();
+  rF();
+
+  // ArtCaixa chart
+  new Chart(document.getElementById('cA'), {
+    type: 'bar',
+    data: {
+      labels: ['5.000 Litros', '3.000 Litros', '2.000 Litros'],
+      datasets: [
+        { label: 'Un/ano', data: [2040, 1020, 530], backgroundColor: ['rgba(59,130,246,.5)', 'rgba(139,92,246,.5)', 'rgba(20,184,166,.5)'], borderRadius: 4, yAxisID: 'y' },
+        { label: 'Fat. (R$M)', data: [4.69, 1.59, 0.61], backgroundColor: ['rgba(59,130,246,.1)', 'rgba(139,92,246,.1)', 'rgba(20,184,166,.1)'], borderColor: ['#3b82f6', '#8b5cf6', '#14b8a6'], borderWidth: 2, borderRadius: 4, yAxisID: 'y2' },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#6e7a91', boxWidth: 8, font: { size: 9 } } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6e7a91', font: { size: 9 } } }, y: { grid: { color: 'rgba(26,36,56,.4)' }, ticks: { color: '#6e7a91', font: { size: 8 } } }, y2: { position: 'right', grid: { display: false }, ticks: { color: '#6e7a91', font: { size: 8 }, callback: v => 'R$' + v + 'M' } } } },
+  });
+
+  // BE chart
+  const fx0 = getTotalFixed(), mc0 = calcMCAvg();
+  chartBE = new Chart(document.getElementById('cB'), {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: 101 }, (_, i) => i),
+      datasets: [
+        { label: 'MC acumulada', data: Array.from({ length: 101 }, (_, i) => Math.round(i * mc0)), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .3, pointRadius: 0 },
+        { label: 'Custos fixos', data: Array(101).fill(fx0), borderColor: '#ef4444', borderDash: [4, 3], pointRadius: 0 },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#6e7a91', boxWidth: 8, font: { size: 9 } } } }, scales: { x: { title: { display: true, text: 'Unidades/mês', color: '#6e7a91', font: { size: 8 } }, grid: { display: false }, ticks: { color: '#6e7a91', font: { size: 8 }, callback: (v, i) => i % 20 === 0 ? i : '' } }, y: { grid: { color: 'rgba(26,36,56,.4)' }, ticks: { color: '#6e7a91', font: { size: 8 }, callback: v => fRshort(v) } } } },
+  });
+
+  // Sim chart
+  chartSim = new Chart(document.getElementById('cS'), {
+    type: 'bar',
+    data: { labels: ['Rec.líquida', 'Custo var.', 'Fixos', 'Lucro'], datasets: [{ data: [1, 1, 1, 1], backgroundColor: ['rgba(59,130,246,.6)', 'rgba(239,68,68,.6)', 'rgba(245,158,11,.6)', 'rgba(16,185,129,.6)'], borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(26,36,56,.4)' }, ticks: { color: '#6e7a91', font: { size: 8 }, callback: v => fRshort(v) } }, y: { grid: { display: false }, ticks: { color: '#6e7a91', font: { size: 9 } } } } },
+  });
+
+  // Payback chart
+  const iv0 = getInv(); const pb0 = []; let cm0 = -iv0;
+  for (let i = 0; i <= 24; i++) { pb0.push(Math.round(cm0)); cm0 += 29000; }
+  chartPB = new Chart(document.getElementById('cP'), {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: 25 }, (_, i) => i === 0 ? 'Inv.' : 'Mês ' + i),
+      datasets: [
+        { label: 'Retorno acumulado', data: pb0, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.04)', fill: true, tension: .3, pointBackgroundColor: pb0.map(v => v >= 0 ? '#10b981' : '#ef4444'), pointRadius: 4, pointBorderWidth: 1.5, pointBorderColor: '#070a11' },
+        { label: 'Zero', data: Array(25).fill(0), borderColor: 'rgba(255,255,255,.07)', borderDash: [4, 3], pointRadius: 0 },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#6e7a91', boxWidth: 8, font: { size: 9 } } } }, scales: { x: { grid: { display: false }, ticks: { color: '#6e7a91', font: { size: 9 } } }, y: { grid: { color: 'rgba(26,36,56,.4)' }, ticks: { color: '#6e7a91', font: { size: 8 }, callback: v => { if (Math.abs(v) >= 1e6) return 'R$' + (v / 1e6).toFixed(1) + 'M'; return 'R$' + Math.round(v / 1000) + 'k'; } } } } },
+  });
+
+  rc();
+});
+</script>
+</body>
+</html>

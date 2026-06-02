@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard de Frete – Caixas d'Água</title>
+<style>
+:root{
+  --navy:#0f2744;--blue:#1d4ed8;--teal:#0891b2;--green:#15803d;
+  --amber:#b45309;--red:#b91c1c;--purple:#6d28d9;
+  --bg:#eef2f7;--panel:#fff;--border:#d4dbe8;--text:#1a2535;--muted:#64748b;
+  --r:10px;--sh:0 2px 14px rgba(0,0,0,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* HEADER */
+header{background:linear-gradient(130deg,#0c2240 0%,#1a3a5c 100%);color:#fff;padding:16px 28px;display:flex;align-items:center;gap:16px}
+.hd-icon{font-size:34px}
+.hd-title{font-size:21px;font-weight:800;letter-spacing:-.4px}
+.hd-sub{font-size:12px;opacity:.65;margin-top:2px}
+.hd-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+/* ORIGIN SELECTOR */
+.origin-bar{background:#1a3a5c;border-top:1px solid rgba(255,255,255,.12);padding:10px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.origin-bar label{color:rgba(255,255,255,.7);font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.origin-btn{padding:7px 18px;border-radius:20px;border:2px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.origin-btn:hover{border-color:rgba(255,255,255,.5);color:#fff}
+.origin-btn.active{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.4)}
+.origin-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:11px;padding:4px 12px;border-radius:12px}
+
+/* TABS */
+.tabs{display:flex;background:#162f52;padding:0 28px;gap:2px;border-bottom:1px solid rgba(255,255,255,.1)}
+.tab{padding:11px 20px;color:rgba(255,255,255,.55);cursor:pointer;font-size:13px;font-weight:600;border-bottom:3px solid transparent;transition:all .2s}
+.tab:hover{color:#fff}
+.tab.active{color:#fff;border-bottom-color:#38bdf8}
+
+/* PAGES */
+.page{display:none;padding:22px 28px;max-width:1280px;margin:0 auto}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--panel);border-radius:var(--r);box-shadow:var(--sh);padding:20px;border:1px solid var(--border);margin-bottom:18px}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* FORM */
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.fi input,.fi select{padding:11px 13px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;color:var(--text);background:#fff;outline:none;transition:border-color .2s}
+.fi input:focus,.fi select:focus{border-color:var(--blue)}
+
+.btn-calc{background:linear-gradient(135deg,#1d4ed8 0%,#0891b2 100%);color:#fff;border:none;padding:14px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;width:100%;margin-top:10px;letter-spacing:.5px;box-shadow:0 4px 14px rgba(29,78,216,.35);transition:transform .1s,box-shadow .1s}
+.btn-calc:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(29,78,216,.45)}
+
+/* RESULT */
+.result-hero{border-radius:var(--r);padding:22px;margin-bottom:16px;border:2px solid}
+.rh-atende{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#16a34a}
+.rh-nao{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#dc2626}
+.rh-consulta{background:linear-gradient(135deg,#fef9c3,#fef08a);border-color:#d97706}
+.rh-retirada{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#2563eb}
+.r-status{font-size:20px;font-weight:800;margin-bottom:4px}
+.r-frete{font-size:46px;font-weight:900;letter-spacing:-1px;margin:6px 0}
+.r-prazo{font-size:14px;font-weight:600;opacity:.85}
+
+/* METRICS */
+.metric{background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border)}
+.m-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.m-value{font-size:20px;font-weight:800;color:var(--navy)}
+.m-sub{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* BREAKDOWN */
+.breakdown{background:var(--bg);border-radius:8px;padding:14px;border:1px solid var(--border)}
+.brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--border);font-size:12px}
+.brow:last-child{border:none;font-weight:700;font-size:13px;padding-top:8px}
+.brow.pos .v{color:var(--green);font-weight:700}
+.brow.neg .v{color:var(--red);font-weight:700}
+
+/* ALERT BOX */
+.agrup{background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:13px 16px;margin-top:12px;font-size:12px;line-height:1.75}
+.agrup h4{font-size:11px;font-weight:800;color:#1d4ed8;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+.alert{border-radius:8px;padding:11px 14px;font-size:12px;margin-top:10px}
+.al-w{background:#fef9c3;border-left:4px solid #d97706;color:#78350f}
+.al-i{background:#eff6ff;border-left:4px solid #2563eb;color:#1e3a5f}
+.al-s{background:#dcfce7;border-left:4px solid #16a34a;color:#14532d}
+.al-r{background:#fee2e2;border-left:4px solid #dc2626;color:#7f1d1d}
+
+/* BADGES */
+.zb{display:inline-block;padding:3px 10px;border-radius:16px;font-size:11px;font-weight:700;margin-bottom:6px}
+.bz1{background:#dcfce7;color:#15803d}
+.bz2{background:#dbeafe;color:#1d4ed8}
+.bz3{background:#fef9c3;color:#92400e}
+.bz4{background:#fee2e2;color:#991b1b}
+.bz5{background:#f3e8ff;color:#6b21a8}
+.bzna{background:#f1f5f9;color:#475569}
+.bzc{background:#fef3c7;color:#92400e}
+
+/* TABLES */
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--navy);color:#fff;padding:9px 11px;text-align:left;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+tbody tr:nth-child(even){background:#f8fafc}
+tbody tr:hover{background:#eff6ff}
+tbody td{padding:7px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+.badge{display:inline-block;padding:2px 8px;border-radius:11px;font-size:10px;font-weight:700}
+.bg{background:#dcfce7;color:#15803d}
+.br{background:#fee2e2;color:#991b1b}
+.ba{background:#fef9c3;color:#92400e}
+.bb{background:#dbeafe;color:#1d4ed8}
+.bgr{background:#f1f5f9;color:#475569}
+
+/* ORIGIN COMPARISON */
+.cmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.cmp-card{border-radius:var(--r);padding:16px;border:2px solid;text-align:center}
+.cmp-jard{background:#f0fdf4;border-color:#86efac}
+.cmp-cotia{background:#eff6ff;border-color:#93c5fd}
+.cmp-spc{background:#fef9c3;border-color:#fde68a}
+.cmp-title{font-size:13px;font-weight:800;margin-bottom:10px}
+.cmp-item{font-size:11px;line-height:1.9;text-align:left}
+
+/* PROJ */
+.pcard{border-radius:var(--r);padding:18px;border:2px solid;text-align:center}
+.pc-b{background:#eff6ff;border-color:#93c5fd}
+.pc-m{background:#fef9c3;border-color:#fbbf24}
+.pc-a{background:#dcfce7;border-color:#86efac}
+.pn{font-size:30px;font-weight:900;letter-spacing:-1px}
+.pl{font-size:11px;color:var(--muted);margin:2px 0 10px}
+.pd{font-size:11px;text-align:left;border-top:1px dashed rgba(0,0,0,.1);padding-top:8px;line-height:1.85}
+
+/* SETTINGS */
+.sg{display:flex;flex-direction:column;gap:5px}
+.sg label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.sg input{padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-weight:600;color:var(--text);outline:none;transition:border-color .2s}
+.sg input:focus{border-color:var(--blue)}
+.btns{background:#16a34a;color:#fff;border:none;padding:12px 26px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+.smsg{color:#16a34a;font-weight:700;font-size:12px;display:none;margin-left:10px}
+.sh2{font-size:15px;font-weight:800;color:var(--navy);margin:22px 0 12px;border-left:4px solid var(--blue);padding-left:9px}
+
+@media(max-width:720px){.grid2,.grid3,.grid4,.cmp-grid,.origin-bar{grid-template-columns:1fr;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-icon">🚚</div>
+  <div>
+    <div class="hd-title">Dashboard de Frete – Caixas d'Água</div>
+    <div class="hd-sub">Ferramenta interna · Use apenas para consulta operacional</div>
+  </div>
+  <div class="hd-right">
+    <div class="origin-badge" id="activeBadge">📍 Jardinópolis/SP</div>
+  </div>
+</header>
+
+<!-- ORIGIN SELECTOR BAR -->
+<div class="origin-bar">
+  <label>📍 Origem da entrega:</label>
+  <button class="origin-btn active" id="ob-jardinopolis" onclick="setOrigin('jardinopolis')">
+    🏭 Jardinópolis/SP <small>(padrão)</small>
+  </button>
+  <button class="origin-btn" id="ob-cotia" onclick="setOrigin('cotia')">
+    🏢 Cotia/SP
+  </button>
+  <button class="origin-btn" id="ob-sp_capital" onclick="setOrigin('sp_capital')">
+    🌆 São Paulo Capital
+  </button>
+  <span style="color:rgba(255,255,255,.4);font-size:11px;margin-left:8px" id="originDesc">
+    Centro de distribuição principal · ~30km de Ribeirão Preto · Próximo ao Sul de MG e Triângulo MG
+  </span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('calc',this)">🔍 Calcular Frete</div>
+  <div class="tab" onclick="switchTab('tabela',this)">📋 Tabela por Origem</div>
+  <div class="tab" onclick="switchTab('comparacao',this)">🗺️ Comparar Origens</div>
+  <div class="tab" onclick="switchTab('projecao',this)">📈 Projeção de Km</div>
+  <div class="tab" onclick="switchTab('config',this)">⚙️ Configurações</div>
+</div>
+
+<!-- ══ CALCULAR FRETE ══ -->
+<div class="page active" id="page-calc">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Consultar Frete por CEP</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="fi"><label>CEP do Cliente</label><input type="text" id="cepInput" placeholder="00000-000" maxlength="9" oninput="fmtCep(this)" onkeydown="if(event.key==='Enter')calc()"></div>
+        <div class="fi"><label>Produto</label>
+          <select id="prodInput">
+            <option value="2000">Caixa d'Água 2.000L</option>
+            <option value="3000">Caixa d'Água 3.000L</option>
+            <option value="5000" selected>Caixa d'Água 5.000L</option>
+          </select>
+        </div>
+        <div class="fi"><label>Quantidade</label><input type="number" id="qtdInput" value="1" min="1" max="10"></div>
+        <div class="fi"><label>Cidade (opcional)</label><input type="text" id="cidInput" placeholder="Ex: Ribeirão Preto"></div>
+      </div>
+      <button class="btn-calc" onclick="calc()">CALCULAR FRETE →</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Painel de Operação Atual</div>
+      <div class="grid4" style="margin-bottom:10px">
+        <div class="metric"><div class="m-label">Origem</div><div class="m-value" style="font-size:13px" id="inf-base">Jardinópolis</div></div>
+        <div class="metric"><div class="m-label">Custo/km</div><div class="m-value" style="font-size:13px" id="inf-ckm">R$ 2,22</div></div>
+        <div class="metric"><div class="m-label">Diesel</div><div class="m-value" style="font-size:13px" id="inf-die">R$6,50/L</div></div>
+        <div class="metric"><div class="m-label">Consumo</div><div class="m-value" style="font-size:13px" id="inf-con">5,5km/L</div></div>
+      </div>
+      <div class="alert al-i" id="originHint" style="font-size:12px">
+        🏭 <strong>Jardinópolis:</strong> Melhor cobertura de Ribeirão Preto, SJRP, Sul MG e Triângulo MG. Grande SP fica na Z3 daqui.
+      </div>
+    </div>
+  </div>
+
+  <div id="resultPanel" style="display:none">
+    <div id="resultHero" class="result-hero rh-atende">
+      <div id="zBadge"></div>
+      <div class="r-status" id="rStatus"></div>
+      <div class="r-frete" id="rFrete"></div>
+      <div class="r-prazo" id="rPrazo"></div>
+    </div>
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="metric"><div class="m-label">Distância</div><div class="m-value" id="mDist">–</div><div class="m-sub">km (1 via)</div></div>
+      <div class="metric"><div class="m-label">Ida + Volta</div><div class="m-value" id="mIV">–</div><div class="m-sub">km totais</div></div>
+      <div class="metric"><div class="m-label">Custo Real Est.</div><div class="m-value" id="mCusto">–</div><div class="m-sub">por entrega</div></div>
+      <div class="metric"><div class="m-label">Lucro / Prejuízo</div><div class="m-value" id="mLucro">–</div><div class="m-sub" id="mLubroSub">no frete</div></div>
+      <div class="metric"><div class="m-label">Margem</div><div class="m-value" id="mMargem">–</div><div class="m-sub">% sobre frete</div></div>
+      <div class="metric"><div class="m-label">Frete Sugerido</div><div class="m-value" id="mSug">–</div><div class="m-sub">com sua margem</div></div>
+      <div class="metric"><div class="m-label">Origem Ativa</div><div class="m-value" style="font-size:12px" id="mOrig">–</div><div class="m-sub">base de saída</div></div>
+      <div class="metric"><div class="m-label">Frete Concorrente</div><div class="m-value" id="mConc">–</div><div class="m-sub">de Cotia/SP</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="card-title">Detalhamento de Custo</div><div class="breakdown" id="bkDiv"></div></div>
+      <div>
+        <div class="agrup" id="agrupDiv"><h4>🗺️ Rota e Agrupamento</h4><div id="agrupText"></div></div>
+        <div id="alertBox" class="alert" style="display:none;margin-top:10px"></div>
+        <div id="concBox" class="alert al-i" style="display:none;margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABELA POR ORIGEM ══ -->
+<div class="page" id="page-tabela">
+  <h2 class="sh2">Tabela de Fretes – <span id="tabelaOrigemLabel">Jardinópolis/SP</span></h2>
+  <div class="alert al-i" style="margin-bottom:14px;font-size:12px">
+    💡 Frete <strong>por viagem</strong>, independente do produto (2000L = 3000L = 5000L). Até 2 caixas = 1 frete. Selecione a origem na barra acima para ver fretes da base correspondente.
+  </div>
+  <div class="tw"><table id="freteTable">
+    <thead><tr><th>Zona</th><th>CEP Principal</th><th>Principais Cidades</th><th>Dist. Est.</th><th>Frete</th><th>Prazo</th><th>Tipo</th><th>Status</th></tr></thead>
+    <tbody id="freteTbody"></tbody>
+  </table></div>
+
+  <h2 class="sh2">Rotas Sugeridas – <span id="rotasOrigemLabel">Jardinópolis/SP</span></h2>
+  <div class="tw"><table id="rotasTable">
+    <thead><tr><th>Rota</th><th>Destinos</th><th>Dia Sugerido</th><th>Mín. Ent.</th><th>km I+V</th><th>Frete</th></tr></thead>
+    <tbody id="rotasTbody"></tbody>
+  </table></div>
+</div>
+
+<!-- ══ COMPARAR ORIGENS ══ -->
+<div class="page" id="page-comparacao">
+  <h2 class="sh2">Comparativo de Cobertura – Jardinópolis vs Cotia vs SP Capital</h2>
+  <div class="alert al-s" style="margin-bottom:14px;font-size:12px">
+    🏆 <strong>Jardinópolis vence em:</strong> Ribeirão Preto, SJRP, Catanduva, Bauru, Sul MG, Triângulo MG (mercados SEM cobertura do concorrente).<br>
+    🔵 <strong>Cotia/SP Capital vencem em:</strong> Grande SP, Santos/Litoral, Rio de Janeiro.
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Região</th><th>Estado</th><th>🏭 Jardinópolis (Padrão)</th><th>🏢 Cotia/SP</th><th>🌆 SP Capital</th><th>Vantagem</th></tr></thead>
+      <tbody id="cmpTbody"></tbody>
+    </table>
+  </div>
+  <h2 class="sh2">Resumo por Origem</h2>
+  <div class="cmp-grid">
+    <div class="cmp-card cmp-jard">
+      <div class="cmp-title">🏭 Jardinópolis/SP</div>
+      <div class="cmp-item">
+        ✅ Z1 exclusiva: Ribeirão Preto (~30km)<br>
+        ✅ Z1 exclusiva: SJRP (~155km)<br>
+        ✅ Z1 exclusiva: Sul MG Poços/Alfenas (~150km)<br>
+        ✅ Z2 exclusiva: Triângulo MG Uberaba (~180km)<br>
+        ✅ Z2: Bauru, Catanduva (~200-215km)<br>
+        ✅ Z2: Campinas (~210km)<br>
+        ⚠️ Z3: SP Capital/Grande SP (365km)<br>
+        ⚠️ Z4: Santos, Litoral SP (~470km)<br>
+        ❌ Rio de Janeiro (~760km – inviável)
+      </div>
+    </div>
+    <div class="cmp-card cmp-cotia">
+      <div class="cmp-title">🏢 Cotia/SP</div>
+      <div class="cmp-item">
+        ✅ Z1: Grande SP (~40km) – enorme mercado<br>
+        ✅ Z1: Campinas, SJC, Sorocaba (~75-95km)<br>
+        ✅ Z2: Santos/Litoral (~75km)<br>
+        ✅ Z2: Rio Claro, Pirassununga (~175km)<br>
+        ✅ Z3: Bauru (~305km)<br>
+        ✅ Z3: Sul MG Poços/Alfenas (~340km)<br>
+        ✅ Z4: Rio de Janeiro (~450km)<br>
+        ⚠️ Consulta: Ribeirão Preto (310km)<br>
+        ❌ Triângulo MG (~440km – não atende)<br>
+        ❌ SJRP (470km – Z5 R$800)
+      </div>
+    </div>
+    <div class="cmp-card cmp-spc">
+      <div class="cmp-title">🌆 São Paulo Capital</div>
+      <div class="cmp-item">
+        ✅ Z1: Grande SP metro (~20km)<br>
+        ✅ Z1: Campinas, SJC (~80km)<br>
+        ✅ Z1-Z2: Santos/Litoral (~70-130km)<br>
+        ✅ Z3: Sul MG (~355km)<br>
+        ✅ Z4: Rio de Janeiro (~440km)<br>
+        ⚠️ Consulta: Ribeirão Preto (~320km)<br>
+        ❌ Triângulo MG (~450km – não atende)<br>
+        ❌ SJRP (460km – Z5 R$800)<br>
+        📍 Muito similar a Cotia, custo mais alto
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROJEÇÃO ══ -->
+<div class="page" id="page-projecao">
+  <h2 class="sh2">Projeção de Km – <span id="projOrigemLabel">Jardinópolis/SP</span></h2>
+  <div class="grid3" id="projCards"></div>
+  <h2 class="sh2">Custo vs Receita por Cenário</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Cenário</th><th>km/mês</th><th>Custo km (R$2,22)</th><th>Diárias/Extras Est.</th><th>Custo Total</th><th>Receita Frete Est.</th><th>Resultado</th></tr></thead>
+    <tbody id="projTbody"></tbody>
+  </table></div>
+  <div class="alert al-w" style="margin-top:12px;font-size:12px">⚠️ Lembrete: Custo/km não inclui folha fixa (~R$6.500–8.000/mês). O frete deve cobrir variáveis + contribuir para fixos. Break-even real = ~35–45 entregas/mês (Jardinópolis) por ter custo fixo menor.</div>
+</div>
+
+<!-- ══ CONFIGURAÇÕES ══ -->
+<div class="page" id="page-config">
+  <h2 class="sh2">Configurações</h2>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">Origens (bases de distribuição)</div>
+    <div class="grid3">
+      <div class="sg"><label>CEP Jardinópolis (Padrão)</label><input id="cfg_cep_jard" value="14174-000"></div>
+      <div class="sg"><label>CEP Cotia</label><input id="cfg_cep_cotia" value="06700-000"></div>
+      <div class="sg"><label>CEP São Paulo Capital</label><input id="cfg_cep_sp" value="01310-100"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">Custos Operacionais</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div class="sg"><label>Diesel (R$/L)</label><input id="cfg_diesel" type="number" step="0.01" value="6.50"></div>
+      <div class="sg"><label>Consumo (km/L)</label><input id="cfg_consumo" type="number" step="0.1" value="5.5"></div>
+      <div class="sg"><label>Manutenção (R$/km)</label><input id="cfg_manut" type="number" step="0.01" value="0.30"></div>
+      <div class="sg"><label>Depreciação (R$/km)</label><input id="cfg_dep" type="number" step="0.01" value="0.20"></div>
+      <div class="sg"><label>Motorista (R$/mês)</label><input id="cfg_mot" type="number" value="4500"></div>
+      <div class="sg"><label>Ajudante (R$/mês)</label><input id="cfg_aju" type="number" value="2000"></div>
+      <div class="sg"><label>km Médios/mês</label><input id="cfg_km" type="number" value="10000"></div>
+      <div class="sg"><label>Pedágio médio/rota (R$)</label><input id="cfg_ped" type="number" value="80"></div>
+      <div class="sg"><label>Outros (R$/mês)</label><input id="cfg_out" type="number" value="500"></div>
+      <div class="sg"><label>Margem desejada (%)</label><input id="cfg_mg" type="number" value="20"></div>
+      <div class="sg"><label>Prazo padrão (dias)</label><input id="cfg_prazo" type="number" value="7"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">Entregas Médias por Viagem (ajusta custo por entrega)</div>
+    <div class="grid4">
+      <div class="sg"><label>Z1 (≤150km)</label><input id="cfg_ez1" type="number" value="4"></div>
+      <div class="sg"><label>Z2 (150-280km)</label><input id="cfg_ez2" type="number" value="3"></div>
+      <div class="sg"><label>Z3 (280-450km)</label><input id="cfg_ez3" type="number" value="3"></div>
+      <div class="sg"><label>Z4 (450-600km)</label><input id="cfg_ez4" type="number" value="4"></div>
+    </div>
+  </div>
+  <button class="btns" onclick="saveCfg()">💾 SALVAR</button>
+  <span class="smsg" id="saveMsg">✅ Salvo!</span>
+  <div class="alert al-i" style="margin-top:12px;font-size:12px">Configurações salvas no navegador (localStorage).</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════
+const DEFS={cep_jard:'14174-000',cep_cotia:'06700-000',cep_sp:'01310-100',
+  diesel:6.5,consumo:5.5,manut:0.3,dep:0.2,mot:4500,aju:2000,km:10000,ped:80,out:500,
+  mg:20,prazo:7,ez1:4,ez2:3,ez3:3,ez4:4};
+let C={...DEFS};
+let ORIG='jardinopolis';
+
+const ORIGIN_INFO={
+  jardinopolis:{name:'Jardinópolis/SP',short:'Jardinópolis',hint:'🏭 <strong>Jardinópolis:</strong> Melhor cobertura de Ribeirão Preto, SJRP, Sul MG e Triângulo MG. Grande SP fica na Z3 daqui (R$450).'},
+  cotia:{name:'Cotia/SP',short:'Cotia',hint:'🏢 <strong>Cotia:</strong> Melhor cobertura de Grande SP, Litoral e RJ. Mercados do interior SP e MG ficam longe.'},
+  sp_capital:{name:'São Paulo Capital',short:'SP Capital',hint:'🌆 <strong>SP Capital:</strong> Mesma cobertura de Cotia, ligeiramente mais próximo do centro SP. Custo de galpão mais alto.'}
+};
+
+const ORIGIN_DESCS={
+  jardinopolis:'Centro de distribuição principal · ~30km de Ribeirão Preto · Próximo ao Sul de MG e Triângulo MG',
+  cotia:'Centro de distribuição secundário · ~35km de SP Capital · Acesso rápido a Grande SP e RJ',
+  sp_capital:'Base na capital · 0km de SP Capital · Acesso a Grande SP e Litoral'
+};
+
+// ════════════════════════════════════════════════════════
+// CEP DISTANCE TABLE [cep_min, cep_max, region, state, d_jard, d_cotia, d_sp, notes_jard, notes_cotia]
+// ════════════════════════════════════════════════════════
+const CEP_TABLE=[
+  [1000,9999,'Grande SP (Capital, ABC, Guarulhos, Osasco, Barueri)','SP',365,40,20,'Z3 – longe de Jardinópolis','Z1 – mercado principal'],
+  [11000,11499,'Baixada Santista (Santos, Guarujá, Praia Grande)','SP',470,75,70,'Z4 – frete alto','Z2 – rota Anchieta'],
+  [11500,11999,'Litoral Sul SP / Mongaguá / Itanhaém / Registro','SP',490,185,185,'Z4 – frete alto','Z2 – rota litoral'],
+  [12000,12349,'Vale do Paraíba Norte (SJC, Taubaté, Guaratinguetá)','SP',315,95,80,'Z3 – médio','Z1 – relativamente próximo'],
+  [12350,12699,'Vale do Paraíba Serra (Campos do Jordão)','SP',370,190,185,'Z3 – longe','Z2 – médio'],
+  [12700,12999,'Atibaia / Bragança Paulista / Piracaia','SP',290,70,60,'Z2–Z3','Z1 – próximo'],
+  [13000,13499,'Campinas / Americana / Piracicaba / Jundiaí / Limeira','SP',210,75,80,'Z2 – razoável','Z1 – próximo'],
+  [13500,13799,'Interior SP Médio (Rio Claro, Pirassununga)','SP',230,175,170,'Z2 – ok','Z2 – médio'],
+  [13800,13999,'Interior SP (Araras, Americana interior)','SP',195,120,115,'Z2 – ok','Z1 – próximo'],
+  [14000,14999,'Ribeirão Preto e região (Franca, Ituverava)','SP',30,310,320,'Z1 🟢 EXCLUSIVO','Sob Consulta'],
+  [15000,15199,'SJRP – Neves Paulista / Ida Iolanda','SP',165,470,460,'Z1 🟢 EXCLUSIVO','Z5 R$800'],
+  [15200,15699,'Interior SP NW médio','SP',220,430,425,'Z2 – ok','Não atende / Consulta'],
+  [15700,15999,'Catanduva / Noroeste SP','SP',200,400,390,'Z2 🟢 vantagem','Z4 R$600'],
+  [16000,16999,'Araçatuba e região','SP',315,480,475,'Z3 – possível','Não atende'],
+  [17000,17999,'Bauru e região','SP',215,305,295,'Z2 🟢 vantagem','Z3 R$450'],
+  [18000,18399,'Sorocaba / Porangaba / Votorantim','SP',400,90,95,'Z3 – longe','Z1 – próximo'],
+  [18400,18699,'Itapetininga / São Miguel Arcanjo','SP',375,155,160,'Z3 – longe','Z2 – médio'],
+  [18700,18999,'Botucatu / Ourinhos / Avaré','SP',295,275,265,'Z3 – médio','Z2-Z3'],
+  [19000,19999,'Presidente Prudente (extremo oeste SP)','SP',455,560,555,'Z4 – borderline','Não atende'],
+  [20000,28499,'Rio de Janeiro metro + Serra + interior próximo','RJ',760,450,440,'Não atende','Z4 R$600'],
+  [28500,28999,'RJ interior norte / Campos dos Goytacazes','RJ',800,580,570,'Não atende','Não atende / Consulta'],
+  [29000,29999,'Espírito Santo','ES',850,820,815,'Não atende','Não atende'],
+  [30000,36999,'MG Central (BH, Lavras, Varginha, Uberlândia Sul)','MG',465,575,570,'Z4 (*) – verificar BH','Não atende'],
+  [37000,37799,'Sul MG (Poços de Caldas, Alfenas, Pedralva)','MG',150,340,355,'Z1 🟢 EXCLUSIVO','Z3 R$450'],
+  [37800,37999,'Sul MG Distante (Muzambinho, S. Sebastião do Paraíso)','MG',175,420,440,'Z2 🟢 vantagem','Z4 R$600'],
+  [38000,38999,'Triângulo Mineiro (Uberaba, Uberlândia)','MG',180,440,450,'Z2 🟢 EXCLUSIVO','Não atende'],
+  [39000,39999,'Norte MG (Montes Claros) / Leste MG','MG',650,740,740,'Não atende','Não atende'],
+  [40000,49999,'Bahia / Sergipe','BA/SE',1600,1600,1600,'Não atende','Não atende'],
+  [50000,59999,'Nordeste (PE, AL, PB, RN, CE, PI, MA)','NE',2200,2200,2200,'Não atende','Não atende'],
+  [60000,68999,'Nordeste / Norte','NE/N',2400,2400,2400,'Não atende','Não atende'],
+  [69000,69999,'AM / RR / AP / AC','N',2600,2600,2600,'Não atende','Não atende'],
+  [70000,73999,'Brasília / DF','DF',900,1000,1000,'Não atende','Não atende'],
+  [74000,76999,'Goiás (Goiânia ~490km de Jard.)','GO',490,1000,1010,'Z4 (*) – verificar','Não atende'],
+  [77000,77999,'Tocantins','TO',1200,1600,1600,'Não atende','Não atende'],
+  [78000,78999,'Mato Grosso','MT',1000,1350,1350,'Não atende','Não atende'],
+  [79000,79999,'Mato Grosso do Sul','MS',750,1100,1100,'Não atende','Não atende'],
+  [80000,87999,'Paraná (Londrina ~500km Jard. / Curitiba ~640km)','PR',580,400,390,'Não atende / Consulta','Z3-Z4'],
+  [88000,89999,'Santa Catarina','SC',840,640,630,'Não atende','Não atende'],
+  [90000,99999,'Rio Grande do Sul','RS',1200,1050,1040,'Não atende','Não atende'],
+];
+
+function getCepInfo(cepRaw){
+  const n=parseInt((cepRaw||'').replace(/\D/g,'').substring(0,5));
+  if(isNaN(n)) return null;
+  for(const row of CEP_TABLE){
+    if(n>=row[0]&&n<=row[1]) return {
+      min:row[0],max:row[1],region:row[2],state:row[3],
+      dist:{jardinopolis:row[4],cotia:row[5],sp_capital:row[6]},
+      note_jard:row[7],note_cotia:row[8]
+    };
+  }
+  return null;
+}
+
+function distToZone(dist){
+  if(dist<=0) return {zone:'R',frete:0,prazo:0,label:'Retirada na Base'};
+  if(dist<=150) return {zone:'Z1',frete:150,prazo:3,label:'Zona 1'};
+  if(dist<=280) return {zone:'Z2',frete:250,prazo:7,label:'Zona 2'};
+  if(dist<=450) return {zone:'Z3',frete:450,prazo:7,label:'Zona 3'};
+  if(dist<=620) return {zone:'Z4',frete:600,prazo:7,label:'Zona 4'};
+  if(dist<=700) return {zone:'Z5',frete:800,prazo:7,label:'Zona 5 – Consulta'};
+  return {zone:'NA',frete:0,prazo:0,label:'Fora da Área'};
+}
+
+function ckm(){
+  const d=C.diesel/C.consumo, l=(C.mot+C.aju)/C.km, o=C.out/C.km;
+  return d+Number(C.manut)+Number(C.dep)+l+o;
+}
+
+// ════════════════════════════════════════════════════════
+// MAIN CALC
+// ════════════════════════════════════════════════════════
+function calc(){
+  const cep=document.getElementById('cepInput').value;
+  const prod=document.getElementById('prodInput').value;
+  const qtd=parseInt(document.getElementById('qtdInput').value)||1;
+  if(cep.replace(/\D/g,'').length<5){alert('Informe um CEP válido.');return;}
+
+  const info=getCepInfo(cep);
+  if(!info){
+    document.getElementById('resultPanel').style.display='block';
+    document.getElementById('resultHero').className='result-hero rh-consulta';
+    document.getElementById('zBadge').innerHTML='<span class="zb bzc">Desconhecido</span>';
+    document.getElementById('rStatus').textContent='❓ CEP não identificado';
+    document.getElementById('rFrete').textContent='Consultar';
+    document.getElementById('rPrazo').textContent='Entre em contato para cotação manual';
+    return;
+  }
+
+  const dist=info.dist[ORIG];
+  const zInfo=distToZone(dist);
+  const iv=dist*2;
+  const custKm=ckm();
+  const nEnt={Z1:C.ez1,Z2:C.ez2,Z3:C.ez3,Z4:C.ez4}[zInfo.zone]||3;
+  const cDie=(iv/C.consumo)*C.diesel;
+  const cMan=iv*C.manut;
+  const cDep=iv*C.dep;
+  const cLab=(C.mot+C.aju)/C.km*iv;
+  const cPed=Number(C.ped);
+  const cOut=C.out/C.km*iv;
+  const cTot=cDie+cMan+cDep+cLab+cPed+cOut;
+  const cEnt=cTot/nEnt;
+  const freteB=zInfo.frete*qtd;
+  const lucro=freteB-cEnt;
+  const margem=freteB>0?lucro/freteB*100:0;
+  const freteSug=Math.ceil(cEnt*(1+C.mg/100)/50)*50;
+
+  // competitor frete from Cotia for same CEP
+  const distCotia=info.dist.cotia;
+  const zCotia=distToZone(distCotia);
+  const freteConc=zCotia.zone==='NA'?'Não atende':(zCotia.zone==='Z5'?'R$800 (consulta)':'R$ '+zCotia.frete);
+
+  document.getElementById('resultPanel').style.display='block';
+
+  const heroClass={Z1:'rh-atende',Z2:'rh-atende',Z3:'rh-atende',Z4:'rh-atende',Z5:'rh-consulta',NA:'rh-nao',R:'rh-retirada'}[zInfo.zone]||'rh-consulta';
+  document.getElementById('resultHero').className='result-hero '+heroClass;
+
+  const zbCls={Z1:'bz1',Z2:'bz2',Z3:'bz3',Z4:'bz4',Z5:'bz5',NA:'bzna',R:'bz2'}[zInfo.zone]||'bzc';
+  document.getElementById('zBadge').innerHTML=`<span class="zb ${zbCls}">${zInfo.label} – ${info.region} (${info.state}) · ${ORIGIN_INFO[ORIG].short}</span>`;
+
+  if(zInfo.zone==='NA'){
+    document.getElementById('rStatus').textContent='❌ Região Não Atendida';
+    document.getElementById('rFrete').textContent='Fora da área';
+    document.getElementById('rPrazo').textContent='Esta região está fora da área de entrega desta origem';
+  } else if(zInfo.zone==='Z5'){
+    document.getElementById('rStatus').textContent='📞 Sob Consulta / Rota Isolada';
+    document.getElementById('rFrete').textContent='R$ '+zInfo.frete+(qtd>1?' ('+qtd+'× caixas)':'');
+    document.getElementById('rPrazo').textContent='⏱️ Prazo: até '+zInfo.prazo+' dias | Confirmar disponibilidade antes de responder';
+  } else {
+    document.getElementById('rStatus').textContent='✅ Região Atendida';
+    document.getElementById('rFrete').textContent='R$ '+(freteB).toLocaleString('pt-BR')+(qtd>1?' ('+qtd+'× caixas)':'');
+    document.getElementById('rPrazo').textContent='⏱️ Entrega em até '+zInfo.prazo+' dias úteis | Saída: '+getRouteDay(zInfo.zone,ORIG);
+  }
+
+  document.getElementById('mDist').textContent=dist>0?dist+' km':'–';
+  document.getElementById('mIV').textContent=dist>0?iv+' km':'–';
+  document.getElementById('mCusto').textContent=zInfo.zone!=='NA'?'R$ '+Math.round(cEnt).toLocaleString('pt-BR'):'–';
+  document.getElementById('mOrig').textContent=ORIGIN_INFO[ORIG].short;
+  document.getElementById('mConc').textContent=freteConc;
+
+  const lEl=document.getElementById('mLucro');
+  if(freteB>0){lEl.textContent=(lucro>=0?'+':'')+'R$ '+Math.round(lucro).toLocaleString('pt-BR');lEl.style.color=lucro>=0?'var(--green)':'var(--red)';}
+  else{lEl.textContent='–';lEl.style.color='';}
+  const mEl=document.getElementById('mMargem');
+  if(freteB>0){mEl.textContent=margem.toFixed(1)+'%';mEl.style.color=margem>=C.mg?'var(--green)':(margem>=0?'var(--amber)':'var(--red)');}
+  else{mEl.textContent='–';mEl.style.color='';}
+  document.getElementById('mSug').textContent=zInfo.zone!=='NA'?'R$ '+freteSug:'–';
+
+  // Breakdown
+  if(zInfo.zone!=='NA'){
+    document.getElementById('bkDiv').innerHTML=`
+      <div class="brow"><span>Diesel (${iv}km ÷ ${C.consumo}km/L × R$${C.diesel})</span><span class="v">R$ ${Math.round(cDie)}</span></div>
+      <div class="brow"><span>Manutenção (${iv}km × R$${C.manut})</span><span class="v">R$ ${Math.round(cMan)}</span></div>
+      <div class="brow"><span>Depreciação (${iv}km × R$${C.dep})</span><span class="v">R$ ${Math.round(cDep)}</span></div>
+      <div class="brow"><span>Mão de obra (proporcional)</span><span class="v">R$ ${Math.round(cLab)}</span></div>
+      <div class="brow"><span>Pedágio estimado</span><span class="v">R$ ${cPed}</span></div>
+      <div class="brow"><span>Outros custos</span><span class="v">R$ ${Math.round(cOut)}</span></div>
+      <div class="brow"><span>CUSTO TOTAL DA VIAGEM</span><span class="v">R$ ${Math.round(cTot)}</span></div>
+      <div class="brow"><span>÷ ${nEnt} entregas por viagem</span><span class="v">R$ ${Math.round(cEnt)}/entrega</span></div>
+      <div class="brow ${lucro>=0?'pos':'neg'}"><span>Frete R$ ${freteB} − Custo R$ ${Math.round(cEnt)} = Resultado</span><span class="v">${lucro>=0?'+':''}R$ ${Math.round(lucro)}</span></div>
+    `;
+  } else {
+    document.getElementById('bkDiv').innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">Região não atendida por esta origem.</p>';
+  }
+
+  // Agrupamento
+  const rt=getRouteInfo(zInfo.zone,ORIG);
+  document.getElementById('agrupText').innerHTML=rt;
+
+  // Alerts
+  const aBox=document.getElementById('alertBox');
+  const cBox=document.getElementById('concBox');
+  aBox.style.display='none'; cBox.style.display='none';
+
+  if(zInfo.zone==='Z1'&&ORIG==='jardinopolis'){
+    aBox.className='alert al-s'; aBox.style.display='block';
+    aBox.innerHTML='🏆 <strong>Vantagem competitiva!</strong> De Jardinópolis, você atende essa região por R$'+zInfo.frete+'. O concorrente cobra '+freteConc+'. Você é mais competitivo aqui.';
+  } else if(zInfo.zone==='Z4'&&nEnt<4){
+    aBox.className='alert al-w'; aBox.style.display='block';
+    aBox.innerHTML='⚠️ Viagem para zona distante com poucas entregas gera prejuízo. Confirme mínimo de '+nEnt+' pedidos antes de sair.';
+  } else if(zInfo.zone==='NA'&&zCotia.zone!=='NA'){
+    aBox.className='alert al-i'; aBox.style.display='block';
+    aBox.innerHTML='💡 Esta região não é atendida por <strong>'+ORIGIN_INFO[ORIG].short+'</strong>, mas é atendida por <strong>Cotia/SP</strong> ('+freteConc+'). Considere modelo misto de distribuição.';
+  } else if(zInfo.zone==='Z5'){
+    aBox.className='alert al-w'; aBox.style.display='block';
+    aBox.innerHTML='📞 Rota isolada. Confirme disponibilidade e calcule com distância real. Frete mínimo sugerido: R$800.';
+  }
+
+  if(freteB>0&&freteConc.includes('R$')){
+    const concVal=parseInt(freteConc.replace(/\D/g,''));
+    if(freteB<concVal){
+      cBox.className='alert al-s'; cBox.style.display='block';
+      cBox.innerHTML='💰 Seu frete (R$'+freteB+') é <strong>R$ '+(concVal-freteB)+' mais barato</strong> que o concorrente ('+freteConc+') para este destino. Argumento de venda direto!';
+    }
+  }
+
+  document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function getRouteDay(zone,orig){
+  const days={
+    jardinopolis:{Z1:'Seg, Ter ou Qui (Ribeirão Preto / Sul MG)',Z2:'Terça ou Quarta (Campinas, Bauru, SJRP)',Z3:'Seg (saída) → Ter (volta) – SP Capital',Z4:'Agendado (Santos, Sorocaba)',Z5:'Agendado'},
+    cotia:{Z1:'Seg, Qua ou Sex (Grande SP)',Z2:'Quinta (Litoral) ou Terça (Interior)',Z3:'Segunda (volta terça)',Z4:'Início da semana (2 noites)',Z5:'Agendado'},
+    sp_capital:{Z1:'Seg, Qua ou Sex (Grande SP metro)',Z2:'Quinta (Litoral/Interior)',Z3:'Segunda (volta terça)',Z4:'Início da semana',Z5:'Agendado'}
+  };
+  return (days[orig]||days.jardinopolis)[zone]||'A combinar';
+}
+
+function getRouteInfo(zone,orig){
+  const routeMap={
+    jardinopolis:{
+      Z1:'<strong>Rota R1 – Ribeirão Preto metro / Sul MG / SJRP</strong><br>Dia sugerido: Seg, Ter e Qui<br>Mínimo para sair: 3+ pedidos<br>Frequência: 3–4× por semana<br>Distância típica: 30–165km<br>💡 Esta é a rota mais lucrativa de Jardinópolis.',
+      Z2:'<strong>Rota R2 – Campinas / Bauru / Catanduva / Triângulo MG</strong><br>Dia sugerido: Terça ou Quarta<br>Mínimo: 2+ pedidos<br>Frequência: 2–3× por semana<br>Distância: 180–280km',
+      Z3:'<strong>Rota R3 – SP Capital / Grande SP / Interior SP Longo</strong><br>Dia sugerido: Segunda (saída) → volta tarde<br>Mínimo: 3+ pedidos para cobrir custo alto<br>Frequência: 1–2× por semana<br>⚠️ SP Capital fica na Z3 de Jardinópolis (365km)',
+      Z4:'<strong>Rota R4 – Santos / Sorocaba / Interior SP extremo</strong><br>Dia sugerido: Agendado (acumular pedidos)<br>Mínimo: 3+ pedidos<br>Frequência: 1–2× por mês<br>⚠️ Rotas caras de Jardinópolis',
+      Z5:'<strong>Rota R5 – Destinos Isolados</strong><br>Apenas sob consulta. Calcule custo real antes de confirmar.',
+      NA:'<strong>Região fora da área de Jardinópolis.</strong> Verifique se Cotia/SP poderia atender esta região (selecione a origem na barra superior).'
+    },
+    cotia:{
+      Z1:'<strong>Rota R1 – Grande SP</strong><br>Dia sugerido: Seg, Qua ou Sex<br>Mínimo: 3+ pedidos<br>Frequência: 3–4× por semana',
+      Z2:'<strong>Rota R2 – Litoral (Qui) ou Interior Médio (Ter)</strong><br>Mínimo: 2+ pedidos<br>Frequência: 1× por semana',
+      Z3:'<strong>Rota R3 – Interior SP Longo / Sul MG</strong><br>Saída segunda, volta terça<br>Mínimo: 2+ pedidos<br>Frequência: 2× por mês',
+      Z4:'<strong>Rota R6 – Rio de Janeiro</strong><br>Saída início da semana (2 noites)<br>Mínimo: 4+ pedidos<br>Frequência: 1–2× por mês<br>⚠️ Só é lucrativo com lote mínimo',
+      Z5:'<strong>Rota R7 – SP Extremo NW (SJRP)</strong><br>Agendado. Mínimo 2 pedidos. R$800/entrega.',
+      NA:'<strong>Região fora da área de Cotia.</strong> Verifique Jardinópolis/SP para mercados do interior.'
+    },
+    sp_capital:{
+      Z1:'<strong>Rota R1 – Grande SP Metro</strong><br>Saídas diárias<br>Mínimo: 3+ pedidos<br>Frequência: diária',
+      Z2:'<strong>Rota R2 – Campinas / Litoral / Interior próximo</strong><br>Dia sugerido: Ter ou Qui<br>Mínimo: 2+ pedidos',
+      Z3:'<strong>Rota R3 – Interior SP Longo / Sul MG</strong><br>Saída segunda, volta terça<br>Mínimo: 2+ pedidos',
+      Z4:'<strong>Rota R4 – Rio de Janeiro</strong><br>2 noites fora. Mínimo 4 pedidos.',
+      Z5:'<strong>Rota R5 – Destinos Isolados</strong><br>Sob consulta.',
+      NA:'<strong>Região fora da área.</strong>'
+    }
+  };
+  return (routeMap[orig]||routeMap.jardinopolis)[zone]||'Consultar.';
+}
+
+// ════════════════════════════════════════════════════════
+// TABELA E ROTAS POR ORIGEM
+// ════════════════════════════════════════════════════════
+const TABELAS={
+  jardinopolis:[
+    ['Z1 – Ribeirão Preto e Região','14xxx','Ribeirão Preto, Franca, Ituverava, São Simão, Serrana','0–80 km','R$ 150','2–3 dias','Fixo','<span class="badge bg">✅ PRIORITÁRIA</span>'],
+    ['Z1 – Sul de MG','37000–37799','Poços de Caldas, Alfenas, Pedralva, Três Pontas, Lavras','150 km','R$ 150','2–3 dias','Fixo','<span class="badge bg">✅ EXCLUSIVO</span>'],
+    ['Z1 – SJRP / Catanduva área','15xxx','São José do Rio Preto, Mirassol, Rio Preto entorno','155–200 km','R$ 150–250','3–5 dias','Fixo','<span class="badge bg">✅ VANTAGEM</span>'],
+    ['Z2 – Triângulo MG','38xxx','Uberaba, Uberlândia, Araxá, Ituiutaba','180 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ EXCLUSIVO</span>'],
+    ['Z2 – Campinas / Int. SP','13xxx, 17xxx','Campinas, Americana, Bauru, Catanduva, Piracicaba','200–215 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z2 – Sul MG Distante','37800–37999','Muzambinho, São Sebastião do Paraíso','175 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ VANTAGEM</span>'],
+    ['Z2 – Interior SP Médio','13500–13999, 18700–18999','Rio Claro, Araras, Botucatu, Ourinhos','195–295 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z3 – SP Capital / Grande SP','01xxx–09xxx','São Paulo, ABC, Guarulhos, Osasco, Barueri, Sorocaba','365–400 km','R$ 450','7 dias','Fixo (lote mín.)','<span class="badge ba">⚠️ LOTE MÍN.</span>'],
+    ['Z3 – Vale Paraíba / SJC','12xxx, 18xxx','SJC, Taubaté, Sorocaba, Itapetininga','290–400 km','R$ 450','7 dias','Fixo','<span class="badge ba">⚠️ LOTE MÍN.</span>'],
+    ['Z4 – Litoral SP / Santos','11xxx','Santos, Guarujá, Praia Grande, Mongaguá, Registro','470–490 km','R$ 600','7 dias','Sob consulta','<span class="badge ba">⚠️ CONSULTA</span>'],
+    ['Z4 – BH / MG Central (*)','30xxx–36xxx','Belo Horizonte (*), Lavras, Varginha','465 km','R$ 600 (*)','7 dias','Consultar viabilidade','<span class="badge bb">📞 CONSULTAR</span>'],
+    ['Z4 – Goiânia (*)','74xxx','Goiânia, Anápolis (*)','490 km','R$ 600 (*)','7 dias','Consultar viabilidade','<span class="badge bb">📞 CONSULTAR</span>'],
+    ['Não Atende','20xxx–28xxx, 80xxx+, 40xxx–69xxx','RJ, PR, SC, RS, BA, NE, Norte, MT, MS, DF, TO','760km+','–','–','Fora da área','<span class="badge br">❌ NÃO ATENDE</span>'],
+  ],
+  cotia:[
+    ['Z1 – Grande SP','01xxx–09xxx, 12000–12350, 13000–13499, 18000–18399','SP Capital, ABC, Guarulhos, Barueri, Campinas, SJC, Sorocaba, Jundiaí','0–150 km','R$ 150','2–3 dias','Fixo','<span class="badge bg">✅ PRIORITÁRIA</span>'],
+    ['Z2 – Litoral SP','11xxx','Santos, Guarujá, Praia Grande, Mongaguá, Itanhaém','70–185 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z2 – Interior SP Médio','13500–13999, 12700–12999, 18400–18699','Rio Claro, Pirassununga, Atibaia, Itapetininga, São Miguel Arcanjo','150–280 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z3 – Interior SP Longo + Sul MG','17xxx, 37000–37799, 12466, 15700–15999','Bauru, Catanduva, Poços de Caldas, Alfenas, Pedralva, Campos do Jordão','280–450 km','R$ 450','7 dias','Fixo (lote mín.)','<span class="badge ba">⚠️ LOTE MÍN.</span>'],
+    ['Z4 – Rio de Janeiro','20xxx–28499','RJ metro, Nova Iguaçu, São Gonçalo, Petrópolis, Duque de Caxias, Cabo Frio','440–500 km','R$ 600','7 dias','Fixo – lote ≥4','<span class="badge ba">⚠️ LOTE MÍN. 4</span>'],
+    ['Z4 – Sul MG Distante','37800–37999','Muzambinho, São Sebastião do Paraíso','420–440 km','R$ 600','7 dias','Fixo','<span class="badge ba">⚠️ AGRUPAR</span>'],
+    ['Z5 – SP Extremo NW','15000–15199','Neves Paulista, Ida Iolanda (SJRP)','470 km','R$ 800','7 dias','Sob consulta','<span class="badge ba">🔶 CONSULTA</span>'],
+    ['Não Atende','38xxx, 39xxx, 30xxx–36xxx, 14xxx, 16xxx, 80xxx+','Triângulo MG, MG Central, RP, Araçatuba, PR, SC, RS, NE, Norte, CO','440km+','–','–','Fora da área','<span class="badge br">❌ NÃO ATENDE</span>'],
+  ],
+  sp_capital:[
+    ['Z1 – Grande SP Metro','01xxx–09xxx, 12000–12299, 13000–13499, 18000–18399','SP Capital, ABC, Guarulhos, Barueri, Campinas, SJC, Sorocaba','0–150 km','R$ 150','2–3 dias','Fixo','<span class="badge bg">✅ PRIORITÁRIA</span>'],
+    ['Z1-Z2 – Litoral SP','11xxx','Santos, Guarujá, Praia Grande, Mongaguá, Itanhaém','70–185 km','R$ 150–250','3–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z2 – Interior SP Médio','13500–13999, 12700–12999, 18400–18699','Rio Claro, Pirassununga, Atibaia, Itapetininga','150–265 km','R$ 250','5–7 dias','Fixo','<span class="badge bg">✅ ATENDE</span>'],
+    ['Z3 – Interior SP Longo + Sul MG','17xxx, 37000–37799, 12466','Bauru, Poços de Caldas, Alfenas, Pedralva, Campos do Jordão','280–360 km','R$ 450','7 dias','Fixo (lote mín.)','<span class="badge ba">⚠️ LOTE MÍN.</span>'],
+    ['Z4 – Rio de Janeiro','20xxx–28499','RJ metro completo, Baixada Fluminense, Serra RJ, Cabo Frio','440–500 km','R$ 600','7 dias','Lote ≥4','<span class="badge ba">⚠️ LOTE MÍN. 4</span>'],
+    ['Z4 – Sul MG Distante','37800–37999','Muzambinho, São Sebastião do Paraíso','440 km','R$ 600','7 dias','Fixo','<span class="badge ba">⚠️ AGRUPAR</span>'],
+    ['Z4 – PR Norte','80xxx–83xxx','Curitiba, Londrina, Maringá','390–600 km','R$ 450–600','7 dias','Consulta','<span class="badge bb">📞 CONSULTAR</span>'],
+    ['Não Atende','38xxx, 14xxx, 16xxx, 15xxx, 88xxx+, NE, N, CO','Triângulo MG, Ribeirão Preto, SJRP, SC, RS, NE, Norte, DF, GO','600km+','–','–','Fora da área','<span class="badge br">❌ NÃO ATENDE</span>'],
+  ]
+};
+
+const ROTAS={
+  jardinopolis:[
+    ['R1 – Ribeirão Preto / Sul MG / SJRP','RP metro, Franca, Poços de Caldas, Alfenas, Pedralva, SJRP, Catanduva','Seg, Ter e Qui','3+','60–320 km','R$ 150–250'],
+    ['R2 – Triângulo MG / Bauru / Campinas','Uberaba, Uberlândia, Bauru, Campinas, Americana, Piracicaba','Qua e Sex','2+','360–450 km','R$ 250'],
+    ['R3 – Interior SP Médio','Rio Claro, Araras, Botucatu, Catanduva, Araçatuba (consulta)','Terça','2+','390–640 km','R$ 250–450'],
+    ['R4 – SP Capital e Grande SP','SP Capital, ABC, Guarulhos, Osasco, Barueri, Sorocaba, SJC','Segunda (saída) → tarde','3+','730–800 km','R$ 450'],
+    ['R5 – Santos / Litoral SP','Santos, Guarujá, Praia Grande, Mongaguá, Registro','Agendado (acumular)','2+','940–980 km','R$ 600'],
+    ['R6 – BH / Goiás (*consulta)','Belo Horizonte, Lavras, Varginha; Goiânia (*verificar)','Agendado','3+','930–980 km','R$ 600 (*)'],
+  ],
+  cotia:[
+    ['R1 – Grande SP','SP Capital, ABC, Guarulhos, Barueri, Campinas, SJC, Sorocaba','Seg, Qua, Sex','3+','60–480 km','R$ 150'],
+    ['R2 – Litoral SP','Santos, Guarujá, Praia Grande, Mongaguá, Itanhaém','Quinta','2+','140–370 km','R$ 250'],
+    ['R3 – Interior SP Médio','Rio Claro, Pirassununga, Itapetininga, S. Miguel Arcanjo','Terça','2+','300–600 km','R$ 250–450'],
+    ['R4 – Interior SP Longo + Campos do Jordão','Bauru, Catanduva, Campos do Jordão, Mococa, Tambaú','Seg (volta Ter)','2+','600–900 km','R$ 450'],
+    ['R5 – Sul MG','Poços de Caldas, Alfenas, Pedralva, Muzambinho, S.S.Paraíso','Seg (volta Ter)','3+','620–880 km','R$ 450–600'],
+    ['R6 – Rio de Janeiro','RMRJ completa, Nova Iguaçu, São Gonçalo, Petrópolis, Cabo Frio','Início da semana (2 noites)','4+','880–1300 km','R$ 600'],
+    ['R7 – SP Extremo NW (SJRP)','Neves Paulista, Ida Iolanda','Agendado','2+','~940 km','R$ 800'],
+  ],
+  sp_capital:[
+    ['R1 – Grande SP Metro','SP Capital, ABC, Guarulhos, Barueri','Diária','3+','40–80 km','R$ 150'],
+    ['R2 – Campinas / SJC / Sorocaba','Campinas, Americana, SJC, Sorocaba','Ter e Qui','3+','160–190 km','R$ 150'],
+    ['R3 – Litoral SP','Santos, Guarujá, Praia Grande, Mongaguá','Quinta','2+','140–260 km','R$ 150–250'],
+    ['R4 – Interior SP + Sul MG','Bauru, Rio Claro, Poços de Caldas, Alfenas','Seg (volta Ter)','2+','590–720 km','R$ 250–450'],
+    ['R5 – Rio de Janeiro','RMRJ, Nova Iguaçu, São Gonçalo, Petrópolis','Início da semana (2 noites)','4+','880–1000 km','R$ 600'],
+    ['R6 – PR Norte (consulta)','Curitiba, Londrina, Maringá','Agendado','3+','780–1200 km','R$ 450–600'],
+  ]
+};
+
+function renderTabela(){
+  const rows=TABELAS[ORIG]||TABELAS.jardinopolis;
+  document.getElementById('freteTbody').innerHTML=rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${v}</td>`).join('')+'</tr>').join('');
+  document.getElementById('tabelaOrigemLabel').textContent=ORIGIN_INFO[ORIG].name;
+
+  const rts=ROTAS[ORIG]||ROTAS.jardinopolis;
+  document.getElementById('rotasTbody').innerHTML=rts.map(r=>'<tr>'+r.map(v=>`<td>${v}</td>`).join('')+'</tr>').join('');
+  document.getElementById('rotasOrigemLabel').textContent=ORIGIN_INFO[ORIG].name;
+}
+
+// ════════════════════════════════════════════════════════
+// COMPARAÇÃO
+// ════════════════════════════════════════════════════════
+const CMP_DATA=[
+  ['Grande SP / SP Capital','SP',365,40,20],
+  ['Campinas / Americana','SP',210,75,80],
+  ['Santos / Baixada Santista','SP',470,75,70],
+  ['SJC / Vale do Paraíba','SP',315,95,80],
+  ['Sorocaba / região','SP',400,90,95],
+  ['Ribeirão Preto e região','SP',30,310,320],
+  ['São José do Rio Preto','SP',165,470,460],
+  ['Catanduva / NW SP','SP',200,400,390],
+  ['Bauru / Interior SP','SP',215,305,295],
+  ['Sul MG (Poços, Alfenas, Pedralva)','MG',150,340,355],
+  ['Sul MG Distante (Muzambinho)','MG',175,420,440],
+  ['Triângulo MG (Uberaba, Uberlândia)','MG',180,440,450],
+  ['BH / MG Central','MG',465,575,570],
+  ['Goiânia / interior GO','GO',490,1000,1010],
+  ['Rio de Janeiro metro','RJ',760,450,440],
+  ['Paraná (Curitiba, Londrina)','PR',620,400,390],
+  ['Santos extremo / Registro','SP',490,220,220],
+];
+
+function zLabel(dist){
+  if(dist<=150) return '<span class="badge bg">Z1 R$150</span>';
+  if(dist<=280) return '<span class="badge bb">Z2 R$250</span>';
+  if(dist<=450) return '<span class="badge ba">Z3 R$450</span>';
+  if(dist<=620) return '<span class="badge br">Z4 R$600</span>';
+  if(dist<=700) return '<span class="badge" style="background:#f3e8ff;color:#6b21a8">Z5 R$800</span>';
+  return '<span class="badge bgr">❌ Não atende</span>';
+}
+
+function renderComparacao(){
+  const tbody=document.getElementById('cmpTbody');
+  if(!tbody) return;
+  tbody.innerHTML=CMP_DATA.map(([region,state,dj,dc,dsp])=>{
+    const zj=distToZone(dj), zc=distToZone(dc), zs=distToZone(dsp);
+    const vantagem=dj<dc&&dj<dsp?'🏆 Jardinópolis':(dc<=dsp?'Cotia/SP':'SP Capital');
+    const rowBg=vantagem.includes('Jardinópolis')?'#f0fdf4':(vantagem.includes('Cotia')?'#eff6ff':'#fef9c3');
+    return `<tr style="background:${rowBg}">
+      <td><strong>${region}</strong></td>
+      <td>${state}</td>
+      <td>${dj}km – ${zLabel(dj)}</td>
+      <td>${dc}km – ${zLabel(dc)}</td>
+      <td>${dsp}km – ${zLabel(dsp)}</td>
+      <td><strong>${vantagem}</strong></td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// PROJEÇÃO
+// ════════════════════════════════════════════════════════
+const PROJECOES={
+  jardinopolis:{
+    cons:{km:3200,ent:22,rec:'R$ 4.000–7.000',desc:'R1 Ribeirão Preto 3×/sem<br>R2 Triângulo/Bauru 2×/sem<br>R3 SP Capital 0×<br>~800km/semana'},
+    medio:{km:6500,ent:45,rec:'R$ 11.000–18.000',desc:'R1 4×/sem<br>R2 3×/sem<br>R4 SP Capital 1×/sem<br>R5 Sul MG 2×/mês<br>~1.600km/semana'},
+    agress:{km:11500,ent:85,rec:'R$ 22.000–36.000',desc:'R1-R3 pleno<br>R4 SP 2×/sem<br>R5 Santos 1×/mês<br>R6 BH/Goiânia 2×/mês<br>~2.900km/semana'},
+  },
+  cotia:{
+    cons:{km:3600,ent:25,rec:'R$ 5.000–8.000',desc:'R1 Grande SP 2×/sem<br>R2 Litoral 1×/sem<br>~900km/semana'},
+    medio:{km:7200,ent:50,rec:'R$ 14.000–20.000',desc:'R1 3×/sem, R2 1×/sem<br>R3 1×/sem, R5 Sul MG 2×/mês<br>R6 RJ 1×/mês<br>~1.800km/semana'},
+    agress:{km:12800,ent:90,rec:'R$ 26.000–42.000',desc:'Pleno: todas as rotas<br>~3.200km/semana'},
+  },
+  sp_capital:{
+    cons:{km:3200,ent:28,rec:'R$ 5.000–8.500',desc:'R1 Grande SP 3×/sem<br>R3 Litoral 1×/sem<br>~800km/semana'},
+    medio:{km:7000,ent:52,rec:'R$ 14.000–21.000',desc:'R1-R2 pleno<br>R4 Interior/MG 2×/mês<br>R5 RJ 1×/mês<br>~1.750km/semana'},
+    agress:{km:12500,ent:92,rec:'R$ 27.000–44.000',desc:'Pleno<br>~3.100km/semana'},
+  }
+};
+
+function renderProjecao(){
+  const p=PROJECOES[ORIG]||PROJECOES.jardinopolis;
+  document.getElementById('projOrigemLabel').textContent=ORIGIN_INFO[ORIG].name;
+  document.getElementById('projCards').innerHTML=`
+    <div class="pcard pc-b"><h3 style="font-size:12px;font-weight:800;margin-bottom:10px;text-transform:uppercase">🔵 Conservador</h3>
+      <div class="pn">${p.cons.km.toLocaleString('pt-BR')}</div><div class="pl">km por mês</div>
+      <div class="pd">Entregas: ~${p.cons.ent}/mês<br>Receita frete: ${p.cons.rec}<br><br>${p.cons.desc}</div></div>
+    <div class="pcard pc-m"><h3 style="font-size:12px;font-weight:800;margin-bottom:10px;text-transform:uppercase">🟡 Médio</h3>
+      <div class="pn">${p.medio.km.toLocaleString('pt-BR')}</div><div class="pl">km por mês</div>
+      <div class="pd">Entregas: ~${p.medio.ent}/mês<br>Receita frete: ${p.medio.rec}<br><br>${p.medio.desc}</div></div>
+    <div class="pcard pc-a"><h3 style="font-size:12px;font-weight:800;margin-bottom:10px;text-transform:uppercase">🟢 Agressivo</h3>
+      <div class="pn">${p.agress.km.toLocaleString('pt-BR')}</div><div class="pl">km por mês</div>
+      <div class="pd">Entregas: ~${p.agress.ent}/mês<br>Receita frete: ${p.agress.rec}<br><br>${p.agress.desc}</div></div>`;
+
+  const cKm=ckm();
+  document.getElementById('projTbody').innerHTML=[
+    ['🔵 Conservador',p.cons.km,Math.round(p.cons.km*cKm),'R$ 2.000',Math.round(p.cons.km*cKm+2000),p.cons.rec,'<span class="badge ba">Perto do equilíbrio</span>'],
+    ['🟡 Médio',p.medio.km,Math.round(p.medio.km*cKm),'R$ 3.500',Math.round(p.medio.km*cKm+3500),p.medio.rec,'<span class="badge bg">✅ Lucrativo</span>'],
+    ['🟢 Agressivo',p.agress.km,Math.round(p.agress.km*cKm),'R$ 5.500',Math.round(p.agress.km*cKm+5500),p.agress.rec,'<span class="badge bg">✅✅ Alta margem</span>'],
+  ].map(r=>'<tr>'+r.map((v,i)=>`<td${i===0?' style="font-weight:700"':''}>R$`+
+    [false,false,true,false,true,false,false][i]?('R$ '+Number(v).toLocaleString('pt-BR')):v+`</td>`).join('')+'</tr>').join('');
+
+  // Fix numeric formatting
+  const rows=[
+    ['🔵 Conservador',p.cons.km,Math.round(p.cons.km*cKm),'R$ 2.000',Math.round(p.cons.km*cKm+2000),p.cons.rec,'<span class="badge ba">Perto do equilíbrio</span>'],
+    ['🟡 Médio',p.medio.km,Math.round(p.medio.km*cKm),'R$ 3.500',Math.round(p.medio.km*cKm+3500),p.medio.rec,'<span class="badge bg">✅ Lucrativo</span>'],
+    ['🟢 Agressivo',p.agress.km,Math.round(p.agress.km*cKm),'R$ 5.500',Math.round(p.agress.km*cKm+5500),p.agress.rec,'<span class="badge bg">✅✅ Alta margem</span>'],
+  ];
+  document.getElementById('projTbody').innerHTML=rows.map(r=>`<tr>
+    <td style="font-weight:700">${r[0]}</td>
+    <td>${Number(r[1]).toLocaleString('pt-BR')}</td>
+    <td>R$ ${Number(r[2]).toLocaleString('pt-BR')}</td>
+    <td>${r[3]}</td>
+    <td><strong>R$ ${Number(r[4]).toLocaleString('pt-BR')}</strong></td>
+    <td>${r[5]}</td>
+    <td>${r[6]}</td>
+  </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// ORIGIN SWITCH
+// ════════════════════════════════════════════════════════
+function setOrigin(o){
+  ORIG=o;
+  document.querySelectorAll('.origin-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ob-'+o).classList.add('active');
+  document.getElementById('activeBadge').textContent='📍 '+ORIGIN_INFO[o].name;
+  document.getElementById('originDesc').textContent=ORIGIN_DESCS[o];
+  document.getElementById('originHint').innerHTML=ORIGIN_INFO[o].hint;
+  document.getElementById('inf-base').textContent=ORIGIN_INFO[o].short;
+  renderTabela();
+  renderProjecao();
+  renderComparacao();
+  document.getElementById('resultPanel').style.display='none';
+}
+
+// ════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
+  if(name==='tabela') renderTabela();
+  if(name==='projecao') renderProjecao();
+  if(name==='comparacao') renderComparacao();
+}
+
+// ════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════
+function loadCfg(){
+  try{const s=localStorage.getItem('freteCfg');if(s) C={...DEFS,...JSON.parse(s)};}catch(e){}
+  Object.keys(DEFS).forEach(k=>{const el=document.getElementById('cfg_'+k);if(el) el.value=C[k];});
+  updateInf();
+}
+function saveCfg(){
+  Object.keys(DEFS).forEach(k=>{const el=document.getElementById('cfg_'+k);if(el) C[k]=isNaN(Number(el.value))?el.value:Number(el.value);});
+  try{localStorage.setItem('freteCfg',JSON.stringify(C));}catch(e){}
+  updateInf();
+  const m=document.getElementById('saveMsg');m.style.display='inline';setTimeout(()=>m.style.display='none',2500);
+}
+function updateInf(){
+  const ck=ckm();
+  document.getElementById('inf-ckm').textContent='R$ '+ck.toFixed(2)+'/km';
+  document.getElementById('inf-die').textContent='R$'+Number(C.diesel).toFixed(2)+'/L';
+  document.getElementById('inf-con').textContent=Number(C.consumo).toFixed(1)+'km/L';
+}
+function fmtCep(el){let v=el.value.replace(/\D/g,'');if(v.length>5) v=v.substring(0,5)+'-'+v.substring(5,8);el.value=v;}
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+loadCfg();
+renderComparacao();
+</script>
+</body>
+</html>
