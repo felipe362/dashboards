@@ -87,7 +87,10 @@ tr:hover td{background:#f0f4fa}
   <button class="tab-btn" onclick="showTab('tab10')">🗒️ Lista Junho</button>
   <button class="tab-btn" onclick="showTab('tab11')">💡 Insights</button>
   <button class="tab-btn" onclick="showTab('tab12')">📱 WhatsApp</button>
+  <button class="tab-btn" onclick="showTab('tab13')">🥦 Hortifruti</button>
 </div>
+
+<div id="tab13" class="tab-content"></div>
 
 <div id="tab1" class="tab-content active"></div>
 <div id="tab2" class="tab-content"></div>
@@ -914,6 +917,291 @@ function showTab(id) {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 buildSummary();
 buildTab1();  // load first tab immediately
+
+
+// ─── TAB 13: HORTIFRUTI ─────────────────────────────────────────────────────
+const hortifrutiData = {
+  frutas: [
+    {nome:"Banana Karape / Oferta", compras:[
+      {data:"01/05",qtd:null,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"qtd n/d"},
+      {data:"04/05",qtd:0.810,unit:"kg",preco:3449,total:2794,mercado:"Cadena Real",obs:"Banana Oferta"},
+      {data:"11/05",qtd:0.950,unit:"kg",preco:4100,total:3895,mercado:"Cadena Real",obs:"Banana Karape"},
+      {data:"13/05",qtd:1.735,unit:"kg",preco:4100,total:7113,mercado:"Cadena Real",obs:"Banana Karape"},
+      {data:"16/05",qtd:2.430,unit:"kg",preco:4100,total:9963,mercado:"Cadena Real",obs:"Banana Karape"},
+      {data:"20/05",qtd:0.566,unit:"kg",preco:2352,total:1332,mercado:"Cadena Real",obs:"Banana Oferta"},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"qtd n/d"},
+      {data:"30/05",qtd:0.419,unit:"kg",preco:4100,total:1718,mercado:"Cadena Real",obs:"Banana Karape"},
+    ]},
+    {nome:"Kiwi Italiano", compras:[
+      {data:"13/05",qtd:0.245,unit:"kg",preco:45947,total:11257,mercado:"Cadena Real",obs:""},
+      {data:"13/05",qtd:0.220,unit:"kg",preco:45950,total:10109,mercado:"Cadena Real",obs:"2ª compra mesmo dia"},
+      {data:"19/05",qtd:0.220,unit:"kg",preco:45950,total:10109,mercado:"Cadena Real",obs:""},
+    ]},
+    {nome:"Naranja Ombligo (Laranja)", compras:[
+      {data:"13/05",qtd:1.205,unit:"kg",preco:5549,total:6686,mercado:"Cadena Real",obs:"est. preço"},
+      {data:"20/05",qtd:null,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"qtd n/d"},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"qtd n/d"},
+    ]},
+    {nome:"Limão Tahiti", compras:[
+      {data:"11/05",qtd:0.085,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"qtd pequena"},
+      {data:"20/05",qtd:0.425,unit:"kg",preco:4330,total:1840,mercado:"Cadena Real",obs:""},
+    ]},
+    {nome:"Mandarina", compras:[
+      {data:"01/05",qtd:null,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"qtd n/d"},
+    ]},
+    {nome:"Fruta Lacyosa", compras:[
+      {data:"11/05",qtd:5,unit:"un",preco:null,total:null,mercado:"Cadena Real",obs:""},
+    ]},
+    {nome:"Mango / Manga", compras:[
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"qtd n/d"},
+    ]},
+  ],
+  verduras: [
+    {nome:"Pepino", compras:[
+      {data:"04/05",qtd:0.545,unit:"kg",preco:10499,total:5722,mercado:"Cadena Real",obs:""},
+      {data:"11/05",qtd:0.660,unit:"kg",preco:10499,total:6929,mercado:"Cadena Real",obs:""},
+      {data:"13/05",qtd:1.415,unit:"kg",preco:11950,total:16909,mercado:"Cadena Real",obs:""},
+    ]},
+    {nome:"Lechuga / Alface", compras:[
+      {data:"13/05",qtd:1,unit:"un",preco:5700,total:5700,mercado:"Cadena Real",obs:"Lechuga Nacional"},
+      {data:"13/05",qtd:2,unit:"un",preco:5700,total:11400,mercado:"Cadena Real",obs:"Lechuga Hidropônica"},
+      {data:"19/05",qtd:0.200,unit:"kg",preco:26950,total:5390,mercado:"Cadena Real (Ecomm)",obs:"Lechuga Repollada"},
+      {data:"20/05",qtd:1,unit:"un",preco:5233,total:5233,mercado:"Cadena Real",obs:"Lechuga Nacional"},
+    ]},
+    {nome:"Perejil / Cheiro-verde", compras:[
+      {data:"13/05",qtd:3,unit:"maço",preco:1300,total:3900,mercado:"Cadena Real",obs:"Perejil x Mazo"},
+      {data:"20/05",qtd:2,unit:"maço",preco:1300,total:2600,mercado:"Cadena Real",obs:"Perejil x Mazo"},
+    ]},
+    {nome:"Cebollita / Cebolinha", compras:[
+      {data:"13/05",qtd:2,unit:"maço",preco:2200,total:4400,mercado:"Cadena Real",obs:"Cebollita x Mazo"},
+    ]},
+    {nome:"Zanahoria / Cenoura", compras:[
+      {data:"11/05",qtd:0.075,unit:"kg",preco:7950,total:596,mercado:"Cadena Real",obs:"qtd pequena"},
+      {data:"13/05",qtd:0.407,unit:"kg",preco:7950,total:3234,mercado:"Cadena Real",obs:""},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"qtd n/d"},
+    ]},
+    {nome:"Tomate", compras:[
+      {data:"13/05",qtd:null,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"Tomate Santa Cruz — qtd n/d"},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"Tomate Perita Nacional — qtd n/d"},
+    ]},
+    {nome:"Brócoli", compras:[
+      {data:"13/05",qtd:null,unit:"un",preco:null,total:null,mercado:"Cadena Real",obs:"qtd n/d"},
+    ]},
+  ],
+  legumes: [
+    {nome:"Papa / Batata", compras:[
+      {data:"11/05",qtd:null,unit:"kg",preco:null,total:24500,mercado:"Cadena Real",obs:"Papa Tradicional — qtd n/d"},
+      {data:"11/05",qtd:1.950,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"Papa Cepillada"},
+      {data:"13/05",qtd:null,unit:"kg",preco:null,total:null,mercado:"Cadena Real",obs:"Papa Cepillada — qtd n/d"},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"Papa Negra — qtd n/d"},
+    ]},
+    {nome:"Mandioca", compras:[
+      {data:"16/05",qtd:2,unit:"un",preco:14200,total:28400,mercado:"Cadena Real",obs:"Mandioca Congelada"},
+      {data:"19/05",qtd:0.780,unit:"kg",preco:19900,total:15522,mercado:"Cadena Real",obs:"Mandioca Festi (fresca)"},
+      {data:"19/05",qtd:2,unit:"un",preco:14200,total:28400,mercado:"Cadena Real",obs:"Mandioca Congelada"},
+    ]},
+    {nome:"Cebolla / Cebola", compras:[
+      {data:"13/05",qtd:1.125,unit:"kg",preco:7500,total:8437,mercado:"Cadena Real",obs:""},
+      {data:"20/05",qtd:null,unit:"kg",preco:7500,total:null,mercado:"Cadena Real",obs:"qtd n/d"},
+      {data:"28/05(est.)",qtd:null,unit:"kg",preco:null,total:null,mercado:"Luisito",obs:"Cebolla Blanca — qtd n/d"},
+    ]},
+    {nome:"Zapallo Brasilero / Abóbora", compras:[
+      {data:"13/05",qtd:1.525,unit:"kg",preco:6950,total:10598,mercado:"Cadena Real",obs:""},
+    ]},
+    {nome:"Supa Paraguaya / Locro", compras:[
+      {data:"19/05",qtd:0.265,unit:"kg",preco:53498,total:14177,mercado:"Cadena Real",obs:"caro — usar com moderação"},
+    ]},
+    {nome:"Ajo / Alho", compras:[
+      {data:"11/05",qtd:2,unit:"malha",preco:null,total:null,mercado:"Cadena Real",obs:"Ajo x Malla"},
+    ]},
+  ],
+};
+
+function buildTab13() {
+  const fmtGs2 = v => v ? 'G. '+Math.round(v).toLocaleString('pt-BR') : '—';
+  const fmtQtd = (q,u) => q ? q+' '+u : '—';
+
+  function totalSection(arr) {
+    let t=0; arr.forEach(item=>item.compras.forEach(c=>{ if(c.total) t+=c.total; })); return t;
+  }
+  function totalItem(item) {
+    let t=0,q=0; item.compras.forEach(c=>{ if(c.total) t+=c.total; if(c.qtd&&c.unit==='kg') q+=c.qtd; }); return {t,q};
+  }
+
+  function renderSection(arr, title, emoji) {
+    let rows = '';
+    arr.forEach(item => {
+      const {t,q} = totalItem(item);
+      const nComp = item.compras.length;
+      rows += `<tr style="background:#f8f9ff;font-weight:600">
+        <td colspan="7" style="padding:10px 12px;color:var(--primary);border-top:2px solid var(--border)">
+          ${emoji} ${item.nome}
+          <span style="font-weight:400;font-size:11px;color:var(--muted)"> — ${nComp} compra(s) em maio${q>0?' | '+q.toFixed(2)+' kg total identificado':''}${t>0?' | Total: G. '+Math.round(t).toLocaleString('pt-BR'):''}</span>
+        </td></tr>`;
+      item.compras.forEach(c => {
+        rows += `<tr>
+          <td style="padding-left:24px">${c.data}</td>
+          <td>${fmtQtd(c.qtd,c.unit)}</td>
+          <td>${c.preco ? 'G. '+c.preco.toLocaleString('pt-BR')+'/'+c.unit : '—'}</td>
+          <td class="text-right">${fmtGs2(c.total)}</td>
+          <td>${c.mercado}</td>
+          <td style="font-size:11px;color:var(--muted)">${c.obs||''}</td>
+        </tr>`;
+      });
+    });
+    const tot = totalSection(arr);
+    return `<div class="section-box" style="margin-bottom:16px">
+      <h3>${emoji} ${title}</h3>
+      <div style="overflow-x:auto">
+      <table>
+        <tr><th>Data</th><th>Quantidade</th><th>Preço Unitário</th><th>Total Gs</th><th>Mercado</th><th>Obs.</th></tr>
+        ${rows}
+        <tr class="total-row"><td colspan="3">TOTAL ${title.toUpperCase()}</td>
+          <td class="text-right">${tot>0?fmtGs2(tot):'Parcial'}</td><td colspan="2"></td></tr>
+      </table></div></div>`;
+  }
+
+  // June list
+  const juneItems = [
+    // item, qtd sugerida, unit, preço ref, total est
+    {emoji:"🍌",cat:"Fruta",nome:"Banana",qtd:"5–6",unit:"kg",preco:"G. 4.100/kg",est:"G. 20.500–24.600",freq:"2× semana",obs:"Consumo alto — comprar em 2 momentos"},
+    {emoji:"🥝",cat:"Fruta",nome:"Kiwi Italiano",qtd:"0,5–1",unit:"kg",preco:"G. 45.950/kg",est:"G. 23.000–46.000",freq:"Quinzenal",obs:"⚠️ Caro — comprar menos ou buscar alternativa"},
+    {emoji:"🍊",cat:"Fruta",nome:"Laranja (Naranja Ombligo)",qtd:"2–3",unit:"kg",preco:"~G. 5.500/kg",est:"G. 11.000–16.500",freq:"Semanal",obs:""},
+    {emoji:"🍋",cat:"Fruta",nome:"Limão Tahiti",qtd:"0,5",unit:"kg",preco:"G. 4.330/kg",est:"G. 2.165",freq:"Semanal",obs:"Usado em pouca quantidade"},
+    {emoji:"🍊",cat:"Fruta",nome:"Mandarina",qtd:"1",unit:"kg",preco:"~G. 6.000/kg",est:"~G. 6.000",freq:"Quinzenal",obs:""},
+    {emoji:"🥒",cat:"Verdura",nome:"Pepino",qtd:"2–3",unit:"kg",preco:"G. 11.000/kg",est:"G. 22.000–33.000",freq:"Semanal",obs:"Consumo frequente"},
+    {emoji:"🥬",cat:"Verdura",nome:"Alface (Lechuga)",qtd:"4",unit:"un",preco:"G. 5.700/un",est:"G. 22.800",freq:"2× semana",obs:""},
+    {emoji:"🌿",cat:"Verdura",nome:"Cheiro-verde (Perejil)",qtd:"4–5",unit:"maço",preco:"G. 1.300/maço",est:"G. 5.200–6.500",freq:"Semanal",obs:""},
+    {emoji:"🌿",cat:"Verdura",nome:"Cebolinha (Cebollita)",qtd:"2–3",unit:"maço",preco:"G. 2.200/maço",est:"G. 4.400–6.600",freq:"Semanal",obs:""},
+    {emoji:"🥕",cat:"Verdura",nome:"Cenoura (Zanahoria)",qtd:"1",unit:"kg",preco:"G. 7.950/kg",est:"G. 7.950",freq:"Semanal",obs:""},
+    {emoji:"🍅",cat:"Verdura",nome:"Tomate",qtd:"2",unit:"kg",preco:"~G. 8.000/kg",est:"~G. 16.000",freq:"Semanal",obs:"Dados insuficientes em maio — est."},
+    {emoji:"🥦",cat:"Verdura",nome:"Brócoli",qtd:"1",unit:"un",preco:"~G. 12.000/un",est:"~G. 12.000",freq:"Quinzenal",obs:"Apareceu 1× em maio"},
+    {emoji:"🥔",cat:"Legume",nome:"Batata (Papa)",qtd:"4–5",unit:"kg",preco:"~G. 8.000/kg",est:"G. 32.000–40.000",freq:"Semanal",obs:""},
+    {emoji:"🌿",cat:"Legume",nome:"Mandioca",qtd:"2",unit:"kg",preco:"G. 14.200–19.900",est:"G. 28.400–39.800",freq:"Quinzenal",obs:"Congelada ou fresca"},
+    {emoji:"🧅",cat:"Legume",nome:"Cebola (Cebolla)",qtd:"2",unit:"kg",preco:"G. 7.500/kg",est:"G. 15.000",freq:"Semanal",obs:""},
+    {emoji:"🎃",cat:"Legume",nome:"Abóbora (Zapallo)",qtd:"1",unit:"kg",preco:"G. 6.950/kg",est:"G. 6.950",freq:"Mensal",obs:"Comprar só se usar no mês"},
+    {emoji:"🧄",cat:"Legume",nome:"Alho (Ajo)",qtd:"2",unit:"malha",preco:"~G. 4.500/malha",est:"~G. 9.000",freq:"Mensal",obs:""},
+  ];
+
+  // Weekly list
+  const weekly = [
+    {dia:"🛒 Semana 1 (início do mês)",itens:[
+      "Banana 2 kg","Alface 2 un","Pepino 1 kg","Cebola 1 kg","Batata 2 kg","Cheiro-verde 2 maços","Limão 0,3 kg","Laranja 1 kg"
+    ]},
+    {dia:"🛒 Semana 2",itens:[
+      "Banana 2 kg","Alface 2 un","Pepino 1 kg","Tomate 1 kg","Cenoura 0,5 kg","Cebolinha 2 maços","Mandioca 1 kg","Cebola 1 kg"
+    ]},
+    {dia:"🛒 Semana 3",itens:[
+      "Banana 2 kg","Alface 2 un","Pepino 1 kg","Batata 2 kg","Laranja 1 kg","Cheiro-verde 2 maços","Brócoli 1 un","Limão 0,2 kg"
+    ]},
+    {dia:"🛒 Semana 4 / Feira grande",itens:[
+      "Banana 1,5 kg","Kiwi 0,5 kg","Alface 2 un","Pepino 0,5 kg","Tomate 1 kg","Cenoura 0,5 kg","Abóbora 1 kg","Alho 2 malhas","Cebola 1 kg"
+    ]},
+  ];
+
+  // Insights
+  const totalFrutas = totalSection(hortifrutiData.frutas);
+  const totalVerduras = totalSection(hortifrutiData.verduras);
+  const totalLegumes = totalSection(hortifrutiData.legumes);
+  const totalHort = totalFrutas + totalVerduras + totalLegumes;
+
+  document.getElementById('tab13').innerHTML = `
+  <h2>🥦 Hortifruti — Frutas, Legumes e Verduras</h2>
+  
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="card green"><label>Total Frutas (identificado)</label><div class="val">${fmtGs2(totalFrutas)}</div><div class="sub">+ compras Luisito s/ qtd</div></div>
+    <div class="card blue"><label>Total Verduras (identificado)</label><div class="val">${fmtGs2(totalVerduras)}</div><div class="sub">+ compras Luisito s/ qtd</div></div>
+    <div class="card"><label>Total Legumes (identificado)</label><div class="val">${fmtGs2(totalLegumes)}</div><div class="sub">+ compras Luisito s/ qtd</div></div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="section-box" style="margin-bottom:16px;background:linear-gradient(135deg,#f0f7ff,#fff)">
+    <h3>💡 Insights — Hortifruti</h3>
+    <div class="grid2">
+      <div class="insight-card warn">
+        <h4>⚠️ Kiwi: o item mais caro por kg</h4>
+        <p>G. 45.950/kg — comprado 3× em maio (~0,7 kg total = ~G. 32.000). Compare com banana a G. 4.100/kg. Para economizar, reduza a frequência ou substitua por laranja ou mandarina na maioria das vezes.</p>
+      </div>
+      <div class="insight-card">
+        <h4>🍌 Banana: item mais frequente</h4>
+        <p>8 compras em maio, ~6,9 kg total, preço médio G. 3.800/kg. É o item mais recorrente e bem precificado. <strong>Comprar sempre</strong> — está entre os mais baratos da seção.</p>
+      </div>
+      <div class="insight-card tip">
+        <h4>💡 Pepino: preço subiu entre compras</h4>
+        <p>G. 10.499/kg em 04/05 → G. 11.950/kg em 13/05. A 3ª compra (maior volume: 1,415 kg) foi a mais cara. Observe se a fair tem preço melhor do que a Cadena Real.</p>
+      </div>
+      <div class="insight-card info">
+        <h4>📌 Muitos itens sem quantidade legível</h4>
+        <p>Tomate, brócoli, naranja e Luisito: vários itens aparecem nos recibos mas sem quantidade legível. O total real de hortifruti em maio deve ser <strong>30–40% maior</strong> do que o valor identificado aqui.</p>
+      </div>
+      <div class="insight-card">
+        <h4>🛒 Mandioca: comprada congelada E fresca</h4>
+        <p>Mandioca Congelada (2 un × 2 compras = G. 56.800) + Mandioca Festi fresca 0.78kg (G. 15.522). A congelada sai mais cara por kg. Se tiver na feira, a fresca é mais econômica.</p>
+      </div>
+      <div class="insight-card tip">
+        <h4>💡 Preços Cadena Real vs Feira</h4>
+        <p>Perejil (cheiro-verde): G. 1.300/maço é bom preço. Zanahoria: G. 7.950/kg razoável. Alface: G. 5.700/un pode ser mais barata na feira. <strong>Hoje na feira: compare banana, kiwi e alface antes de decidir quantidade.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTAS DETALHADAS -->
+  ${renderSection(hortifrutiData.frutas, "Frutas", "🍌")}
+  ${renderSection(hortifrutiData.verduras, "Verduras e Folhosas", "🥗")}
+  ${renderSection(hortifrutiData.legumes, "Legumes e Tubérculos", "🥔")}
+
+  <!-- LISTA JUNHO -->
+  <div class="section-box" style="margin-top:16px;margin-bottom:16px">
+    <h3>📋 Lista Estimada para Junho (com base em maio)</h3>
+    <p class="note" style="margin-bottom:10px">Itens de uso único excluídos. Quantidades baseadas no consumo identificado em maio.</p>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>Cat.</th><th>Item</th><th>Qtd Sugerida</th><th>Preço Ref.</th><th>Est. Mensal Gs</th><th>Frequência</th><th>Obs.</th></tr>
+      ${juneItems.map(r=>`<tr>
+        <td>${r.emoji} ${r.cat}</td>
+        <td style="font-weight:600">${r.nome}</td>
+        <td>${r.qtd} ${r.unit}</td>
+        <td>${r.preco}</td>
+        <td class="text-right" style="font-weight:600;color:var(--primary)">${r.est}</td>
+        <td>${r.freq}</td>
+        <td style="font-size:11px;color:var(--muted)">${r.obs}</td>
+      </tr>`).join('')}
+    </table></div>
+    <div style="margin-top:12px;padding:12px;background:#f0f7f0;border-radius:8px;border-left:4px solid var(--green)">
+      <strong>Estimativa total hortifruti junho:</strong> G. 200.000–280.000 &nbsp;|&nbsp; ~USD 26–37 &nbsp;|&nbsp; ~R$ 152–214
+    </div>
+  </div>
+
+  <!-- LISTA SEMANAL -->
+  <div class="section-box">
+    <h3>📅 Lista Semanal para Feira — Junho</h3>
+    <p class="note" style="margin-bottom:12px">Dividida em 4 compras semanais para manter frescor e evitar desperdício.</p>
+    <div class="grid2">
+      ${weekly.map(w=>`
+        <div style="background:#f8fafb;border-radius:8px;padding:14px;border:1px solid var(--border)">
+          <div style="font-weight:700;color:var(--primary);margin-bottom:10px">${w.dia}</div>
+          <ul style="list-style:none;padding:0">
+            ${w.itens.map(i=>`<li style="padding:4px 0;border-bottom:1px dashed var(--border);font-size:13px">☐ ${i}</li>`).join('')}
+          </ul>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:14px;padding:12px;background:#fffde7;border-radius:8px;border-left:4px solid var(--accent)">
+      <strong>💡 Dica para hoje na feira:</strong> Priorize banana (sempre), alface (2 un), pepino (1 kg), cebola (1 kg), batata (2 kg) e cheiro-verde (2 maços). Se o kiwi estiver abaixo de G. 35.000/kg, vale comprar. Acima disso, substitua por laranja ou mandarina.
+    </div>
+  </div>
+  `;
+}
+
+// Register tab 13 in the builders map — patch showTab
+const _origShowTab = showTab;
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  const builders = {tab1:buildTab1,tab2:buildTab2,tab3:buildTab3,tab4:buildTab4,tab5:buildTab5,tab6:buildTab6,tab7:buildTab7,tab8:buildTab8,tab9:buildTab9,tab10:buildTab10,tab11:buildTab11,tab12:buildTab12,tab13:buildTab13};
+  if(document.getElementById(id).innerHTML.trim()==='') builders[id] && builders[id]();
+}
 
 </script>
 </body>
