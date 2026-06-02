@@ -446,23 +446,34 @@ function showEmpty() {
   statusBadge.innerHTML = '';
 }
 
+function normalizeCode(val) {
+  // Remove prefixo M7 (case-insensitive) e sufixo 67
+  let s = val.trim().toUpperCase();
+  if (s.startsWith('M7')) s = s.slice(2);
+  if (s.endsWith('67'))   s = s.slice(0, -2);
+  return s;
+}
+
 function doSearch() {
   const raw = input.value.trim();
   if (!raw) { showEmpty(); return; }
 
+  // Normaliza: descarta prefixo M7 e sufixo 67
+  const normalized = normalizeCode(raw);
+
   // Try exact match first, then padded zeros
-  let code = raw;
+  let code = normalized;
   let imgs = DATA[code];
 
   // Try zero-padded to 9 digits
   if (!imgs) {
-    const padded = raw.padStart(9, '0');
+    const padded = normalized.padStart(9, '0');
     if (DATA[padded]) { code = padded; imgs = DATA[code]; }
   }
 
   // Try partial match if still not found
   if (!imgs) {
-    const matches = Object.keys(DATA).filter(k => k.includes(raw));
+    const matches = Object.keys(DATA).filter(k => k.includes(normalized));
     if (matches.length === 1) {
       code = matches[0];
       imgs = DATA[code];
