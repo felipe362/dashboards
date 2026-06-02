@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital do Ecommerce — Modelo de Receita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0d12;
+  --surface:#131820;
+  --surface-2:#1a212b;
+  --surface-3:#222b38;
+  --border:#2a3441;
+  --border-light:#374355;
+  --text:#e8ecef;
+  --muted:#8a96a3;
+  --dim:#5a6573;
+  --green:#2dd4a4;
+  --green-dim:rgba(45,212,164,0.12);
+  --green-glow:rgba(45,212,164,0.35);
+  --red:#ef4444;
+  --red-dim:rgba(239,68,68,0.12);
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,0.12);
+  --blue:#60a5fa;
+  --blue-dim:rgba(96,165,250,0.12);
+  --purple:#a78bfa;
+  --purple-dim:rgba(167,139,250,0.12);
+  --display:'Fraunces',Georgia,serif;
+  --sans:'IBM Plex Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;min-height:100vh}
+body{
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(45,212,164,0.06), transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(45,212,164,0.025) 39px, rgba(45,212,164,0.025) 40px);
+}
+.app{max-width:1480px;margin:0 auto;padding:20px 24px 60px}
+
+/* ============ HEADER ============ */
+header{
+  display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;
+  padding-bottom:18px;margin-bottom:18px;
+  border-bottom:1px solid var(--border);
+}
+.brand-mark{
+  display:flex;align-items:center;gap:14px;margin-bottom:8px;
+}
+.cross{
+  width:36px;height:36px;position:relative;
+  background:var(--green);border-radius:6px;
+  display:grid;place-items:center;
+  box-shadow:0 0 24px var(--green-glow);
+}
+.cross::before,.cross::after{
+  content:"";position:absolute;background:var(--bg);
+}
+.cross::before{width:18px;height:5px}
+.cross::after{width:5px;height:18px}
+.brand-text .name{font-family:var(--display);font-weight:600;font-size:28px;letter-spacing:-0.02em;line-height:1}
+.brand-text .sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:6px}
+.brand-desc{font-family:var(--display);font-style:italic;font-size:15px;color:var(--muted);max-width:560px;line-height:1.4}
+.brand-desc strong{color:var(--text);font-style:normal;font-weight:600}
+
+.hero-kpis{display:flex;gap:14px}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;min-width:130px;
+}
+.kpi .lbl{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase}
+.kpi .val{font-family:var(--display);font-size:22px;font-weight:600;line-height:1.1;margin-top:3px}
+.kpi .val.green{color:var(--green)}
+.kpi .val.amber{color:var(--amber)}
+.kpi .val.blue{color:var(--blue)}
+.kpi .sub{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:2px}
+
+/* ============ TABS ============ */
+.tabs{
+  display:flex;gap:2px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:18px;
+  overflow-x:auto;
+}
+.tab{
+  flex:1;min-width:max-content;
+  background:transparent;border:none;color:var(--muted);
+  padding:9px 14px;border-radius:6px;cursor:pointer;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  transition:all 0.15s;white-space:nowrap;
+}
+.tab:hover{color:var(--text);background:var(--surface-2)}
+.tab.active{background:var(--green);color:var(--bg);font-weight:600;box-shadow:0 0 16px var(--green-glow)}
+
+.pane{display:none}
+.pane.active{display:block;animation:fade 0.25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ============ CARDS ============ */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:16px;
+}
+.card-t{
+  font-family:var(--display);font-weight:600;font-size:15px;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  letter-spacing:-0.01em;
+}
+.card-t .badge{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  padding:2px 7px;border-radius:4px;letter-spacing:0.08em;
+}
+.b-g{background:var(--green-dim);color:var(--green);border:1px solid rgba(45,212,164,0.3)}
+.b-r{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.b-a{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
+.b-b{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,0.3)}
+.b-p{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,0.3)}
+
+/* ============ GRIDS ============ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g-side{display:grid;grid-template-columns:380px 1fr;gap:14px}
+@media(max-width:1100px){.g-side,.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* ============ INPUTS ============ */
+.in{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;gap:10px;
+}
+.in label{font-size:11px;color:var(--muted);font-weight:500;flex:1}
+.in input[type=number]{
+  width:100px;background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text);padding:5px 8px;border-radius:5px;
+  font-family:var(--mono);font-size:11px;text-align:right;
+}
+.in input[type=number]:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px var(--green-dim)}
+.in input[type=range]{flex:2;accent-color:var(--green)}
+.in .v{font-family:var(--mono);font-size:11px;color:var(--green);min-width:60px;text-align:right}
+.in.sl{display:grid;grid-template-columns:1fr 2fr auto;gap:10px;align-items:center}
+.in.sl label{margin:0}
+
+/* ============ TABLES ============ */
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;color:var(--dim);font-weight:600;padding:7px 6px;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:7px 6px;border-bottom:1px solid var(--border);color:var(--text)}
+td.mono{font-family:var(--mono);text-align:right}
+td.r{text-align:right}
+tr:hover td{background:var(--surface-2)}
+
+/* ============ CHARTS ============ */
+.chart{height:280px;position:relative}
+.chart-tall{height:380px;position:relative}
+.chart-sm{height:180px;position:relative}
+
+/* ============ MISC ============ */
+.split-h{height:1px;background:var(--border);margin:14px 0}
+.note{font-size:10px;color:var(--muted);font-style:italic;margin-top:6px;line-height:1.5}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase}
+.tag-g{background:var(--green-dim);color:var(--green)}
+.tag-r{background:var(--red-dim);color:var(--red)}
+.tag-a{background:var(--amber-dim);color:var(--amber)}
+.tag-b{background:var(--blue-dim);color:var(--blue)}
+
+/* MODELS GRID for VISÃO GERAL */
+.model-cmp{
+  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.model-cmp .row{display:contents}
+.model-cmp .cell{padding:11px 14px;border-bottom:1px solid var(--border)}
+.model-cmp .row:last-child .cell{border-bottom:none}
+.model-cmp .cell.h{background:var(--surface-2);font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+.model-cmp .cell.lbl{font-weight:500;color:var(--muted);font-size:11px}
+.model-cmp .cell.v{font-family:var(--mono);font-size:12px;font-weight:500}
+.model-cmp .cell.best{background:var(--green-dim);color:var(--green);font-weight:600}
+.model-cmp .cell.worst{background:var(--red-dim);color:var(--red)}
+
+/* PHASES TIMELINE */
+.phase-tl{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0 8px;
+  position:relative;
+}
+.phase{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:14px;position:relative;
+}
+.phase.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green-glow)}
+.phase .ph-num{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase}
+.phase .ph-name{font-family:var(--display);font-weight:600;font-size:16px;margin:4px 0 6px;letter-spacing:-0.01em}
+.phase .ph-when{font-family:var(--mono);font-size:10px;color:var(--green)}
+.phase .ph-stack{margin-top:8px;display:flex;flex-wrap:wrap;gap:3px}
+.phase .ph-rev{font-family:var(--mono);font-size:13px;color:var(--amber);margin-top:8px;font-weight:600}
+
+/* INSIGHT BOX */
+.insight{
+  background:var(--surface);border-left:3px solid var(--green);border-radius:6px;
+  padding:12px 14px;margin-bottom:10px;font-size:12px;line-height:1.55;
+}
+.insight.red{border-left-color:var(--red)}
+.insight.amber{border-left-color:var(--amber)}
+.insight.blue{border-left-color:var(--blue)}
+.insight.purple{border-left-color:var(--purple)}
+.insight strong{font-family:var(--display);font-weight:600;font-size:13px;display:block;margin-bottom:5px;color:var(--text)}
+
+/* SCENARIO BUTTONS */
+.scn{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.scn button{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--muted);
+  padding:7px 11px;border-radius:6px;cursor:pointer;font-size:11px;font-family:var(--sans);font-weight:500;
+  transition:all 0.15s;
+}
+.scn button:hover{color:var(--text);border-color:var(--border-light)}
+.scn button.act{background:var(--green);color:var(--bg);border-color:var(--green);font-weight:600}
+
+/* HORIZONTAL BAR (for utilization etc.) */
+.hbar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:4px}
+.hbar .fill{height:100%;background:var(--green);border-radius:3px;transition:width 0.3s}
+.hbar .fill.amber{background:var(--amber)}
+.hbar .fill.red{background:var(--red)}
+.hbar .fill.blue{background:var(--blue)}
+
+/* RECOMENDAÇÃO TAB */
+.rec-step{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;
+  position:relative;
+}
+.rec-step .num{
+  position:absolute;top:-12px;left:18px;
+  background:var(--green);color:var(--bg);font-family:var(--mono);font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:5px;letter-spacing:0.08em;
+}
+.rec-step h3{font-family:var(--display);font-weight:600;font-size:17px;margin-bottom:6px;letter-spacing:-0.01em}
+.rec-step .when{font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.rec-step p{font-size:12px;line-height:1.65;color:var(--text)}
+.rec-step ul{margin:8px 0 0 18px;font-size:12px;line-height:1.7;color:var(--muted)}
+.rec-step ul strong{color:var(--text)}
+
+/* SECTION TITLE */
+.sec-t{
+  font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.01em;
+  margin:6px 0 12px;display:flex;align-items:center;gap:10px;
+}
+.sec-t .line{flex:1;height:1px;background:var(--border)}
+.sec-t .note{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.08em;text-transform:uppercase;font-style:normal}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div>
+    <div class="brand-mark">
+      <div class="cross"></div>
+      <div class="brand-text">
+        <div class="name">Hospital do Ecommerce</div>
+        <div class="sub">Modelo de Receita · Consultas · Mentorias · Comunidade · SaaS</div>
+      </div>
+    </div>
+    <p class="brand-desc">Simulador interativo de três modelos de monetização — isolados e em stack. <strong>Mude qualquer parâmetro</strong> e veja a receita combinada cruzada com seu runway de 24 meses.</p>
+  </div>
+  <div class="hero-kpis">
+    <div class="kpi"><div class="lbl">Receita Mês 6</div><div class="val green" id="kpi6">—</div><div class="sub">Só consultas</div></div>
+    <div class="kpi"><div class="lbl">Receita Mês 12</div><div class="val amber" id="kpi12">—</div><div class="sub">+ mentorias</div></div>
+    <div class="kpi"><div class="lbl">Receita Mês 24</div><div class="val blue" id="kpi24">—</div><div class="sub">Stack completo</div></div>
+    <div class="kpi"><div class="lbl">Acumulado 24m</div><div class="val" id="kpiAc">—</div><div class="sub">Bruto total</div></div>
+  </div>
+</header>
+
+<!-- ============ TABS ============ -->
+<nav class="tabs">
+  <button class="tab active" onclick="setTab('overview')">Visão Geral</button>
+  <button class="tab" onclick="setTab('consultas')">Consultas (Médico)</button>
+  <button class="tab" onclick="setTab('mentorias')">Mentorias</button>
+  <button class="tab" onclick="setTab('saas')">Comunidade / SaaS</button>
+  <button class="tab" onclick="setTab('stack')">Stack 24 Meses</button>
+  <button class="tab" onclick="setTab('rec')">Recomendação</button>
+</nav>
+
+<main id="main"></main>
+
+<!-- ============ PANES ============ -->
+<div id="panes">
+
+<!-- ============ PANE: VISÃO GERAL ============ -->
+<div class="pane active" id="p-overview">
+
+  <div class="sec-t">Os três modelos lado a lado <span class="line"></span><span class="note">comparação direta</span></div>
+
+  <div class="model-cmp">
+    <div class="row">
+      <div class="cell h">Critério</div>
+      <div class="cell h">Consultas (Médico)</div>
+      <div class="cell h">Mentorias</div>
+      <div class="cell h">Comunidade / SaaS</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Ticket médio</div>
+      <div class="cell v">R$ 3-5k / consulta</div>
+      <div class="cell v">R$ 5-10k / cohort 3m</div>
+      <div class="cell v">R$ 100-900 / mês recorrente</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Tempo até 1ª receita</div>
+      <div class="cell v best">Mês 1-2</div>
+      <div class="cell v">Mês 4-6</div>
+      <div class="cell v worst">Mês 12-18 (SaaS) / Mês 6 (comunidade)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Audiência mínima viável</div>
+      <div class="cell v best">2-3K qualificados</div>
+      <div class="cell v">5-10K</div>
+      <div class="cell v worst">15K+ (comunidade) / 30K+ (SaaS)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Investimento inicial</div>
+      <div class="cell v best">R$ 5-15k (operação)</div>
+      <div class="cell v">R$ 20-40k (conteúdo)</div>
+      <div class="cell v worst">R$ 200-500k (SaaS)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Limite de escala</div>
+      <div class="cell v worst">Tempo do time (~R$400k/m teto)</div>
+      <div class="cell v">Capacidade de cohorts paralelos</div>
+      <div class="cell v best">Quase ilimitado (SaaS)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Recorrência</div>
+      <div class="cell v">Natural (volta quando precisa)</div>
+      <div class="cell v">Contratual durante cohort</div>
+      <div class="cell v best">MRR puro (assinatura)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Você é o gargalo?</div>
+      <div class="cell v">Não (time executa)</div>
+      <div class="cell v worst">Sim (você ensina)</div>
+      <div class="cell v best">Não (produto entrega)</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Match com a marca</div>
+      <div class="cell v best">Perfeito — médico → consulta</div>
+      <div class="cell v">Bom — protocolo de tratamento</div>
+      <div class="cell v">Médio — exige tradução</div>
+    </div>
+    <div class="row">
+      <div class="cell lbl">Risco de falência se falhar</div>
+      <div class="cell v best">Baixo (operação enxuta)</div>
+      <div class="cell v">Médio (refund + reputação)</div>
+      <div class="cell v worst">Alto (CapEx perdido em SaaS)</div>
+    </div>
+  </div>
+
+  <div style="margin-top:18px" class="g2">
+    <div class="card">
+      <div class="card-t">Por que <em>não</em> escolher um único modelo</div>
+      <p style="font-size:12px;line-height:1.65;color:var(--muted)">
+        Os três modelos têm pontos cegos quando isolados. <strong style="color:var(--text)">Consulta sozinha</strong> tem teto de receita (tempo do time). <strong style="color:var(--text)">Mentoria sozinha</strong> exige audiência antes da primeira venda séria — você queima 6 meses sem receita. <strong style="color:var(--text)">SaaS sozinho</strong> consome R$200-500k antes de gerar caixa e exige product-market fit que você só descobre <em>fazendo consulta</em>.
+      </p>
+      <p style="font-size:12px;line-height:1.65;color:var(--muted);margin-top:8px">
+        A jogada é a <strong style="color:var(--green)">sequência</strong>: cada fase alimenta a próxima com dados, casos validados e demanda comprovada. Consulta valida a metodologia → mentoria escala a metodologia → comunidade aglutina os formados → SaaS automatiza os problemas repetidos que você só descobre depois de 100+ casos.
+      </p>
+    </div>
+    <div class="card">
+      <div class="card-t">As fases (clique para detalhar)</div>
+      <div class="phase-tl" style="grid-template-columns:1fr;gap:8px">
+        <div class="phase active">
+          <div class="ph-num">Fase 1 · Mês 0-6</div>
+          <div class="ph-name">Consultas</div>
+          <div class="ph-when">Construir caixa + casos</div>
+          <div class="ph-stack"><span class="tag tag-g">Consultas</span></div>
+          <div class="ph-rev">R$ 100-240k / mês</div>
+        </div>
+        <div class="phase">
+          <div class="ph-num">Fase 2 · Mês 6-12</div>
+          <div class="ph-name">+ Mentorias</div>
+          <div class="ph-when">Produtizar o protocolo</div>
+          <div class="ph-stack"><span class="tag tag-g">Consultas</span><span class="tag tag-a">Mentorias</span></div>
+          <div class="ph-rev">R$ 200-400k / mês</div>
+        </div>
+        <div class="phase">
+          <div class="ph-num">Fase 3 · Mês 12-24</div>
+          <div class="ph-name">+ Comunidade</div>
+          <div class="ph-when">Aglutinar alumni + lead gen</div>
+          <div class="ph-stack"><span class="tag tag-g">Consultas</span><span class="tag tag-a">Mentorias</span><span class="tag tag-b">Comunidade</span></div>
+          <div class="ph-rev">R$ 300-550k / mês</div>
+        </div>
+        <div class="phase">
+          <div class="ph-num">Fase 4 · Mês 24+</div>
+          <div class="ph-name">+ SaaS (se justificado)</div>
+          <div class="ph-when">Automatizar o repetido</div>
+          <div class="ph-stack"><span class="tag tag-g">Consultas</span><span class="tag tag-a">Mentorias</span><span class="tag tag-b">Comunidade</span><span class="tag tag-r">SaaS</span></div>
+          <div class="ph-rev">R$ 500k - 1M / mês</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-t" style="margin-top:24px">Receita combinada projetada (24 meses) <span class="line"></span><span class="note">stack das fases</span></div>
+  <div class="card">
+    <div class="chart-tall"><canvas id="cOverview"></canvas></div>
+    <div class="note">Curva considera utilização gradual e início faseado de cada modelo conforme parâmetros padrão. Mude os parâmetros nas abas de cada modelo e volte aqui para ver o impacto.</div>
+  </div>
+</div>
+
+<!-- ============ PANE: CONSULTAS ============ -->
+<div class="pane" id="p-consultas">
+
+  <div class="g-side">
+    <div class="card">
+      <div class="card-t">Parâmetros das Consultas <span class="badge b-g">MODELO 2</span></div>
+
+      <div class="scn">
+        <button onclick="applyConsScn('cons')" class="act">Conservador</button>
+        <button onclick="applyConsScn('real')">Realista</button>
+        <button onclick="applyConsScn('agr')">Agressivo</button>
+      </div>
+
+      <div class="in sl"><label>Ticket por consulta (R$)</label><input type="range" id="cTicket" min="2000" max="8000" step="500" value="4000" oninput="updateAll()"><span class="v" id="cTicketV">R$ 4.000</span></div>
+      <div class="in sl"><label>Nº de especialistas</label><input type="range" id="cEsp" min="1" max="6" step="1" value="3" oninput="updateAll()"><span class="v" id="cEspV">3</span></div>
+      <div class="in sl"><label>Consultas/dia por especialista</label><input type="range" id="cDia" min="1" max="4" step="1" value="2" oninput="updateAll()"><span class="v" id="cDiaV">2</span></div>
+      <div class="in sl"><label>Dias úteis/mês</label><input type="range" id="cDias" min="15" max="24" step="1" value="20" oninput="updateAll()"><span class="v" id="cDiasV">20</span></div>
+
+      <div class="split-h"></div>
+      <div class="card-t" style="font-size:12px;margin-top:4px">Curva de utilização (ramp-up)</div>
+
+      <div class="in sl"><label>Utilização Mês 1 (%)</label><input type="range" id="cU1" min="5" max="50" step="5" value="20" oninput="updateAll()"><span class="v" id="cU1V">20%</span></div>
+      <div class="in sl"><label>Utilização Mês 3 (%)</label><input type="range" id="cU3" min="10" max="70" step="5" value="35" oninput="updateAll()"><span class="v" id="cU3V">35%</span></div>
+      <div class="in sl"><label>Utilização Mês 6 (%)</label><input type="range" id="cU6" min="20" max="90" step="5" value="55" oninput="updateAll()"><span class="v" id="cU6V">55%</span></div>
+      <div class="in sl"><label>Utilização Mês 12+ (%)</label><input type="range" id="cU12" min="30" max="95" step="5" value="70" oninput="updateAll()"><span class="v" id="cU12V">70%</span></div>
+
+      <div class="split-h"></div>
+      <div class="card-t" style="font-size:12px">Estrutura do produto</div>
+
+      <div class="in sl"><label>% que vira retorno (2ª consulta)</label><input type="range" id="cRet" min="0" max="60" step="5" value="25" oninput="updateAll()"><span class="v" id="cRetV">25%</span></div>
+      <div class="in sl"><label>Custo variável por consulta (R$)</label><input type="range" id="cCv" min="0" max="2000" step="100" value="400" oninput="updateAll()"><span class="v" id="cCvV">R$ 400</span></div>
+      <div class="in sl"><label>Custo fixo time (R$/mês)</label><input type="range" id="cCf" min="5000" max="60000" step="1000" value="25000" oninput="updateAll()"><span class="v" id="cCfV">R$ 25.000</span></div>
+
+      <div class="note">Custo do time considera salários + estúdio + ferramentas dos 3 especialistas.</div>
+    </div>
+
+    <div>
+      <div class="g4" style="margin-bottom:14px">
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Capacidade máx</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--green);margin-top:4px" id="kCap">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">consultas/mês</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 1</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--amber);margin-top:4px" id="kRev1">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kCons1">— consultas</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 6</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--blue);margin-top:4px" id="kRev6">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kCons6">— consultas</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 12+</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--purple);margin-top:4px" id="kRev12">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kCons12">— consultas</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-t">Receita × Custo × Lucro (12 meses)</div>
+        <div class="chart"><canvas id="cConsRev"></canvas></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Estrutura ideal da consulta <span class="badge b-g">PROTOCOLO</span></div>
+          <table>
+            <thead><tr><th>Etapa</th><th class="r">Tempo</th><th class="r">Quem</th></tr></thead>
+            <tbody>
+              <tr><td>Triagem inicial (form + screening)</td><td class="mono r">15 min</td><td class="r">Você</td></tr>
+              <tr><td>Pré-consulta (acesso a dados + diagnóstico inicial)</td><td class="mono r">30 min</td><td class="r">Especialista</td></tr>
+              <tr><td>Consulta ao vivo (diagnóstico)</td><td class="mono r">90 min</td><td class="r">Especialista</td></tr>
+              <tr><td>Trabalho de mapeamento (1 semana)</td><td class="mono r">6-8 h</td><td class="r">Especialista</td></tr>
+              <tr><td>Reunião de entrega do relatório</td><td class="mono r">60 min</td><td class="r">Especialista</td></tr>
+              <tr><td>Revisão sênior (casos complexos)</td><td class="mono r">30 min</td><td class="r">Você</td></tr>
+              <tr style="background:var(--green-dim)"><td><strong>Total por consulta</strong></td><td class="mono r"><strong>~11 h</strong></td><td class="r"><strong>R$ 360/h</strong></td></tr>
+            </tbody>
+          </table>
+          <div class="note">Você gasta ~45min do seu tempo por consulta (triagem + revisão sênior). Especialista executa 9-10h. A R$4k de ticket, o valor/hora do seu tempo direto é R$5.300/h.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-t">Onde escala (e onde quebra)</div>
+          <div class="insight"><strong>Escala vertical fácil:</strong> contratar mais especialista. Cada novo especialista (R$8-12k/mês CLT) adiciona ~40 consultas/mês = R$160k de receita potencial. ROI ~10x se mantiver demanda.</div>
+          <div class="insight amber"><strong>Quebra de qualidade:</strong> sem você na revisão sênior, qualidade despenca. Limite prático: ~5-6 especialistas com você revisando, ou contratar um "chefe de clínica" sênior pago R$20-25k/mês.</div>
+          <div class="insight red"><strong>Teto duro:</strong> ~R$400-480k/mês com 6 especialistas saturados. Para passar disso, precisa virar mentoria/produto.</div>
+          <div class="insight blue"><strong>Lead gen:</strong> ao 3K seguidores qualificados, 1% convertendo/mês = 30 leads → ~10 vendas/mês. Insuficiente para 60-90 consultas/mês — precisa de tráfego pago ou conteúdo viral.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANE: MENTORIAS ============ -->
+<div class="pane" id="p-mentorias">
+
+  <div class="g-side">
+    <div class="card">
+      <div class="card-t">Parâmetros das Mentorias <span class="badge b-a">MODELO 1</span></div>
+
+      <div class="scn">
+        <button onclick="applyMentScn('cons')" class="act">Conservador</button>
+        <button onclick="applyMentScn('real')">Realista</button>
+        <button onclick="applyMentScn('agr')">Agressivo</button>
+      </div>
+
+      <div class="card-t" style="font-size:12px;margin-top:4px">Programa estruturado (cohort)</div>
+
+      <div class="in sl"><label>Ticket total por aluno (R$)</label><input type="range" id="mTicket" min="3000" max="20000" step="500" value="7000" oninput="updateAll()"><span class="v" id="mTicketV">R$ 7.000</span></div>
+      <div class="in sl"><label>Duração do programa (meses)</label><input type="range" id="mDur" min="2" max="6" step="1" value="3" oninput="updateAll()"><span class="v" id="mDurV">3 meses</span></div>
+      <div class="in sl"><label>Tamanho da turma (alunos)</label><input type="range" id="mTurma" min="5" max="30" step="1" value="12" oninput="updateAll()"><span class="v" id="mTurmaV">12</span></div>
+      <div class="in sl"><label>Mês de início da 1ª turma</label><input type="range" id="mIni" min="3" max="12" step="1" value="6" oninput="updateAll()"><span class="v" id="mIniV">Mês 6</span></div>
+      <div class="in sl"><label>Turmas/ano</label><input type="range" id="mAno" min="2" max="8" step="1" value="4" oninput="updateAll()"><span class="v" id="mAnoV">4</span></div>
+      <div class="in sl"><label>Turmas paralelas (a partir do mês 12)</label><input type="range" id="mPar" min="1" max="4" step="1" value="2" oninput="updateAll()"><span class="v" id="mParV">2</span></div>
+
+      <div class="split-h"></div>
+      <div class="card-t" style="font-size:12px">Mentoria individual (high-ticket)</div>
+
+      <div class="in sl"><label>Ticket mentoria 1:1 (R$/mês)</label><input type="range" id="mInd" min="0" max="15000" step="500" value="5000" oninput="updateAll()"><span class="v" id="mIndV">R$ 5.000</span></div>
+      <div class="in sl"><label>Clientes 1:1 (pico)</label><input type="range" id="mIndQ" min="0" max="20" step="1" value="5" oninput="updateAll()"><span class="v" id="mIndQV">5</span></div>
+      <div class="in sl"><label>Mês para atingir pico 1:1</label><input type="range" id="mIndM" min="6" max="24" step="1" value="12" oninput="updateAll()"><span class="v" id="mIndMV">Mês 12</span></div>
+
+      <div class="split-h"></div>
+      <div class="in sl"><label>Custo de produção do programa (R$/turma)</label><input type="range" id="mCust" min="0" max="20000" step="500" value="4000" oninput="updateAll()"><span class="v" id="mCustV">R$ 4.000</span></div>
+      <div class="in sl"><label>Conversão de seguidores em alunos (%)</label><input type="range" id="mConv" min="0.5" max="5" step="0.1" value="1.5" oninput="updateAll()"><span class="v" id="mConvV">1.5%</span></div>
+
+      <div class="note">Mentoria individual é alta margem mas consome seu tempo direto. Use como camada premium acima do programa em grupo.</div>
+    </div>
+
+    <div>
+      <div class="g4" style="margin-bottom:14px">
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita / turma</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--green);margin-top:4px" id="kMTurma">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kMTurmaSub">— alunos × R$ —</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita/mês durante cohort</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--amber);margin-top:4px" id="kMMes">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">parcelado</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita anual</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--blue);margin-top:4px" id="kMAno">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kMAnoSub">— turmas/ano</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Margem por aluno</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--purple);margin-top:4px" id="kMMarg">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">já descontado custo</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-t">Receita das mentorias ao longo de 24 meses</div>
+        <div class="chart"><canvas id="cMentRev"></canvas></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Estrutura recomendada do programa <span class="badge b-a">PROTOCOLO ANTI-CRISE</span></div>
+          <table>
+            <thead><tr><th>Semana</th><th>Foco</th><th class="r">Entregável</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">1</td><td>Diagnóstico financeiro + sangramento de caixa</td><td class="r">Mapa de hemorragia</td></tr>
+              <tr><td class="mono">2</td><td>Estancamento: cortes imediatos + renegociação</td><td class="r">Plano 30 dias</td></tr>
+              <tr><td class="mono">3-4</td><td>Operação: estoque, anúncios, conversão</td><td class="r">Auditoria + correções</td></tr>
+              <tr><td class="mono">5-6</td><td>Marketplace: rep, BR, FBM/FBA, claims</td><td class="r">Score recuperação</td></tr>
+              <tr><td class="mono">7-8</td><td>Estrutura tributária + societária</td><td class="r">Plano enxugar</td></tr>
+              <tr><td class="mono">9-10</td><td>Reconstrução: relançamento + caixa positivo</td><td class="r">Plano 90d</td></tr>
+              <tr><td class="mono">11-12</td><td>Alta clínica + plano de manutenção</td><td class="r">Protocolo manutenção</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Programa de 12 semanas (3 meses). Encontros semanais 2h + comunidade WhatsApp + revisão individual mensal.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-t">Trade-offs do modelo</div>
+          <div class="insight"><strong>Margem alta:</strong> uma turma de 12 × R$7k = R$84k. Custo de produção R$4k + 2-3 mentores R$15k = R$19k. <strong style="color:var(--green)">Margem ~77%</strong>. Muito acima de consulta.</div>
+          <div class="insight amber"><strong>Você é o gargalo de venda:</strong> programa de transformação exige sua cara na campanha. Não dá pra terceirizar a venda — pelo menos não nos primeiros 4-6 cohorts.</div>
+          <div class="insight blue"><strong>Lead gen via consulta:</strong> 20-30% dos clientes de consulta vão querer continuar. Eles entram na próxima turma. Isso resolve metade do problema de aquisição.</div>
+          <div class="insight red"><strong>Reputação assimétrica:</strong> 1 cliente que não recupera fala 10x mais alto que 11 que se salvam. Critério de entrada rigoroso é mandatório.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANE: SAAS / COMUNIDADE ============ -->
+<div class="pane" id="p-saas">
+
+  <div class="g-side">
+    <div class="card">
+      <div class="card-t">Parâmetros Comunidade / SaaS <span class="badge b-b">MODELO 3</span></div>
+
+      <div class="scn">
+        <button onclick="applySaasScn('com')" class="act">Só comunidade</button>
+        <button onclick="applySaasScn('mix')">Comunidade + SaaS</button>
+        <button onclick="applySaasScn('saas')">Só SaaS</button>
+      </div>
+
+      <div class="card-t" style="font-size:12px;margin-top:4px">Comunidade paga (membership)</div>
+
+      <div class="in sl"><label>Ticket comunidade (R$/mês)</label><input type="range" id="sCmTick" min="0" max="500" step="10" value="150" oninput="updateAll()"><span class="v" id="sCmTickV">R$ 150</span></div>
+      <div class="in sl"><label>Mês de lançamento</label><input type="range" id="sCmIni" min="6" max="24" step="1" value="12" oninput="updateAll()"><span class="v" id="sCmIniV">Mês 12</span></div>
+      <div class="in sl"><label>Membros mês 1 do lançamento</label><input type="range" id="sCmM1" min="0" max="200" step="10" value="50" oninput="updateAll()"><span class="v" id="sCmM1V">50</span></div>
+      <div class="in sl"><label>Membros teto (mês +18)</label><input type="range" id="sCmMax" min="50" max="2000" step="50" value="400" oninput="updateAll()"><span class="v" id="sCmMaxV">400</span></div>
+      <div class="in sl"><label>Churn mensal (%)</label><input type="range" id="sCmCh" min="1" max="15" step="0.5" value="5" oninput="updateAll()"><span class="v" id="sCmChV">5%</span></div>
+
+      <div class="split-h"></div>
+      <div class="card-t" style="font-size:12px">SaaS (LLM + marketplaces)</div>
+
+      <div class="in sl"><label>Ticket SaaS (R$/mês)</label><input type="range" id="sSaTick" min="0" max="1500" step="50" value="700" oninput="updateAll()"><span class="v" id="sSaTickV">R$ 700</span></div>
+      <div class="in sl"><label>Mês de lançamento MVP</label><input type="range" id="sSaIni" min="12" max="36" step="1" value="18" oninput="updateAll()"><span class="v" id="sSaIniV">Mês 18</span></div>
+      <div class="in sl"><label>Investimento total para MVP (R$)</label><input type="range" id="sSaInv" min="100000" max="800000" step="25000" value="300000" oninput="updateAll()"><span class="v" id="sSaInvV">R$ 300.000</span></div>
+      <div class="in sl"><label>Usuários mês +6 do lançamento</label><input type="range" id="sSaU6" min="10" max="500" step="10" value="80" oninput="updateAll()"><span class="v" id="sSaU6V">80</span></div>
+      <div class="in sl"><label>Usuários mês +12 do lançamento</label><input type="range" id="sSaU12" min="20" max="1500" step="20" value="220" oninput="updateAll()"><span class="v" id="sSaU12V">220</span></div>
+      <div class="in sl"><label>Churn SaaS B2B (%/mês)</label><input type="range" id="sSaCh" min="2" max="15" step="0.5" value="6" oninput="updateAll()"><span class="v" id="sSaChV">6%</span></div>
+
+      <div class="note">Churn 5-7%/mês é a faixa real de SaaS B2B SMB no Brasil. Empresas em crise (seu público) tem churn ainda maior.</div>
+    </div>
+
+    <div>
+      <div class="g4" style="margin-bottom:14px">
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">MRR Comunidade mês 24</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--blue);margin-top:4px" id="kCmMRR">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kCmSub">— membros</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">MRR SaaS mês 24</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--purple);margin-top:4px" id="kSaMRR">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px" id="kSaSub">— usuários</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Payback SaaS</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--amber);margin-top:4px" id="kSaPay">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">meses até recuperar investimento</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px 10px">
+          <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita combinada mês 24</div>
+          <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--green);margin-top:4px" id="kSaTot">—</div>
+          <div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">Comunidade + SaaS</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-t">MRR Comunidade vs SaaS (24 meses)</div>
+        <div class="chart"><canvas id="cSaasRev"></canvas></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Realidade do SaaS <span class="badge b-r">CUIDADO</span></div>
+          <div class="insight red"><strong>O investimento é real:</strong> R$200-500k para MVP + 12-18 meses até comercializável. Você precisa de dev sênior (não está no seu time atual), product manager, designer, infra.</div>
+          <div class="insight amber"><strong>Concorrentes existem:</strong> HyperClub, Olist, Bling, Tiny, etc. SaaS sem diferenciação clara morre rápido. Seu único moat real seria o método "anti-crise" embutido — mas isso ainda não está validado.</div>
+          <div class="insight"><strong>Quando faz sentido:</strong> só depois de 100+ casos de consulta + 50+ alunos de mentoria. Aí você sabe os 10 problemas que se repetem e que valem automatizar. Antes disso, é chute caro.</div>
+          <div class="insight blue"><strong>Alternativa esperta:</strong> em vez de SaaS proprietário, criar layer/integração em cima de SaaS existente (ex: dashboard "diagnóstico clínico" que conecta no ML/Shopee via API). 10x mais barato e 5x mais rápido.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-t">Comunidade — o que ela é (e o que não é)</div>
+          <div class="insight"><strong>O que ela é:</strong> ambiente de alumni, troca peer-to-peer e Q&A semanal com você. Funciona como lead gen barato pra consulta/mentoria e como retenção de marca.</div>
+          <div class="insight amber"><strong>O que ela não é:</strong> conteúdo "curso completo". Se virar isso, vira infoproduto barato e compete com Hotmart. Mantenha tese: comunidade + acesso direto, sem curso enlatado.</div>
+          <div class="insight blue"><strong>Quando lançar:</strong> mês 10-12, depois de ter 30-50 ex-clientes para semear. Lançar antes = comunidade vazia, churn imediato.</div>
+          <div class="insight"><strong>Preço:</strong> R$97-197/mês funciona. Abaixo disso o público acha que vale pouco. Acima vira concorrente da mentoria.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANE: STACK 24M ============ -->
+<div class="pane" id="p-stack">
+
+  <div class="sec-t">Stack combinado — 24 meses <span class="line"></span><span class="note">todos os modelos somados</span></div>
+
+  <div class="g4" style="margin-bottom:14px">
+    <div class="card" style="text-align:center;padding:14px 10px">
+      <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 6</div>
+      <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--green);margin-top:4px" id="sk6">—</div>
+      <div class="mono" style="font-size:9px;color:var(--muted);margin-top:2px" id="sk6sub">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px 10px">
+      <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 12</div>
+      <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--amber);margin-top:4px" id="sk12">—</div>
+      <div class="mono" style="font-size:9px;color:var(--muted);margin-top:2px" id="sk12sub">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px 10px">
+      <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 18</div>
+      <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--blue);margin-top:4px" id="sk18">—</div>
+      <div class="mono" style="font-size:9px;color:var(--muted);margin-top:2px" id="sk18sub">—</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px 10px">
+      <div class="mono" style="font-size:9px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase">Receita Mês 24</div>
+      <div style="font-family:var(--display);font-size:22px;font-weight:600;color:var(--purple);margin-top:4px" id="sk24">—</div>
+      <div class="mono" style="font-size:9px;color:var(--muted);margin-top:2px" id="sk24sub">—</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-t">Composição da receita por modelo (área empilhada)</div>
+    <div class="chart-tall"><canvas id="cStack"></canvas></div>
+    <div class="note">Cada cor é um modelo: <span class="tag tag-g">Consultas</span> <span class="tag tag-a">Mentorias (grupo)</span> <span class="tag tag-b">Mentoria 1:1</span> <span class="tag tag-b">Comunidade</span> <span class="tag" style="background:var(--purple-dim);color:var(--purple)">SaaS</span></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Receita acumulada × Runway pessoal</div>
+      <div class="chart"><canvas id="cAcum"></canvas></div>
+      <div class="note">Linha verde = receita acumulada bruta. Linha cinza = seu gasto pessoal acumulado (R$15k/mês). Quando a verde cruza a cinza, o negócio se paga em caixa.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-t">Marcos por mês <span class="badge b-g">PROJEÇÃO</span></div>
+      <table>
+        <thead><tr><th>Evento</th><th>Mês</th><th class="r">Receita/mês</th></tr></thead>
+        <tbody id="tMarcos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec-t" style="margin-top:20px">Detalhamento mês a mês <span class="line"></span></div>
+  <div class="card" style="padding:0;overflow-x:auto">
+    <table style="font-size:10px">
+      <thead><tr>
+        <th>Mês</th>
+        <th class="r">Consultas</th>
+        <th class="r">Mentoria Grupo</th>
+        <th class="r">Mentoria 1:1</th>
+        <th class="r">Comunidade</th>
+        <th class="r">SaaS</th>
+        <th class="r" style="background:var(--green-dim)">TOTAL</th>
+        <th class="r">Acumulado</th>
+      </tr></thead>
+      <tbody id="tMes"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============ PANE: RECOMENDAÇÃO ============ -->
+<div class="pane" id="p-rec">
+
+  <div class="sec-t">Plano de execução — 24 meses <span class="line"></span><span class="note">o que fazer e quando</span></div>
+
+  <div class="rec-step">
+    <div class="num">FASE 1</div>
+    <h3>Lançar Consultas (Médico)</h3>
+    <div class="when">Mês 0-6 · meta: validar protocolo e gerar R$100-240k/mês</div>
+    <p>Você abre o "Hospital" com os 3 especialistas. Foco total em <strong>volume de casos validados</strong>, não em receita máxima. Cada consulta é matéria-prima para o resto do funil.</p>
+    <ul>
+      <li><strong>Semanas 1-2:</strong> formalizar o protocolo de consulta (triagem → diagnóstico → 1 semana → relatório). Padronizar templates de relatório anti-crise.</li>
+      <li><strong>Semanas 3-4:</strong> definir tickets — R$3.500 entrada / R$5.000 premium (caso complexo). Aceitar Pix à vista com 10% desc.</li>
+      <li><strong>Mês 2-3:</strong> conteúdo do Instagram alimentado por casos reais (anonimizados). Roteiro: "case do dia" 3x/semana. Reels longos quinzenais.</li>
+      <li><strong>Mês 4-5:</strong> introduzir consulta de retorno (R$1.500-2.000) para o pós-tratamento. Aumenta LTV sem aumentar aquisição.</li>
+      <li><strong>Mês 6:</strong> hold checkpoint — você tem 40-80 casos? Os 5 problemas mais comuns estão mapeados? Pode produtizar mentoria.</li>
+    </ul>
+    <div class="insight" style="margin-top:12px"><strong>KPI de avanço para Fase 2:</strong> 40+ consultas concluídas, NPS > 8, 3+ casos públicos de transformação, base de 50+ ex-clientes interessados em "continuar".</div>
+  </div>
+
+  <div class="rec-step">
+    <div class="num">FASE 2</div>
+    <h3>Adicionar Mentorias (Programa anti-crise)</h3>
+    <div class="when">Mês 6-12 · meta: R$200-400k/mês com mentoria escalando</div>
+    <p>Você empacota o protocolo das consultas em um <strong>programa de 3 meses</strong> com 12 alunos. A venda inicial vem dos ex-clientes de consulta (eles já te conhecem e confiam).</p>
+    <ul>
+      <li><strong>Mês 6-7:</strong> beta paga — turma piloto com 8 alunos a R$5.000 (preço de teste). Filma tudo, depura formato.</li>
+      <li><strong>Mês 8:</strong> 1ª turma oficial — 12 alunos × R$7.000 = R$84k. Encontros semanais 2h + comunidade WhatsApp + revisão mensal individual.</li>
+      <li><strong>Mês 10-11:</strong> 2ª turma — agora com material gravado das aulas anteriores, escala mais fácil. 15-18 alunos possíveis.</li>
+      <li><strong>Mês 12:</strong> abrir <strong>mentoria 1:1 high-ticket</strong> (R$5-8k/mês) para os 3-5 casos premium que querem você direto.</li>
+      <li><strong>Em paralelo:</strong> consultas continuam — agora um % delas converte em alunos da próxima turma (lead gen interno).</li>
+    </ul>
+    <div class="insight amber" style="margin-top:12px"><strong>Armadilha clássica:</strong> querer cobrar pouco "pra encher turma rápido". Não. Mantenha R$7k+ desde a 1ª turma oficial. O público em crise paga preço — porque a dor é real e o ROI é claro.</div>
+  </div>
+
+  <div class="rec-step">
+    <div class="num">FASE 3</div>
+    <h3>Lançar Comunidade (alumni + lead gen)</h3>
+    <div class="when">Mês 12-18 · meta: R$300-550k/mês total com MRR de comunidade</div>
+    <p>Comunidade paga (R$150-200/mês) aglutinando ex-clientes de consulta, alunos formados e ex-alunos. Funciona como camada de retenção e máquina de leads para os tickets altos.</p>
+    <ul>
+      <li><strong>Mês 12-13:</strong> lançamento com 50-80 membros seed (todos vindos de consulta + mentoria). Plataforma simples: Circle ou Slack premium.</li>
+      <li><strong>Mês 14-18:</strong> conteúdo semanal — call de Q&A 1x/sem (você), AMA com especialista convidado mensal, biblioteca crescente de cases.</li>
+      <li><strong>Mês 18+:</strong> upsell automático: 5% dos membros viram consulta nova ou aluno de mentoria por mês (sua nova máquina de aquisição).</li>
+    </ul>
+    <div class="insight blue" style="margin-top:12px"><strong>Sweet spot:</strong> ~300 membros pagantes a R$150 = R$45k/mês de MRR. Não é o número que paga as contas — é o funil que <em>multiplica</em> as outras receitas.</div>
+  </div>
+
+  <div class="rec-step">
+    <div class="num">FASE 4</div>
+    <h3>SaaS — só se justificado pelos dados</h3>
+    <div class="when">Mês 24+ · meta: R$500k-1M/mês com asset escalável</div>
+    <p>SaaS só faz sentido depois de 100+ casos de consulta + 100+ alunos mapeados. Nessa altura você sabe <strong>exatamente</strong> quais 5-7 problemas se repetem em 80% dos negócios — esses são automatizáveis.</p>
+    <ul>
+      <li><strong>Mês 18-21:</strong> pesquisa formal: quais 5 problemas operacionais se repetem em 80%+ dos casos? Quais valem automatizar?</li>
+      <li><strong>Mês 21-24:</strong> contratar tech lead + dev sênior. Definir MVP minimalista: <em>uma</em> dor crítica resolvida bem, não 10 mal.</li>
+      <li><strong>Mês 24-36:</strong> MVP em produção — primeiros 50 clientes vêm da própria comunidade. Validar PMF antes de escalar marketing.</li>
+      <li><strong>Alternativa esperta:</strong> em vez de SaaS proprietário, parceria com SaaS existente (Bling, Tiny, Olist) embutindo seu método como "módulo Hospital do Ecommerce". Menos CapEx, mais distribuição.</li>
+    </ul>
+    <div class="insight red" style="margin-top:12px"><strong>Critério go/no-go:</strong> só investe se nessa altura você tem (a) caixa de R$500k+ pra queimar sem afetar operação, (b) tech lead validado, (c) 50+ clientes da comunidade já pedindo a ferramenta. Sem os 3, espera mais.</div>
+  </div>
+
+  <div class="sec-t" style="margin-top:24px">Os erros que matam esse plano <span class="line"></span></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Erros estratégicos</div>
+      <div class="insight red"><strong>Pular para mentoria sem consulta:</strong> sem 30+ casos reais, seu programa é teoria. Conversão despenca, NPS cai, reputação queima.</div>
+      <div class="insight red"><strong>Lançar SaaS cedo demais:</strong> consome 100% do seu capital e atenção, sem garantir PMF. Mata as outras 3 fontes de receita.</div>
+      <div class="insight red"><strong>Cobrar barato pra "encher":</strong> público em crise paga caro pra ser bem atendido. Cobrar pouco filtra <em>errado</em> — atrai quem não tem caixa nem pra te pagar 3k.</div>
+      <div class="insight red"><strong>Você virar gargalo das consultas:</strong> se você executa todas pessoalmente, o teto é 30-40/mês. Treine os especialistas pra serem médicos plenos, você fica como diretor clínico.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-t">Erros operacionais</div>
+      <div class="insight amber"><strong>Não documentar os casos:</strong> cada consulta sem relatório padronizado é receita futura perdida. O relatório é o ativo, não a consulta.</div>
+      <div class="insight amber"><strong>Postar antes de atender:</strong> ego de seguidores antes de receita. Conteúdo do Instagram deve ser <em>consequência</em> do que você faz — não substituto.</div>
+      <div class="insight amber"><strong>Misturar diagnóstico com venda:</strong> consulta tem que entregar valor real (relatório) mesmo se o cliente não comprar nada depois. Senão vira armadilha de funil e queima reputação.</div>
+      <div class="insight amber"><strong>Aceitar todo cliente:</strong> alguns negócios não têm salvação. Recusar caso perdido é proteção de reputação. Critério de entrada > critério de venda.</div>
+    </div>
+  </div>
+
+  <div class="sec-t" style="margin-top:24px">Métricas que importam <span class="line"></span></div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th>Fase</th><th>Métrica primária</th><th>Meta</th><th>Métrica secundária</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-g">Fase 1</span></td><td>Consultas concluídas/mês</td><td class="mono">40+ até mês 6</td><td>NPS pós-consulta &gt; 8</td></tr>
+        <tr><td><span class="tag tag-g">Fase 1</span></td><td>% que vira retorno</td><td class="mono">20-30%</td><td>Receita/especialista/mês</td></tr>
+        <tr><td><span class="tag tag-a">Fase 2</span></td><td>Alunos por turma</td><td class="mono">12-15</td><td>% conversão consulta→aluno</td></tr>
+        <tr><td><span class="tag tag-a">Fase 2</span></td><td>Receita mentoria/total</td><td class="mono">40%+</td><td>Casos públicos publicados</td></tr>
+        <tr><td><span class="tag tag-b">Fase 3</span></td><td>MRR comunidade</td><td class="mono">R$30k+ no mês 18</td><td>Churn &lt; 7%/mês</td></tr>
+        <tr><td><span class="tag tag-b">Fase 3</span></td><td>% comunidade → consulta</td><td class="mono">5%/mês</td><td>Engajamento (post/sem)</td></tr>
+        <tr><td><span class="tag" style="background:var(--purple-dim);color:var(--purple)">Fase 4</span></td><td>Problemas repetidos mapeados</td><td class="mono">5-7 dores claras</td><td>Pedidos diretos de ferramenta</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</div><!-- end panes -->
+</div><!-- end app -->
+
+<script>
+// ============================================================
+// HOSPITAL DO ECOMMERCE - MODELO DE RECEITA
+// ============================================================
+const MESES = 24;
+const fmt = n => 'R$ '+Math.round(n).toLocaleString('pt-BR');
+const fmtK = n => n>=1000000 ? 'R$ '+(n/1000000).toFixed(1)+'M' : 'R$ '+Math.round(n/1000)+'k';
+const $ = id => document.getElementById(id);
+
+// ============ TABS ============
+function setTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  $('p-'+id).classList.add('active');
+  setTimeout(updateAll, 50); // re-render charts when pane becomes visible
+}
+
+// ============ SLIDER VALUE DISPLAYS ============
+function bindDisplays(){
+  // Consultas
+  $('cTicket').oninput = ()=>{$('cTicketV').textContent='R$ '+(+$('cTicket').value).toLocaleString('pt-BR');updateAll();};
+  $('cEsp').oninput = ()=>{$('cEspV').textContent=$('cEsp').value;updateAll();};
+  $('cDia').oninput = ()=>{$('cDiaV').textContent=$('cDia').value;updateAll();};
+  $('cDias').oninput = ()=>{$('cDiasV').textContent=$('cDias').value;updateAll();};
+  $('cU1').oninput = ()=>{$('cU1V').textContent=$('cU1').value+'%';updateAll();};
+  $('cU3').oninput = ()=>{$('cU3V').textContent=$('cU3').value+'%';updateAll();};
+  $('cU6').oninput = ()=>{$('cU6V').textContent=$('cU6').value+'%';updateAll();};
+  $('cU12').oninput = ()=>{$('cU12V').textContent=$('cU12').value+'%';updateAll();};
+  $('cRet').oninput = ()=>{$('cRetV').textContent=$('cRet').value+'%';updateAll();};
+  $('cCv').oninput = ()=>{$('cCvV').textContent='R$ '+(+$('cCv').value).toLocaleString('pt-BR');updateAll();};
+  $('cCf').oninput = ()=>{$('cCfV').textContent='R$ '+(+$('cCf').value).toLocaleString('pt-BR');updateAll();};
+
+  // Mentorias
+  $('mTicket').oninput = ()=>{$('mTicketV').textContent='R$ '+(+$('mTicket').value).toLocaleString('pt-BR');updateAll();};
+  $('mDur').oninput = ()=>{$('mDurV').textContent=$('mDur').value+' meses';updateAll();};
+  $('mTurma').oninput = ()=>{$('mTurmaV').textContent=$('mTurma').value;updateAll();};
+  $('mIni').oninput = ()=>{$('mIniV').textContent='Mês '+$('mIni').value;updateAll();};
+  $('mAno').oninput = ()=>{$('mAnoV').textContent=$('mAno').value;updateAll();};
+  $('mPar').oninput = ()=>{$('mParV').textContent=$('mPar').value;updateAll();};
+  $('mInd').oninput = ()=>{$('mIndV').textContent='R$ '+(+$('mInd').value).toLocaleString('pt-BR');updateAll();};
+  $('mIndQ').oninput = ()=>{$('mIndQV').textContent=$('mIndQ').value;updateAll();};
+  $('mIndM').oninput = ()=>{$('mIndMV').textContent='Mês '+$('mIndM').value;updateAll();};
+  $('mCust').oninput = ()=>{$('mCustV').textContent='R$ '+(+$('mCust').value).toLocaleString('pt-BR');updateAll();};
+  $('mConv').oninput = ()=>{$('mConvV').textContent=(+$('mConv').value).toFixed(1)+'%';updateAll();};
+
+  // SaaS / Comunidade
+  $('sCmTick').oninput = ()=>{$('sCmTickV').textContent='R$ '+(+$('sCmTick').value).toLocaleString('pt-BR');updateAll();};
+  $('sCmIni').oninput = ()=>{$('sCmIniV').textContent='Mês '+$('sCmIni').value;updateAll();};
+  $('sCmM1').oninput = ()=>{$('sCmM1V').textContent=$('sCmM1').value;updateAll();};
+  $('sCmMax').oninput = ()=>{$('sCmMaxV').textContent=$('sCmMax').value;updateAll();};
+  $('sCmCh').oninput = ()=>{$('sCmChV').textContent=(+$('sCmCh').value).toFixed(1)+'%';updateAll();};
+  $('sSaTick').oninput = ()=>{$('sSaTickV').textContent='R$ '+(+$('sSaTick').value).toLocaleString('pt-BR');updateAll();};
+  $('sSaIni').oninput = ()=>{$('sSaIniV').textContent='Mês '+$('sSaIni').value;updateAll();};
+  $('sSaInv').oninput = ()=>{$('sSaInvV').textContent='R$ '+(+$('sSaInv').value).toLocaleString('pt-BR');updateAll();};
+  $('sSaU6').oninput = ()=>{$('sSaU6V').textContent=$('sSaU6').value;updateAll();};
+  $('sSaU12').oninput = ()=>{$('sSaU12V').textContent=$('sSaU12').value;updateAll();};
+  $('sSaCh').oninput = ()=>{$('sSaChV').textContent=(+$('sSaCh').value).toFixed(1)+'%';updateAll();};
+}
+
+// ============ SCENARIO PRESETS ============
+function applyConsScn(scn){
+  document.querySelectorAll('#p-consultas .scn button').forEach(b=>b.classList.remove('act'));
+  event.target.classList.add('act');
+  if(scn==='cons'){set('cTicket',3500);set('cEsp',3);set('cDia',2);set('cU1',15);set('cU3',25);set('cU6',40);set('cU12',55);set('cRet',20);}
+  if(scn==='real'){set('cTicket',4000);set('cEsp',3);set('cDia',2);set('cU1',20);set('cU3',35);set('cU6',55);set('cU12',70);set('cRet',25);}
+  if(scn==='agr'){set('cTicket',5000);set('cEsp',4);set('cDia',3);set('cU1',25);set('cU3',45);set('cU6',70);set('cU12',85);set('cRet',35);}
+}
+function applyMentScn(scn){
+  document.querySelectorAll('#p-mentorias .scn button').forEach(b=>b.classList.remove('act'));
+  event.target.classList.add('act');
+  if(scn==='cons'){set('mTicket',5000);set('mTurma',8);set('mIni',8);set('mAno',3);set('mPar',1);set('mInd',5000);set('mIndQ',3);}
+  if(scn==='real'){set('mTicket',7000);set('mTurma',12);set('mIni',6);set('mAno',4);set('mPar',2);set('mInd',5000);set('mIndQ',5);}
+  if(scn==='agr'){set('mTicket',10000);set('mTurma',15);set('mIni',5);set('mAno',6);set('mPar',3);set('mInd',8000);set('mIndQ',8);}
+}
+function applySaasScn(scn){
+  document.querySelectorAll('#p-saas .scn button').forEach(b=>b.classList.remove('act'));
+  event.target.classList.add('act');
+  if(scn==='com'){set('sCmTick',150);set('sCmIni',12);set('sCmMax',400);set('sSaTick',0);set('sSaInv',0);set('sSaU6',0);set('sSaU12',0);}
+  if(scn==='mix'){set('sCmTick',150);set('sCmIni',12);set('sCmMax',400);set('sSaTick',700);set('sSaIni',18);set('sSaInv',300000);set('sSaU6',80);set('sSaU12',220);}
+  if(scn==='saas'){set('sCmTick',0);set('sSaTick',700);set('sSaIni',18);set('sSaInv',400000);set('sSaU6',120);set('sSaU12',350);}
+}
+function set(id,v){const el=$(id);el.value=v;el.dispatchEvent(new Event('input'));}
+
+// ============ MODELS COMPUTATION ============
+function getInputs(){
+  return {
+    cons:{ticket:+$('cTicket').value,esp:+$('cEsp').value,dia:+$('cDia').value,dias:+$('cDias').value,u1:+$('cU1').value/100,u3:+$('cU3').value/100,u6:+$('cU6').value/100,u12:+$('cU12').value/100,ret:+$('cRet').value/100,cv:+$('cCv').value,cf:+$('cCf').value},
+    ment:{ticket:+$('mTicket').value,dur:+$('mDur').value,turma:+$('mTurma').value,ini:+$('mIni').value,ano:+$('mAno').value,par:+$('mPar').value,ind:+$('mInd').value,indQ:+$('mIndQ').value,indM:+$('mIndM').value,cust:+$('mCust').value,conv:+$('mConv').value/100},
+    saas:{cmTick:+$('sCmTick').value,cmIni:+$('sCmIni').value,cmM1:+$('sCmM1').value,cmMax:+$('sCmMax').value,cmCh:+$('sCmCh').value/100,saTick:+$('sSaTick').value,saIni:+$('sSaIni').value,saInv:+$('sSaInv').value,saU6:+$('sSaU6').value,saU12:+$('sSaU12').value,saCh:+$('sSaCh').value/100}
+  };
+}
+
+function utilizationCurve(p){
+  // Piecewise linear: m1, m3, m6, m12+
+  const arr = [];
+  for(let m=1;m<=MESES;m++){
+    let u;
+    if(m<=1) u = p.u1;
+    else if(m<=3) u = p.u1 + (p.u3-p.u1)*(m-1)/2;
+    else if(m<=6) u = p.u3 + (p.u6-p.u3)*(m-3)/3;
+    else if(m<=12) u = p.u6 + (p.u12-p.u6)*(m-6)/6;
+    else u = p.u12;
+    arr.push(Math.min(0.95, u));
+  }
+  return arr;
+}
+
+function computeConsultas(p){
+  const cap = p.esp * p.dia * p.dias; // max consultas/mês
+  const util = utilizationCurve(p);
+  const arr = [];
+  for(let m=0;m<MESES;m++){
+    const novas = cap * util[m];
+    const retornos = m>0 ? arr[m-1].novas * p.ret * 0.5 : 0; // metade dos retornos no mês seguinte
+    const tot = novas + retornos;
+    const rev = tot * p.ticket;
+    const cv = tot * p.cv;
+    const lucro = rev - cv - p.cf;
+    arr.push({mes:m+1,novas,retornos,tot,rev,cv,lucro,cap});
+  }
+  return arr;
+}
+
+function computeMentorias(p){
+  // Programa em grupo: turmas iniciam em meses específicos. Receita parcelada em 'dur' meses.
+  // Calcular meses de início das turmas
+  const startMonths = [];
+  let nextStart = p.ini;
+  const intervalo = Math.max(1, Math.floor(12/p.ano));
+  while(nextStart <= MESES){
+    startMonths.push(nextStart);
+    // Após mês 12, considerar turmas paralelas
+    nextStart += (nextStart >= 12 && p.par > 1) ? Math.max(1, intervalo/p.par) : intervalo;
+  }
+  // Turmas paralelas extras a partir do mês 12
+  const parallelStarts = [];
+  if(p.par > 1){
+    for(let i=1;i<p.par;i++){
+      let s = Math.max(12, p.ini) + i*Math.floor(intervalo/p.par);
+      while(s <= MESES){ parallelStarts.push(s); s += intervalo; }
+    }
+  }
+  const allStarts = [...startMonths, ...parallelStarts].sort((a,b)=>a-b);
+  
+  // Mentoria individual: ramps from 0 ate pico em mês indM
+  const arr = [];
+  for(let m=1;m<=MESES;m++){
+    // Receita das turmas ativas: cada turma gera ticket*turma / dur por mês durante 'dur' meses a partir do mês de início
+    let revGrupo = 0;
+    let turmasAtivas = 0;
+    allStarts.forEach(s=>{
+      if(m>=s && m<s+p.dur){
+        revGrupo += p.ticket * p.turma / p.dur;
+        turmasAtivas++;
+      }
+    });
+    // Mentoria 1:1: rampa linear
+    let qInd = 0;
+    if(m >= 6){
+      qInd = p.indQ * Math.min(1, (m-5) / Math.max(1, p.indM-5));
+    }
+    const revInd = qInd * p.ind;
+    arr.push({mes:m,revGrupo,revInd,turmasAtivas,qInd:Math.round(qInd*10)/10,total:revGrupo+revInd});
+  }
+  return {arr, allStarts};
+}
+
+function computeSaas(p){
+  // Comunidade: cresce de cmM1 até cmMax via logística, com churn
+  const arr = [];
+  let cmMem = 0;
+  let saUsr = 0;
+  for(let m=1;m<=MESES;m++){
+    // Comunidade
+    if(m >= p.cmIni){
+      if(m === p.cmIni) cmMem = p.cmM1;
+      else {
+        // Crescimento logístico até teto, descontando churn
+        const meses_desde_lanc = m - p.cmIni;
+        const target = p.cmM1 + (p.cmMax - p.cmM1) * (1 - Math.exp(-meses_desde_lanc/8));
+        const gain = (target - cmMem) * 0.6;
+        cmMem = Math.max(0, cmMem + gain - cmMem*p.cmCh);
+      }
+    }
+    const cmRev = cmMem * p.cmTick;
+    
+    // SaaS
+    if(m >= p.saIni){
+      const meses_desde_lanc = m - p.saIni;
+      // Curva: mes+0=0, mes+6=saU6, mes+12=saU12, depois crescimento +20%a.a. com churn
+      let target;
+      if(meses_desde_lanc <= 6) target = (p.saU6) * (meses_desde_lanc/6);
+      else if(meses_desde_lanc <= 12) target = p.saU6 + (p.saU12 - p.saU6) * (meses_desde_lanc-6)/6;
+      else target = p.saU12 * Math.pow(1.015, meses_desde_lanc-12);
+      if(meses_desde_lanc === 0) saUsr = 0;
+      else {
+        const gain = (target - saUsr) * 0.5;
+        saUsr = Math.max(0, saUsr + gain - saUsr*p.saCh);
+      }
+    }
+    const saRev = saUsr * p.saTick;
+    
+    arr.push({mes:m,cmMem,cmRev,saUsr,saRev,total:cmRev+saRev});
+  }
+  return arr;
+}
+
+// ============ MAIN UPDATE ============
+let charts = {};
+function updateAll(){
+  const inp = getInputs();
+  const cons = computeConsultas(inp.cons);
+  const ment = computeMentorias(inp.ment);
+  const saas = computeSaas(inp.saas);
+  
+  // ===== KPIs do header =====
+  const rev6 = cons[5].rev;
+  const rev12 = cons[11].rev + ment.arr[11].total;
+  const rev24 = cons[23].rev + ment.arr[23].total + saas[23].total;
+  const acumulado = cons.reduce((s,c)=>s+c.rev,0) + ment.arr.reduce((s,c)=>s+c.total,0) + saas.reduce((s,c)=>s+c.total,0);
+  $('kpi6').textContent = fmtK(rev6);
+  $('kpi12').textContent = fmtK(rev12);
+  $('kpi24').textContent = fmtK(rev24);
+  $('kpiAc').textContent = fmtK(acumulado);
+  
+  // ===== Consultas KPIs =====
+  $('kCap').textContent = cons[0].cap;
+  $('kRev1').textContent = fmtK(cons[0].rev);
+  $('kCons1').textContent = Math.round(cons[0].tot)+' consultas';
+  $('kRev6').textContent = fmtK(cons[5].rev);
+  $('kCons6').textContent = Math.round(cons[5].tot)+' consultas';
+  $('kRev12').textContent = fmtK(cons[11].rev);
+  $('kCons12').textContent = Math.round(cons[11].tot)+' consultas';
+  
+  // ===== Mentorias KPIs =====
+  const revTurma = inp.ment.ticket * inp.ment.turma;
+  const revMesTurma = revTurma / inp.ment.dur;
+  const revAno = revTurma * inp.ment.ano;
+  const margAluno = inp.ment.ticket - (inp.ment.cust/inp.ment.turma);
+  $('kMTurma').textContent = fmtK(revTurma);
+  $('kMTurmaSub').textContent = inp.ment.turma+' alunos × '+fmtK(inp.ment.ticket);
+  $('kMMes').textContent = fmtK(revMesTurma);
+  $('kMAno').textContent = fmtK(revAno);
+  $('kMAnoSub').textContent = inp.ment.ano+' turmas/ano';
+  $('kMMarg').textContent = fmtK(margAluno);
+  
+  // ===== SaaS KPIs =====
+  $('kCmMRR').textContent = fmtK(saas[23].cmRev);
+  $('kCmSub').textContent = Math.round(saas[23].cmMem)+' membros';
+  $('kSaMRR').textContent = fmtK(saas[23].saRev);
+  $('kSaSub').textContent = Math.round(saas[23].saUsr)+' usuários';
+  // Payback SaaS: mês em que receita acumulada SaaS supera investimento
+  let payback = '—';
+  let acumSaas = 0;
+  for(let i=0;i<saas.length;i++){
+    acumSaas += saas[i].saRev;
+    if(acumSaas >= inp.saas.saInv && inp.saas.saInv > 0){
+      payback = (i+1-inp.saas.saIni)+' meses';
+      break;
+    }
+  }
+  if(inp.saas.saInv === 0 || inp.saas.saTick === 0) payback = 'N/A';
+  $('kSaPay').textContent = payback;
+  $('kSaTot').textContent = fmtK(saas[23].total);
+  
+  // ===== STACK KPIs =====
+  const stackData = cons.map((c,i)=>({
+    mes:i+1,
+    cons:c.rev,
+    mentG:ment.arr[i].revGrupo,
+    mentI:ment.arr[i].revInd,
+    com:saas[i].cmRev,
+    saa:saas[i].saRev,
+    tot:c.rev+ment.arr[i].total+saas[i].total
+  }));
+  $('sk6').textContent = fmtK(stackData[5].tot);
+  $('sk6sub').textContent = 'só consultas';
+  $('sk12').textContent = fmtK(stackData[11].tot);
+  $('sk12sub').textContent = '+ mentorias';
+  $('sk18').textContent = fmtK(stackData[17].tot);
+  $('sk18sub').textContent = '+ comunidade';
+  $('sk24').textContent = fmtK(stackData[23].tot);
+  $('sk24sub').textContent = 'stack completo';
+  
+  // ===== CHARTS =====
+  renderChart('cOverview', stackedAreaConfig(stackData));
+  renderChart('cConsRev', consultasRevenueConfig(cons));
+  renderChart('cMentRev', mentRevenueConfig(ment.arr));
+  renderChart('cSaasRev', saasRevenueConfig(saas));
+  renderChart('cStack', stackedAreaConfig(stackData));
+  renderChart('cAcum', acumuladoConfig(stackData));
+  
+  // ===== TABELAS =====
+  renderMarcos(stackData);
+  renderMesAMes(stackData);
+}
+
+function renderChart(id, config){
+  if(charts[id]) charts[id].destroy();
+  const el = $(id);
+  if(!el) return;
+  charts[id] = new Chart(el.getContext('2d'), config);
+}
+
+// ============ CHART CONFIGS ============
+const baseOpts = {
+  responsive:true,maintainAspectRatio:false,
+  plugins:{
+    legend:{labels:{color:'#8a96a3',font:{size:10,family:'JetBrains Mono'},usePointStyle:true,padding:12}},
+    tooltip:{backgroundColor:'#131820',borderColor:'#2a3441',borderWidth:1,titleColor:'#e8ecef',bodyColor:'#e8ecef',padding:10,titleFont:{family:'IBM Plex Sans',size:12},bodyFont:{family:'JetBrains Mono',size:11}}
+  },
+  scales:{
+    x:{ticks:{color:'#5a6573',font:{size:9,family:'JetBrains Mono'}},grid:{color:'rgba(42,52,65,0.5)'}},
+    y:{ticks:{color:'#5a6573',font:{size:9,family:'JetBrains Mono'},callback:v=>v>=1000?(v/1000)+'k':v},grid:{color:'rgba(42,52,65,0.5)'}}
+  }
+};
+
+function consultasRevenueConfig(cons){
+  return {
+    type:'bar',
+    data:{
+      labels:cons.slice(0,12).map(c=>'M'+c.mes),
+      datasets:[
+        {label:'Receita',data:cons.slice(0,12).map(c=>c.rev),backgroundColor:'rgba(45,212,164,0.7)',borderColor:'#2dd4a4',borderWidth:1,order:2},
+        {label:'Custo total',data:cons.slice(0,12).map(c=>c.cv+25000),backgroundColor:'rgba(239,68,68,0.4)',borderColor:'#ef4444',borderWidth:1,order:2},
+        {label:'Lucro',type:'line',data:cons.slice(0,12).map(c=>c.lucro),borderColor:'#f59e0b',backgroundColor:'#f59e0b',tension:0.3,fill:false,order:1,pointRadius:3}
+      ]
+    },
+    options:baseOpts
+  };
+}
+
+function mentRevenueConfig(arr){
+  return {
+    type:'bar',
+    data:{
+      labels:arr.map(a=>'M'+a.mes),
+      datasets:[
+        {label:'Mentoria Grupo',data:arr.map(a=>a.revGrupo),backgroundColor:'rgba(245,158,11,0.7)',borderColor:'#f59e0b',borderWidth:1,stack:'a'},
+        {label:'Mentoria 1:1',data:arr.map(a=>a.revInd),backgroundColor:'rgba(96,165,250,0.7)',borderColor:'#60a5fa',borderWidth:1,stack:'a'}
+      ]
+    },
+    options:{...baseOpts,scales:{...baseOpts.scales,x:{...baseOpts.scales.x,stacked:true},y:{...baseOpts.scales.y,stacked:true}}}
+  };
+}
+
+function saasRevenueConfig(arr){
+  return {
+    type:'line',
+    data:{
+      labels:arr.map(a=>'M'+a.mes),
+      datasets:[
+        {label:'MRR Comunidade',data:arr.map(a=>a.cmRev),borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,0.2)',fill:true,tension:0.4},
+        {label:'MRR SaaS',data:arr.map(a=>a.saRev),borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.2)',fill:true,tension:0.4}
+      ]
+    },
+    options:baseOpts
+  };
+}
+
+function stackedAreaConfig(data){
+  return {
+    type:'line',
+    data:{
+      labels:data.map(d=>'M'+d.mes),
+      datasets:[
+        {label:'Consultas',data:data.map(d=>d.cons),borderColor:'#2dd4a4',backgroundColor:'rgba(45,212,164,0.7)',fill:true,tension:0.4,stack:'a'},
+        {label:'Mentoria Grupo',data:data.map(d=>d.mentG),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.7)',fill:true,tension:0.4,stack:'a'},
+        {label:'Mentoria 1:1',data:data.map(d=>d.mentI),borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,0.7)',fill:true,tension:0.4,stack:'a'},
+        {label:'Comunidade',data:data.map(d=>d.com),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.7)',fill:true,tension:0.4,stack:'a'},
+        {label:'SaaS',data:data.map(d=>d.saa),borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.7)',fill:true,tension:0.4,stack:'a'}
+      ]
+    },
+    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,stacked:true}}}
+  };
+}
+
+function acumuladoConfig(data){
+  let acum = 0;
+  const ac = data.map(d=>{acum += d.tot; return acum;});
+  let acGasto = 0;
+  const gastos = data.map(()=>{acGasto += 15000; return acGasto;});
+  return {
+    type:'line',
+    data:{
+      labels:data.map(d=>'M'+d.mes),
+      datasets:[
+        {label:'Receita acumulada',data:ac,borderColor:'#2dd4a4',backgroundColor:'rgba(45,212,164,0.15)',fill:true,tension:0.3,pointRadius:0,borderWidth:2},
+        {label:'Gasto pessoal acumulado (R$15k/m)',data:gastos,borderColor:'#8a96a3',backgroundColor:'transparent',borderDash:[5,5],fill:false,tension:0,pointRadius:0,borderWidth:1.5}
+      ]
+    },
+    options:baseOpts
+  };
+}
+
+// ============ TABELAS ============
+function renderMarcos(data){
+  // Achar marcos: 1ª consulta, 1ª venda mentoria, 100k/m, 200k/m, 300k/m, 500k/m
+  const marcos = [];
+  for(let i=0;i<data.length;i++){
+    if(data[i].cons > 0 && !marcos.find(m=>m.e==='1ª receita consulta')){
+      marcos.push({e:'1ª receita consulta',m:i+1,r:data[i].tot});
+    }
+    if(data[i].mentG > 0 && !marcos.find(m=>m.e==='1ª turma mentoria')){
+      marcos.push({e:'1ª turma mentoria',m:i+1,r:data[i].tot});
+    }
+    if(data[i].mentI > 0 && !marcos.find(m=>m.e==='1ª mentoria 1:1')){
+      marcos.push({e:'1ª mentoria 1:1',m:i+1,r:data[i].tot});
+    }
+    if(data[i].com > 0 && !marcos.find(m=>m.e==='Comunidade ativa')){
+      marcos.push({e:'Comunidade ativa',m:i+1,r:data[i].tot});
+    }
+    if(data[i].saa > 0 && !marcos.find(m=>m.e==='SaaS comercializável')){
+      marcos.push({e:'SaaS comercializável',m:i+1,r:data[i].tot});
+    }
+    if(data[i].tot >= 100000 && !marcos.find(m=>m.e==='Cruzou R$100k/mês')){
+      marcos.push({e:'Cruzou R$100k/mês',m:i+1,r:data[i].tot});
+    }
+    if(data[i].tot >= 200000 && !marcos.find(m=>m.e==='Cruzou R$200k/mês')){
+      marcos.push({e:'Cruzou R$200k/mês',m:i+1,r:data[i].tot});
+    }
+    if(data[i].tot >= 300000 && !marcos.find(m=>m.e==='Cruzou R$300k/mês')){
+      marcos.push({e:'Cruzou R$300k/mês',m:i+1,r:data[i].tot});
+    }
+    if(data[i].tot >= 500000 && !marcos.find(m=>m.e==='Cruzou R$500k/mês')){
+      marcos.push({e:'Cruzou R$500k/mês',m:i+1,r:data[i].tot});
+    }
+  }
+  $('tMarcos').innerHTML = marcos.map(m=>`<tr><td>${m.e}</td><td class="mono">Mês ${m.m}</td><td class="mono r">${fmtK(m.r)}</td></tr>`).join('');
+}
+
+function renderMesAMes(data){
+  let acum = 0;
+  $('tMes').innerHTML = data.map(d=>{
+    acum += d.tot;
+    return `<tr>
+      <td class="mono"><strong>M${d.mes}</strong></td>
+      <td class="mono r">${d.cons>0?fmtK(d.cons):'—'}</td>
+      <td class="mono r">${d.mentG>0?fmtK(d.mentG):'—'}</td>
+      <td class="mono r">${d.mentI>0?fmtK(d.mentI):'—'}</td>
+      <td class="mono r">${d.com>0?fmtK(d.com):'—'}</td>
+      <td class="mono r">${d.saa>0?fmtK(d.saa):'—'}</td>
+      <td class="mono r" style="background:var(--green-dim);color:var(--green);font-weight:600">${fmtK(d.tot)}</td>
+      <td class="mono r" style="color:var(--muted)">${fmtK(acum)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============ INIT ============
+bindDisplays();
+updateAll();
+</script>
+</body>
+</html>
