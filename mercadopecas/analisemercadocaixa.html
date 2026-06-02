@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise CFO — Mercado Peças</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #ff3b3b;
+    --accent2: #ff8c00;
+    --green: #00d084;
+    --yellow: #ffd700;
+    --blue: #4488ff;
+    --text: #e8e8f0;
+    --text2: #8888a8;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 28px 40px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .header h1 { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
+  .header .subtitle { font-family: var(--mono); font-size: 11px; color: var(--text2); letter-spacing: 0.08em; }
+  .header .date { font-family: var(--mono); font-size: 11px; color: var(--text2); text-align: right; }
+
+  .correction-banner {
+    background: rgba(255,59,59,0.12);
+    border: 1px solid rgba(255,59,59,0.4);
+    padding: 8px 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .nav { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 12px; }
+  .nav a { font-family: var(--mono); font-size: 10px; color: var(--text2); text-decoration: none; padding: 4px 8px; border: 1px solid var(--border); border-radius: 2px; transition: all 0.15s; letter-spacing: 0.05em; text-transform: uppercase; }
+  .nav a:hover { color: var(--text); border-color: var(--accent); background: rgba(255,59,59,0.08); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+
+  .section { margin-bottom: 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section-num { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(255,59,59,0.1); border: 1px solid rgba(255,59,59,0.3); padding: 2px 8px; border-radius: 2px; letter-spacing: 0.1em; }
+  .section-title { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .diag-box { background: var(--surface); border: 1px solid var(--accent); border-left: 4px solid var(--accent); padding: 20px 24px; margin-bottom: 24px; border-radius: 0 4px 4px 0; }
+  .diag-box.warn { border-color: var(--accent2); border-left-color: var(--accent2); }
+  .diag-box.ok { border-color: var(--green); border-left-color: var(--green); }
+  .diag-box h3 { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; }
+  .diag-box.warn h3 { color: var(--accent2); }
+  .diag-box.ok h3 { color: var(--green); }
+  .diag-box p { font-size: 14px; color: var(--text); line-height: 1.7; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; border-radius: 4px; }
+  .metric-card .label { font-family: var(--mono); font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .metric-card .value { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text); }
+  .metric-card .value.red { color: var(--accent); }
+  .metric-card .value.green { color: var(--green); }
+  .metric-card .value.yellow { color: var(--yellow); }
+  .metric-card .value.orange { color: var(--accent2); }
+  .metric-card .value.blue { color: var(--blue); }
+  .metric-card .sub { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  thead tr { background: var(--surface2); border-bottom: 1px solid var(--border); }
+  thead th { text-align: left; padding: 10px 14px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: var(--surface); }
+  tbody td { padding: 10px 14px; color: var(--text); vertical-align: middle; }
+  .td-red { color: var(--accent) !important; font-weight: 600; }
+  .td-green { color: var(--green) !important; font-weight: 600; }
+  .td-yellow { color: var(--yellow) !important; font-weight: 600; }
+  .td-orange { color: var(--accent2) !important; font-weight: 600; }
+  .td-blue { color: var(--blue) !important; font-weight: 600; }
+  .td-dim { color: var(--text2) !important; }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); color: var(--text2); cursor: pointer; border-radius: 2px; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.05em; }
+  .tab-btn.active { background: rgba(255,59,59,0.12); border-color: var(--accent); color: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .waterfall { background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 4px; margin-bottom: 24px; }
+  .wf-row { display: grid; grid-template-columns: 220px 1fr 110px; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .wf-label { font-family: var(--mono); font-size: 11px; color: var(--text2); white-space: nowrap; }
+  .wf-bar-wrap { display: flex; align-items: center; height: 22px; }
+  .wf-bar { height: 100%; border-radius: 1px; min-width: 2px; }
+  .wf-value { font-family: var(--mono); font-size: 11px; text-align: right; white-space: nowrap; }
+  .wf-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+  .rule-list { list-style: none; }
+  .rule-list li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .rule-list li:last-child { border-bottom: none; }
+  .rule-icon { font-family: var(--mono); font-size: 10px; color: var(--accent); background: rgba(255,59,59,0.1); border: 1px solid rgba(255,59,59,0.25); padding: 2px 6px; border-radius: 2px; white-space: nowrap; margin-top: 2px; }
+  .rule-icon.green { color: var(--green); background: rgba(0,208,132,0.08); border-color: rgba(0,208,132,0.25); }
+  .rule-icon.orange { color: var(--accent2); background: rgba(255,140,0,0.08); border-color: rgba(255,140,0,0.25); }
+
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .plan-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--blue); padding: 16px 18px; border-radius: 0 0 4px 4px; }
+  .plan-card h4 { font-family: var(--mono); font-size: 11px; color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .plan-card ul { list-style: none; }
+  .plan-card ul li { padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); display: flex; gap: 8px; align-items: flex-start; }
+  .plan-card ul li:last-child { border-bottom: none; }
+  .plan-card ul li::before { content: '→'; color: var(--blue); font-family: var(--mono); font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+
+  .verdict { background: var(--surface); border: 2px solid var(--accent); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+  .verdict-header { background: var(--accent); padding: 12px 20px; font-family: var(--mono); font-size: 13px; font-weight: 700; color: #000; text-transform: uppercase; letter-spacing: 0.1em; }
+  .verdict-body { padding: 20px; }
+  .verdict-row { display: grid; grid-template-columns: 30px 160px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: start; }
+  .verdict-row:last-child { border-bottom: none; }
+  .verdict-num { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); }
+  .verdict-label { font-family: var(--mono); font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  .verdict-content { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .verdict-content strong { color: var(--accent); font-weight: 600; }
+  .verdict-content .ok { color: var(--green); font-weight: 600; }
+  .verdict-content .warn { color: var(--accent2); font-weight: 600; }
+
+  .stress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stress-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; }
+  .stress-card h4 { font-family: var(--mono); font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .stress-item { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 11px; }
+  .stress-item:last-child { border-bottom: none; }
+  .stress-item .s-label { color: var(--text2); flex-shrink: 0; }
+  .stress-item .s-val { color: var(--text); text-align: right; }
+  .stress-item .s-val.bad { color: var(--accent); }
+  .stress-item .s-val.ok { color: var(--green); }
+  .stress-item .s-val.warn { color: var(--accent2); }
+
+  .note { font-family: var(--mono); font-size: 11px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--text2); padding: 10px 14px; border-radius: 0 3px 3px 0; margin-bottom: 16px; line-height: 1.7; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+  .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .matrix-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .matrix-card-header { padding: 10px 14px; font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .matrix-card-header.green { background: rgba(0,208,132,0.15); color: var(--green); }
+  .matrix-card-header.orange { background: rgba(255,140,0,0.15); color: var(--accent2); }
+  .matrix-card-header.red { background: rgba(255,59,59,0.15); color: var(--accent); }
+  .matrix-card-header.black { background: rgba(0,0,0,0.5); color: var(--text2); }
+  .matrix-card ul { list-style: none; padding: 12px 14px; }
+  .matrix-card ul li { padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); display: flex; gap: 8px; }
+  .matrix-card ul li:last-child { border-bottom: none; }
+
+  .scenario-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 3px; margin-bottom: 12px; }
+  .scenario-badge.A { background: rgba(68,136,255,0.12); color: var(--blue); border: 1px solid rgba(68,136,255,0.3); }
+  .scenario-badge.B { background: rgba(255,215,0,0.1); color: var(--yellow); border: 1px solid rgba(255,215,0,0.3); }
+  .scenario-badge.C { background: rgba(0,208,132,0.1); color: var(--green); border: 1px solid rgba(0,208,132,0.3); }
+  .scenario-badge.D { background: rgba(255,59,59,0.1); color: var(--accent); border: 1px solid rgba(255,59,59,0.3); }
+  .scenario-badge.E { background: rgba(255,140,0,0.1); color: var(--accent2); border: 1px solid rgba(255,140,0,0.3); }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; letter-spacing: 0.05em; }
+  .pill.red { background: rgba(255,59,59,0.15); color: var(--accent); border: 1px solid rgba(255,59,59,0.3); }
+  .pill.green { background: rgba(0,208,132,0.12); color: var(--green); border: 1px solid rgba(0,208,132,0.3); }
+  .pill.orange { background: rgba(255,140,0,0.12); color: var(--accent2); border: 1px solid rgba(255,140,0,0.3); }
+
+  code { font-family: var(--mono); font-size: 12px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 2px; color: var(--yellow); }
+
+  @media (max-width: 700px) {
+    .container { padding: 20px 16px; }
+    .header { padding: 16px 20px 12px; }
+    .correction-banner { padding: 8px 20px; }
+    .two-col, .matrix-grid { grid-template-columns: 1fr; }
+    .wf-row { grid-template-columns: 140px 1fr 90px; }
+    .verdict-row { grid-template-columns: 24px 110px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Análise CFO — Mercado Peças</h1>
+      <div class="subtitle">Diagnóstico estratégico de sobrevivência · v2 corrigida · Confidencial</div>
+    </div>
+    <div class="date">
+      Data-base estoque: 07/05/2026<br>
+      Relatório: 20/05/2026<br>
+      Câmbio ref: R$ 5,75/USD
+    </div>
+  </div>
+  <nav class="nav">
+    <a href="#diagnostico">1 · Diagnóstico</a>
+    <a href="#metricas">2 · Métricas</a>
+    <a href="#caixa">3 · Caixa vs Lucro</a>
+    <a href="#cenarios">4 · Cenários</a>
+    <a href="#importacao">5 · Importação</a>
+    <a href="#stress">6 · Stress Test</a>
+    <a href="#matriz">7 · Matriz Decisão</a>
+    <a href="#plano">8 · Plano CFO</a>
+    <a href="#regras">9 · Regras</a>
+    <a href="#veredicto">10 · Veredicto</a>
+  </nav>
+</div>
+
+<div class="correction-banner">
+  ⚠ v2 CORRIGIDA — Valor Recebido Marketplace = 65% do faturamento bruto (conforme arquivo seção 17.2). Relatório anterior usava 83% — ERRADO. Todos os números foram recalculados.
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ SEÇÃO 1 ═══════════════ -->
+<div class="section" id="diagnostico">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Diagnóstico CFO</span>
+  </div>
+
+  <div class="diag-box">
+    <h3>⚠ Diagnóstico em uma frase</h3>
+    <p>A empresa opera com <strong>margem líquida real de apenas 10,2%</strong> sobre o faturamento bruto — não 28% como parecia. Com custo fixo de <code>R$ 40k/mês</code> e estoque suficiente para ~51 dias, a situação é crítica: qualquer queda de faturamento ou custo extra empurra a empresa para o prejuízo. A importação pode salvar, mas exige capital real que precisa ser verificado.</p>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="label">Estoque atual (07/05)</div>
+      <div class="value yellow">R$ 191k</div>
+      <div class="sub">R$ 149k matriz + R$ 42k Full</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Valor Recebido real (65%)</div>
+      <div class="value orange">65% do fat.</div>
+      <div class="sub">Após comissão + frete ML</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Margem líquida real (Cen A)</div>
+      <div class="value red">10,2%</div>
+      <div class="sub">Sobre faturamento bruto</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Lucro econômico/mês (Cen A)</div>
+      <div class="value orange">R$ 39.950</div>
+      <div class="sub">Fat. R$ 390k, custo R$ 40k</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Duração estoque atual</div>
+      <div class="value red">~51 dias</div>
+      <div class="sub">A R$ 13k/dia — até ~26/jun</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Break-even faturamento</div>
+      <div class="value orange">R$ 195k/mês</div>
+      <div class="sub">R$ 6.504/dia (Cen A)</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Premissas do arquivo (seção 4.1 e 17.2):</strong> Valor Recebido marketplace = 65% do faturamento bruto. Imposto = 9% do faturamento. Ads padrão = 3%. Antecipação = 2,5%. Dev/outros = 1%. CMV = 29%. Custos fixos = R$ 20k empresa + R$ 20k pessoal. Todos os percentuais variáveis incidem sobre o <strong>faturamento bruto</strong>. Lucro calculado como: Valor Recebido − (CMV + imposto + Ads + antecipação + dev + CF empresa + CF pessoal).
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 2 ═══════════════ -->
+<div class="section" id="metricas">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Métricas Reais — P&L Completo</span>
+  </div>
+
+  <p style="margin-bottom:16px; color:var(--text2); font-size:13px;">Faturamento mensal projetado: <strong style="color:var(--text)">R$ 390.000</strong> (R$ 13k/dia × 30d). <strong style="color:var(--accent)">Valor Recebido ML = R$ 253.500 (65%)</strong> — esse é o ponto de entrada do P&L.</p>
+
+  <div class="waterfall">
+    <div style="font-family:var(--mono); font-size:11px; color:var(--text2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px;">Waterfall P&L — Cenário A Atual (faturamento R$ 390k)</div>
+
+    <div class="wf-row">
+      <div class="wf-label">Faturamento bruto</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:100%; background:var(--blue);"></div></div>
+      <div class="wf-value" style="color:var(--blue)">R$ 390.000</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Comissão + frete ML (35%)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:35%; background:rgba(255,59,59,0.6);"></div></div>
+      <div class="wf-value td-red">− R$ 136.500</div>
+    </div>
+    <div class="wf-row" style="background:rgba(255,255,255,0.02); padding:3px 0;">
+      <div class="wf-label" style="color:var(--text); font-weight:600;">= Valor Recebido ML (65%)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:65%; background:rgba(68,136,255,0.5);"></div></div>
+      <div class="wf-value td-blue" style="font-weight:700;">R$ 253.500</div>
+    </div>
+    <div class="wf-divider"></div>
+    <div class="wf-row">
+      <div class="wf-label">— CMV (29% do fat bruto)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:29%; background:rgba(255,59,59,0.7);"></div></div>
+      <div class="wf-value td-red">− R$ 113.100</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Imposto (9% do fat bruto)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:9%; background:rgba(255,59,59,0.55);"></div></div>
+      <div class="wf-value td-red">− R$ 35.100</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Ads (3% do fat bruto)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:3%; background:rgba(255,140,0,0.7);"></div></div>
+      <div class="wf-value td-orange">− R$ 11.700</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Antecipação (2,5%)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:2.5%; background:rgba(255,140,0,0.6);"></div></div>
+      <div class="wf-value td-orange">− R$ 9.750</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Dev/outros (1%)</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:1%; background:rgba(255,140,0,0.5);"></div></div>
+      <div class="wf-value td-orange">− R$ 3.900</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Custo empresa fixo</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:5.1%; background:rgba(255,59,59,0.5);"></div></div>
+      <div class="wf-value td-red">− R$ 20.000</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">— Custo pessoal fixo</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:5.1%; background:rgba(255,59,59,0.4);"></div></div>
+      <div class="wf-value td-red">− R$ 20.000</div>
+    </div>
+    <div class="wf-divider"></div>
+    <div class="wf-row">
+      <div class="wf-label" style="color:var(--text); font-weight:700;">= LUCRO ECONÔMICO REAL</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:10.2%; background:var(--accent2);"></div></div>
+      <div class="wf-value" style="color:var(--accent2); font-weight:700;">R$ 39.950</div>
+    </div>
+  </div>
+
+  <div class="diag-box">
+    <h3>⚠ Impacto da correção VR 65%</h3>
+    <p>Com VR = 83% (análise errada anterior): lucro aparente = <strong style="color:var(--accent)">R$ 110.150 (28,2%)</strong><br>
+    Com VR = 65% (correto): lucro real = <strong style="color:var(--accent2)">R$ 39.950 (10,2%)</strong><br><br>
+    A diferença é de <strong>R$ 70.200/mês</strong> — que saem como comissão e frete para o Mercado Livre. Esses 35% do faturamento nunca entram no seu caixa. Qualquer análise baseada em 83% superestimava massivamente a rentabilidade da empresa.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Linha P&L</th>
+          <th>Fat. R$ 390k</th>
+          <th>Fat. R$ 360k</th>
+          <th>% Fat. Bruto</th>
+          <th>Natureza</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Faturamento bruto</td><td>R$ 390.000</td><td>R$ 360.000</td><td>100%</td><td class="td-dim">Base de cálculo</td></tr>
+        <tr><td style="color:var(--accent)">— Comissão + frete ML</td><td class="td-red">R$ 136.500</td><td class="td-red">R$ 126.000</td><td class="td-red">35%</td><td class="td-dim">Sai para ML — nunca entra</td></tr>
+        <tr style="background:rgba(68,136,255,0.05);"><td><strong>= Valor Recebido ML</strong></td><td class="td-blue"><strong>R$ 253.500</strong></td><td class="td-blue"><strong>R$ 234.000</strong></td><td class="td-blue"><strong>65%</strong></td><td class="td-blue">Ponto de partida real</td></tr>
+        <tr><td>— CMV (29%)</td><td class="td-red">R$ 113.100</td><td class="td-red">R$ 104.400</td><td class="td-red">29%</td><td class="td-dim">Custo econômico</td></tr>
+        <tr><td>— Imposto (9%)</td><td class="td-red">R$ 35.100</td><td class="td-red">R$ 32.400</td><td class="td-red">9%</td><td class="td-dim">Obrigação futura</td></tr>
+        <tr><td>— Ads (3%)</td><td class="td-orange">R$ 11.700</td><td class="td-orange">R$ 10.800</td><td class="td-orange">3%</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>— Antecipação (2,5%)</td><td class="td-orange">R$ 9.750</td><td class="td-orange">R$ 9.000</td><td class="td-orange">2,5%</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>— Dev/outros (1%)</td><td class="td-orange">R$ 3.900</td><td class="td-orange">R$ 3.600</td><td class="td-orange">1%</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>— Custo empresa</td><td class="td-red">R$ 20.000</td><td class="td-red">R$ 20.000</td><td class="td-red">5,1%</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>— Custo pessoal</td><td class="td-red">R$ 20.000</td><td class="td-red">R$ 20.000</td><td class="td-red">5,1%</td><td class="td-dim">Saída imediata</td></tr>
+        <tr style="background:rgba(255,140,0,0.06);"><td><strong>= Lucro econômico real</strong></td><td class="td-orange"><strong>R$ 39.950</strong></td><td class="td-orange"><strong>R$ 33.800</strong></td><td class="td-orange"><strong>10,2%</strong></td><td class="td-orange">Após tudo</td></tr>
+        <tr style="background:rgba(255,59,59,0.04);"><td colspan="5" style="color:var(--accent); font-size:12px; padding:10px 14px;">
+          ⚠ Total de custos sobre faturamento bruto = 35% (ML) + 29% (CMV) + 9% (imposto) + 3% + 2,5% + 1% + 5,1% + 5,1% = <strong>89,7%</strong>. Sobram apenas 10,3% de margem líquida real. Qualquer custo extra ou queda de faturamento pode zerar ou negativar o resultado.
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 3 ═══════════════ -->
+<div class="section" id="caixa">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Caixa Imediato vs Lucro Econômico</span>
+  </div>
+
+  <div class="two-col">
+    <div class="diag-box ok">
+      <h3>Caixa Imediato — O que entra no banco agora</h3>
+      <p>Valor Recebido ML menos saídas imediatas (Ads, antecipação, dev, custos fixos). CMV e imposto ficam de fora — mas são dívidas reais. O caixa imediato parece maior do que o lucro. Isso é <strong>ilusão de caixa</strong>.</p>
+    </div>
+    <div class="diag-box">
+      <h3>Lucro Econômico — O que realmente sobra</h3>
+      <p>Considera CMV (custo do estoque já vendido que precisa ser reposto) e imposto como custos reais. A empresa parece ter caixa, mas está consumindo capital sem perceber se não separar essas reservas.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Componente</th>
+          <th>Caixa Imediato</th>
+          <th>Lucro Econômico</th>
+          <th>Diferença</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Valor Recebido ML (65%)</td><td class="td-green">+R$ 253.500</td><td class="td-green">+R$ 253.500</td><td>—</td><td class="td-dim">Base idêntica</td></tr>
+        <tr><td>CMV (29% fat bruto)</td><td class="td-dim">— (estoque comprado)</td><td class="td-red">−R$ 113.100</td><td class="td-red">−R$ 113.100</td><td class="td-dim">Vai precisar repor</td></tr>
+        <tr><td>Imposto (9% fat bruto)</td><td class="td-dim">— (não pago agora)</td><td class="td-red">−R$ 35.100</td><td class="td-red">−R$ 35.100</td><td class="td-dim">Acumulando passivo</td></tr>
+        <tr><td>Ads (3%)</td><td class="td-red">−R$ 11.700</td><td class="td-red">−R$ 11.700</td><td>—</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>Antecipação (2,5%)</td><td class="td-red">−R$ 9.750</td><td class="td-red">−R$ 9.750</td><td>—</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>Dev/outros (1%)</td><td class="td-red">−R$ 3.900</td><td class="td-red">−R$ 3.900</td><td>—</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>Custo empresa</td><td class="td-red">−R$ 20.000</td><td class="td-red">−R$ 20.000</td><td>—</td><td class="td-dim">Saída imediata</td></tr>
+        <tr><td>Custo pessoal</td><td class="td-red">−R$ 20.000</td><td class="td-red">−R$ 20.000</td><td>—</td><td class="td-dim">Saída imediata</td></tr>
+        <tr style="background:rgba(0,208,132,0.05);">
+          <td><strong>RESULTADO</strong></td>
+          <td class="td-green"><strong>R$ 188.150</strong></td>
+          <td class="td-orange"><strong>R$ 39.950</strong></td>
+          <td class="td-red"><strong>R$ 148.200</strong></td>
+          <td class="td-red">Ilusão de caixa</td>
+        </tr>
+        <tr style="background:rgba(255,59,59,0.05);">
+          <td colspan="5" style="font-size:12px; color:var(--accent); padding:10px 14px;">
+            ⚠ R$ 148.200/mês de diferença = CMV (R$ 113.100 que precisam recompor estoque) + imposto (R$ 35.100 que serão cobrados). Se você gastar esse dinheiro, a empresa está consumindo capital próprio sem perceber.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="diag-box warn">
+    <h3>Caixa gerado pelo estoque atual até acabar</h3>
+    <p>Estoque: <strong>R$ 191.168</strong> → Faturamento potencial: <strong>R$ 659.200</strong> → Duração: <strong>~51 dias</strong><br><br>
+    Valor Recebido total: R$ 659.200 × 65% = <strong>R$ 428.480</strong><br>
+    Saídas imediatas (Ads 3%, antec 2,5%, dev 1%, CF R$ 40k × 1,7m): <strong>− R$ 110.848</strong><br>
+    Caixa imediato total: <strong>R$ 317.632</strong><br>
+    Reserva imposto obrigatória (9%): <strong>− R$ 59.328</strong><br>
+    <strong style="color:var(--green)">Caixa livre estimado do estoque atual: ~R$ 258.000</strong> — mas esse número assume que você não precisa de capital para repor estoque e que não há outros passivos.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 4 ═══════════════ -->
+<div class="section" id="cenarios">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">5 Cenários Comparados</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('cA')">A — Atual</button>
+    <button class="tab-btn" onclick="showTab('cB')">B — Reduzido</button>
+    <button class="tab-btn" onclick="showTab('cC')">C — Super Enxuto ★</button>
+    <button class="tab-btn" onclick="showTab('cD')">D — Fechamento</button>
+    <button class="tab-btn" onclick="showTab('cE')">E — Importação</button>
+  </div>
+
+  <!-- A -->
+  <div id="cA" class="tab-content active">
+    <div class="scenario-badge A">CENÁRIO A — ATUAL (custo R$ 40k/mês, ads 3%, antec 2,5%)</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="label">Faturamento mensal</div><div class="value">R$ 390k</div><div class="sub">R$ 13k/dia × 30d</div></div>
+      <div class="metric-card"><div class="label">Valor Recebido ML</div><div class="value blue">R$ 253,5k</div><div class="sub">65% do faturamento</div></div>
+      <div class="metric-card"><div class="label">Caixa imediato/mês</div><div class="value orange">R$ 188k</div><div class="sub">Sem CMV e imposto</div></div>
+      <div class="metric-card"><div class="label">Lucro econômico real</div><div class="value orange">R$ 39.950</div><div class="sub">Após tudo</div></div>
+      <div class="metric-card"><div class="label">Margem líquida real</div><div class="value orange">10,2%</div><div class="sub">Sobre fat. bruto</div></div>
+      <div class="metric-card"><div class="label">Tempo sobrevivência</div><div class="value red">~51 dias</div><div class="sub">Sem importação</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>R$/mês</th><th>% Fat. Bruto</th></tr></thead>
+        <tbody>
+          <tr><td>Faturamento bruto</td><td>R$ 390.000</td><td>100%</td></tr>
+          <tr><td>= Valor Recebido ML (65%)</td><td class="td-blue">R$ 253.500</td><td class="td-blue">65%</td></tr>
+          <tr><td>— CMV</td><td class="td-red">R$ 113.100</td><td class="td-red">29%</td></tr>
+          <tr><td>— Imposto</td><td class="td-red">R$ 35.100</td><td class="td-red">9%</td></tr>
+          <tr><td>— Ads</td><td class="td-orange">R$ 11.700</td><td class="td-orange">3%</td></tr>
+          <tr><td>— Antecipação</td><td class="td-orange">R$ 9.750</td><td class="td-orange">2,5%</td></tr>
+          <tr><td>— Dev/outros</td><td class="td-orange">R$ 3.900</td><td class="td-orange">1%</td></tr>
+          <tr><td>— Custo empresa</td><td class="td-red">R$ 20.000</td><td class="td-red">5,1%</td></tr>
+          <tr><td>— Custo pessoal</td><td class="td-red">R$ 20.000</td><td class="td-red">5,1%</td></tr>
+          <tr style="background:rgba(255,140,0,0.06);"><td><strong>Lucro econômico final</strong></td><td class="td-orange"><strong>R$ 39.950</strong></td><td class="td-orange"><strong>10,2%</strong></td></tr>
+          <tr><td>Break-even faturamento</td><td colspan="2" style="color:var(--text2)">R$ 195.122/mês (R$ 6.504/dia) — você está acima, mas com pouca folga</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-box warn">
+      <h3>Avaliação CFO — Cenário A</h3>
+      <p><strong>Margem de 10,2% não tem nenhuma gordura.</strong> Um mês com Ads maior, mais devoluções, ou queda de faturamento de 15% já zera o lucro. O custo fixo de R$ 40k representa 15,8% do Valor Recebido — é muito alto. <br>Risco principal: qualquer oscilação negativa = prejuízo. <br><strong>Recomendação: NÃO operar nesse cenário. Migrar para C imediatamente.</strong></p>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div id="cB" class="tab-content">
+    <div class="scenario-badge B">CENÁRIO B — REDUZIDO (custo R$ 20k/mês, ads zero, antec zero)</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="label">Faturamento base</div><div class="value">R$ 390k</div><div class="sub">Se venda mantiver sem ads</div></div>
+      <div class="metric-card"><div class="label">Fat. realista (−40% sem ads)</div><div class="value red">R$ 234k</div><div class="sub">Risco real de zerar ads</div></div>
+      <div class="metric-card"><div class="label">Lucro (fat. mantido)</div><div class="value green">R$ 85.300</div><div class="sub">Se não cair venda</div></div>
+      <div class="metric-card"><div class="label">Lucro (fat. −40%)</div><div class="value orange">R$ 43.180</div><div class="sub">Cenário realista</div></div>
+      <div class="metric-card"><div class="label">Margem (fat. mantido)</div><div class="value green">21,9%</div><div class="sub">Melhor que A</div></div>
+      <div class="metric-card"><div class="label">Margem (fat. −40%)</div><div class="value orange">18,5%</div><div class="sub">Sobre fat. reduzido</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Fat. mantido R$ 390k</th><th>Fat. −40% R$ 234k</th></tr></thead>
+        <tbody>
+          <tr><td>Faturamento bruto</td><td>R$ 390.000</td><td>R$ 234.000</td></tr>
+          <tr><td>Valor Recebido ML (65%)</td><td class="td-blue">R$ 253.500</td><td class="td-blue">R$ 152.100</td></tr>
+          <tr><td>— CMV (29%)</td><td class="td-red">R$ 113.100</td><td class="td-red">R$ 67.860</td></tr>
+          <tr><td>— Imposto (9%)</td><td class="td-red">R$ 35.100</td><td class="td-red">R$ 21.060</td></tr>
+          <tr><td>— Ads (0%)</td><td class="td-green">R$ 0</td><td class="td-green">R$ 0</td></tr>
+          <tr><td>— Antecipação (0%)</td><td class="td-green">R$ 0</td><td class="td-green">R$ 0</td></tr>
+          <tr><td>— Dev/outros (0%)</td><td class="td-green">R$ 0</td><td class="td-green">R$ 0</td></tr>
+          <tr><td>— Custo empresa</td><td class="td-orange">R$ 10.000</td><td class="td-orange">R$ 10.000</td></tr>
+          <tr><td>— Custo pessoal</td><td class="td-orange">R$ 10.000</td><td class="td-orange">R$ 10.000</td></tr>
+          <tr style="background:rgba(0,208,132,0.06);"><td><strong>Lucro econômico real</strong></td><td class="td-green"><strong>R$ 85.300</strong></td><td class="td-orange"><strong>R$ 43.180</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-box warn">
+      <h3>Avaliação CFO — Cenário B</h3>
+      <p><strong>O ganho real de zerar ads é incerto.</strong> Se ads gera venda incremental, zerá-lo reduz faturamento em 30–50%. A melhora de margem seria comida pela queda de volume. Pior: estoque dura mais dias mas a empresa fica mais tempo sem saber se tem mercado. <br><strong>Recomendação: não zerar ads totalmente. Ir para 1,5% (Cenário C).</strong></p>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div id="cC" class="tab-content">
+    <div class="scenario-badge C">CENÁRIO C — SUPER ENXUTO ★ RECOMENDADO (custo R$ 16k, ads 1,5%, preço +12%)</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="label">Faturamento ajustado</div><div class="value">R$ 358.800</div><div class="sub">−8% por preço+12% e ads menor</div></div>
+      <div class="metric-card"><div class="label">Valor Recebido ML</div><div class="value blue">R$ 233.220</div><div class="sub">65% do faturamento</div></div>
+      <div class="metric-card"><div class="label">Caixa imediato/mês</div><div class="value green">R$ 211.500</div><div class="sub">Sem CMV e imposto</div></div>
+      <div class="metric-card"><div class="label">Lucro econômico real</div><div class="value green">R$ 75.494</div><div class="sub">Quase 2× o Cenário A</div></div>
+      <div class="metric-card"><div class="label">Margem líquida real</div><div class="value green">21,0%</div><div class="sub">Sobre fat. bruto</div></div>
+      <div class="metric-card"><div class="label">Break-even faturamento</div><div class="value green">R$ 64k/mês</div><div class="sub">R$ 2.133/dia — enorme folga</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>R$/mês</th><th>% Fat. Bruto</th><th>vs Cenário A</th></tr></thead>
+        <tbody>
+          <tr><td>Faturamento bruto</td><td>R$ 358.800</td><td>100%</td><td class="td-orange">−R$ 31.200</td></tr>
+          <tr><td>= Valor Recebido ML (65%)</td><td class="td-blue">R$ 233.220</td><td class="td-blue">65%</td><td class="td-dim">—</td></tr>
+          <tr><td>— CMV (29%)</td><td class="td-red">R$ 104.052</td><td class="td-red">29%</td><td class="td-green">−R$ 9.048</td></tr>
+          <tr><td>— Imposto (9%)</td><td class="td-red">R$ 32.292</td><td class="td-red">9%</td><td class="td-green">−R$ 2.808</td></tr>
+          <tr><td>— Ads (1,5%)</td><td class="td-orange">R$ 5.382</td><td class="td-orange">1,5%</td><td class="td-green">−R$ 6.318</td></tr>
+          <tr><td>— Antecipação (0%)</td><td class="td-green">R$ 0</td><td class="td-green">0%</td><td class="td-green">−R$ 9.750</td></tr>
+          <tr><td>— Dev/outros (0%)</td><td class="td-green">R$ 0</td><td class="td-green">0%</td><td class="td-green">−R$ 3.900</td></tr>
+          <tr><td>— Custo empresa</td><td class="td-green">R$ 6.000</td><td class="td-green">1,7%</td><td class="td-green">−R$ 14.000</td></tr>
+          <tr><td>— Custo pessoal</td><td class="td-green">R$ 10.000</td><td class="td-green">2,8%</td><td class="td-green">−R$ 10.000</td></tr>
+          <tr style="background:rgba(0,208,132,0.08);"><td><strong>Lucro econômico real</strong></td><td class="td-green"><strong>R$ 75.494</strong></td><td class="td-green"><strong>21,0%</strong></td><td class="td-green"><strong>+R$ 35.544</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-box ok">
+      <h3>✓ Avaliação CFO — Cenário C é o alvo</h3>
+      <p>Lucro de <strong>R$ 75.494/mês</strong> vs R$ 39.950 no cenário atual — quase o dobro com menos faturamento. O segredo é a eliminação de R$ 46.768/mês em custos controláveis (antecipação + dev + custo fixo reduzido). Break-even cai para apenas R$ 64k/mês — a empresa se torna muito mais resiliente a quedas de venda. <strong>Este cenário funciona mesmo se o faturamento cair 40% — ainda há lucro positivo.</strong></p>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div id="cD" class="tab-content">
+    <div class="scenario-badge D">CENÁRIO D — FECHAMENTO PLANEJADO (queima estoque atual, custo mínimo)</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="label">Fat. total estoque atual</div><div class="value">R$ 659.200</div><div class="sub">R$ 191k / 0,29</div></div>
+      <div class="metric-card"><div class="label">Valor Recebido total</div><div class="value blue">R$ 428.480</div><div class="sub">65% do fat. total</div></div>
+      <div class="metric-card"><div class="label">Caixa total gerado</div><div class="value green">R$ 332.064</div><div class="sub">Antes de passivos</div></div>
+      <div class="metric-card"><div class="label">Imposto a reservar</div><div class="value red">R$ 59.328</div><div class="sub">9% do fat. total</div></div>
+      <div class="metric-card"><div class="label">Prazo para liquidar</div><div class="value orange">~51–75 dias</div><div class="sub">Depende de ads mínimo</div></div>
+      <div class="metric-card"><div class="label">Caixa líquido estimado</div><div class="value green">R$ 252–282k</div><div class="sub">Após imposto e passivos</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Componente</th><th>Valor</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>Faturamento total (estoque atual)</td><td>R$ 659.200</td><td class="td-dim">R$ 191.168 / 0,29</td></tr>
+          <tr><td>Valor Recebido ML (65%)</td><td class="td-blue">R$ 428.480</td><td class="td-dim">Ponto de partida</td></tr>
+          <tr><td>— Imposto (9% fat bruto)</td><td class="td-red">R$ 59.328</td><td class="td-dim">Reservar obrigatório</td></tr>
+          <tr><td>— Ads mínimo (1,5%)</td><td class="td-orange">R$ 9.888</td><td class="td-dim">Para manter giro no liquidação</td></tr>
+          <tr><td>— Custo empresa min. (6k × 1,7m)</td><td class="td-orange">R$ 10.200</td><td class="td-dim">Mínimo para operar</td></tr>
+          <tr><td>— Custo pessoal min. (10k × 1,7m)</td><td class="td-orange">R$ 17.000</td><td class="td-dim">Mínimo pessoal</td></tr>
+          <tr style="background:rgba(0,208,132,0.06);"><td><strong>Caixa gerado antes de passivos</strong></td><td class="td-green"><strong>R$ 332.064</strong></td><td class="td-dim">—</td></tr>
+          <tr><td>— Passivos estimados (Movecta + outros)</td><td class="td-red">R$ 50.000–80.000</td><td class="td-dim">Sem dados exatos</td></tr>
+          <tr style="background:rgba(0,208,132,0.08);"><td><strong>Caixa líquido ao encerrar</strong></td><td class="td-green"><strong>R$ 252.000–282.000</strong></td><td class="td-green">Livre e protegido</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-box warn">
+      <h3>Avaliação CFO — Cenário D</h3>
+      <p>Fechar planejadamente pode gerar <strong>R$ 252–282k de caixa limpo</strong>. Esse dinheiro protege família e capital pessoal. É a decisão racional se você não tiver capital para a importação. <strong>Fechar não é fracasso — é preservar capital para um próximo movimento.</strong> Risco: perder o negócio e o histórico construído no Mercado Livre.</p>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div id="cE" class="tab-content">
+    <div class="scenario-badge E">CENÁRIO E — CONTINUIDADE COM IMPORTAÇÃO (Cen. C + importação R$ 420k)</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="label">Fat. potencial total</div><div class="value blue">~R$ 2,07M</div><div class="sub">Estoque atual + importação</div></div>
+      <div class="metric-card"><div class="label">Duração operação</div><div class="value blue">~159 dias</div><div class="sub">~5,3 meses a R$ 13k/dia</div></div>
+      <div class="metric-card"><div class="label">Lucro econômico/mês</div><div class="value green">R$ 75.494</div><div class="sub">Cenário C aplicado</div></div>
+      <div class="metric-card"><div class="label">Lucro econômico total</div><div class="value green">~R$ 377k</div><div class="sub">5 meses × R$ 75.494</div></div>
+      <div class="metric-card"><div class="label">Capital necessário mínimo</div><div class="value red">R$ 520k</div><div class="sub">Importação + giro mínimo</div></div>
+      <div class="metric-card"><div class="label">ROI da importação</div><div class="value green">~67%</div><div class="sub">Sobre R$ 420k de custo</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Valor</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>Estoque atual</td><td>R$ 191.168</td><td class="td-dim">Já disponível</td></tr>
+          <tr><td>Nova importação (custo)</td><td>R$ 420.000</td><td class="td-dim">CMV ~30%</td></tr>
+          <tr><td>Fat. potencial total</td><td class="td-blue">~R$ 2.073.000</td><td class="td-dim">(R$ 611k) / 0,295</td></tr>
+          <tr><td>VR total (65%)</td><td class="td-blue">~R$ 1.347.000</td><td class="td-dim">Entrará no caixa</td></tr>
+          <tr><td>Duração (R$ 13k/dia)</td><td>~159 dias</td><td class="td-dim">5,3 meses</td></tr>
+          <tr><td>Lucro/mês Cen. C</td><td class="td-green">R$ 75.494</td><td class="td-dim">—</td></tr>
+          <tr><td>Lucro total estimado 5m</td><td class="td-green">R$ 377.470</td><td class="td-dim">Econômico acumulado</td></tr>
+          <tr><td><strong>Capital necessário (importação)</strong></td><td class="td-red">R$ 420.000</td><td class="td-dim">A confirmar</td></tr>
+          <tr><td>Capital de giro mínimo adicional</td><td class="td-red">R$ 100.000</td><td class="td-dim">Para cobrir 60 dias de custo</td></tr>
+          <tr style="background:rgba(255,59,59,0.06);"><td><strong>Capital mínimo total necessário</strong></td><td class="td-red"><strong>R$ 520.000</strong></td><td class="td-red">Mínimo absoluto</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diag-box ok">
+      <h3>Avaliação CFO — Cenário E</h3>
+      <p>Maior upside disponível, mas exige capital real. Com Cenário C aplicado, gera <strong>R$ 377k de lucro econômico em 5 meses</strong> — mais de 89% do capital investido em retorno. O risco não é o retorno (que é sólido), é o <strong>capital de giro no intervalo entre pagar a carga e ela virar venda</strong>. Sem reserva mínima de R$ 100k além do custo da importação, a empresa pode pagar os R$ 420k e travar por falta de caixa operacional.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ SEÇÃO 5 ═══════════════ -->
+<div class="section" id="importacao">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">Análise da Importação — Salvação, Risco ou Armadilha?</span>
+  </div>
+
+  <div class="diag-box warn">
+    <h3>Diagnóstico direto</h3>
+    <p>A importação de R$ 420k é <strong>RISCO CONTROLADO com potencial alto</strong> — mas apenas se você tiver capital de giro além do custo dela. Sem capital de giro adicional mínimo de R$ 100k, pagar os R$ 420k e ficar sem caixa operacional transforma uma boa oportunidade em armadilha fatal.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Condição do fornecedor</th>
+          <th>Saída de caixa</th>
+          <th>Viabilidade</th>
+          <th>Recomendação CFO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pagamento total antes do envio</strong></td>
+          <td class="td-red">R$ 420k imediato</td>
+          <td><span class="pill red">Só com R$ 570k+</span></td>
+          <td>Não avançar sem ter R$ 520k+ em caixa. Sem giro adicional = armadilha.</td>
+        </tr>
+        <tr>
+          <td><strong>Envio/pagamento parcial (1/3)</strong></td>
+          <td class="td-orange">R$ 140k por parcela</td>
+          <td><span class="pill orange">Viável com R$ 240k</span></td>
+          <td>Melhor opção. Usa caixa do estoque atual para pagar as parcelas seguintes.</td>
+        </tr>
+        <tr>
+          <td><strong>Retirada em 3 partes no Brasil</strong></td>
+          <td class="td-green">Imposto fracionado</td>
+          <td><span class="pill green">Ótimo</span></td>
+          <td>Reduz pressão tributária. Negociar isso independente do pagamento.</td>
+        </tr>
+        <tr>
+          <td><strong>R$ 100k de crédito adicional disponível</strong></td>
+          <td class="td-orange">Parcial — não resolve sozinho</td>
+          <td><span class="pill orange">Só se parcial</span></td>
+          <td>R$ 100k + caixa estoque atual (~R$ 258k) = ~R$ 358k. Suficiente para pagar 1ª parcela (R$ 140k) + ter folga. Funciona com envio parcial.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="label">Capital mínimo (importação total)</div>
+      <div class="value red">R$ 520k</div>
+      <div class="sub">R$ 420k + R$ 100k giro mínimo</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Capital mínimo (envio parcial 1/3)</div>
+      <div class="value orange">R$ 240k</div>
+      <div class="sub">R$ 140k parcela + R$ 100k giro</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Caixa disponível estimado</div>
+      <div class="value orange">R$ 258k</div>
+      <div class="sub">Do estoque atual (sem passivos)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Com R$ 100k crédito adicional</div>
+      <div class="value orange">R$ 358k</div>
+      <div class="sub">Cobre envio parcial com folga</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">ROI da importação (5 meses)</div>
+      <div class="value green">~67%</div>
+      <div class="sub">R$ 377k lucro / R$ 420k custo</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Fat. potencial importação</div>
+      <div class="value blue">R$ 1,4M</div>
+      <div class="sub">Sobre 3,5–4 meses</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Conclusão sobre R$ 100k adicionais:</strong> Sozinhos, não resolvem a importação total (faltam R$ 320k+). MAS se o fornecedor aceitar envio parcial em 3×, R$ 100k + caixa gerado pelo estoque atual (~R$ 258k) = ~R$ 358k — isso cobre a 1ª parcela de R$ 140k e ainda deixa R$ 218k de reserva para operar 13+ meses no Cenário C. Essa combinação funciona.
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 6 ═══════════════ -->
+<div class="section" id="stress">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">Teste de Estresse</span>
+  </div>
+
+  <div class="stress-grid">
+    <div class="stress-card">
+      <h4>Velocidade de Venda (Cen. C)</h4>
+      <div class="stress-item"><span class="s-label">Normal R$ 13k/dia</span><span class="s-val ok">R$ 75.494/mês</span></div>
+      <div class="stress-item"><span class="s-label">−30% (R$ 9,1k/dia)</span><span class="s-val ok">R$ 43.500/mês — ainda positivo</span></div>
+      <div class="stress-item"><span class="s-label">−50% (R$ 6,5k/dia)</span><span class="s-val warn">R$ 21.000/mês — margem fina</span></div>
+      <div class="stress-item"><span class="s-label">Tempo dobrado (50% fat.)</span><span class="s-val warn">R$ 21k/mês — limite de operação</span></div>
+    </div>
+
+    <div class="stress-card">
+      <h4>Ads — Impacto Real</h4>
+      <div class="stress-item"><span class="s-label">Ads zerado (fat −40%)</span><span class="s-val warn">Fat. R$ 234k → lucro R$ 43k</span></div>
+      <div class="stress-item"><span class="s-label">Ads 1,5% (fat −8%)</span><span class="s-val ok">Fat. R$ 359k → lucro R$ 75k</span></div>
+      <div class="stress-item"><span class="s-label">Ads 3% (padrão)</span><span class="s-val warn">Fat. R$ 390k → lucro R$ 40k</span></div>
+      <div class="stress-item"><span class="s-label">Ads 8–10%</span><span class="s-val bad">Margem negativa. Proibido.</span></div>
+    </div>
+
+    <div class="stress-card">
+      <h4>Aumento de Preço</h4>
+      <div class="stress-item"><span class="s-label">Sem aumento</span><span class="s-val warn">Margem 10,2% (Cen. A)</span></div>
+      <div class="stress-item"><span class="s-label">+10% preço, −8% volume</span><span class="s-val ok">Fat. líq. ~R$ 357k → marg. 20%</span></div>
+      <div class="stress-item"><span class="s-label">+12% preço, −10% volume</span><span class="s-val ok">Fat. ~R$ 358k → marg. 21% ★</span></div>
+      <div class="stress-item"><span class="s-label">+15% preço, −20% volume</span><span class="s-val warn">Fat. ~R$ 335k → marg. 19%</span></div>
+    </div>
+
+    <div class="stress-card">
+      <h4>Custo Fixo — Sensibilidade</h4>
+      <div class="stress-item"><span class="s-label">R$ 40k/mês (atual)</span><span class="s-val bad">Marg. 10,2% — sem gordura</span></div>
+      <div class="stress-item"><span class="s-label">R$ 20k/mês (reduzido)</span><span class="s-val warn">Marg. 15,3% — melhor</span></div>
+      <div class="stress-item"><span class="s-label">R$ 16k/mês (enxuto)</span><span class="s-val ok">Marg. 21% — sustentável ★</span></div>
+      <div class="stress-item"><span class="s-label">Break-even Cen. C</span><span class="s-val ok">R$ 64k/mês = R$ 2.133/dia</span></div>
+    </div>
+
+    <div class="stress-card">
+      <h4>Importação — Riscos</h4>
+      <div class="stress-item"><span class="s-label">Atraso 30 dias</span><span class="s-val warn">Estoque atual pode acabar antes</span></div>
+      <div class="stress-item"><span class="s-label">Atraso 60 dias</span><span class="s-val bad">Operação para. Caixa trava.</span></div>
+      <div class="stress-item"><span class="s-label">Fornecedor exige tudo</span><span class="s-val bad">Só com R$ 520k+</span></div>
+      <div class="stress-item"><span class="s-label">Envio parcial 1/3</span><span class="s-val ok">Viável com R$ 240k</span></div>
+    </div>
+
+    <div class="stress-card">
+      <h4>R$ 100k Adicionais</h4>
+      <div class="stress-item"><span class="s-label">Sem importação</span><span class="s-val warn">Estende ~15 dias. Não resolve.</span></div>
+      <div class="stress-item"><span class="s-label">Com importação total</span><span class="s-val bad">R$ 100k insuficiente (falta R$ 320k+)</span></div>
+      <div class="stress-item"><span class="s-label">Com envio parcial (1/3)</span><span class="s-val ok">Funciona. Cobre 1ª parcela.</span></div>
+      <div class="stress-item"><span class="s-label">Custo crédito &gt; 3,5%/mês</span><span class="s-val bad">Destrói margem. Não aceitar.</span></div>
+    </div>
+  </div>
+
+  <div class="diag-box">
+    <h3>Veredicto Stress Test</h3>
+    <p><strong>R$ 100k adicionais resolvem parcialmente — SE o fornecedor aceitar envio parcial.</strong><br>
+    Com envio parcial: R$ 100k crédito + R$ 258k do estoque atual = R$ 358k. Paga 1ª parcela (R$ 140k), fica com R$ 218k de reserva — cobre 13+ meses no Cenário C (R$ 16k/mês).<br>
+    Sem envio parcial: R$ 100k + R$ 258k = R$ 358k — muito abaixo dos R$ 520k necessários para importação total. Não resolve.<br><br>
+    <strong>A variável mais crítica de todo o diagnóstico é uma só: o fornecedor aceita envio parcial?</strong></p>
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 7 ═══════════════ -->
+<div class="section" id="matriz">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title">Matriz de Decisão CFO</span>
+  </div>
+
+  <div class="matrix-grid">
+    <div class="matrix-card">
+      <div class="matrix-card-header green">✓ Continuar se:</div>
+      <ul>
+        <li>Fornecedor aceita envio parcial (1/3) OU você tem R$ 520k+ disponíveis</li>
+        <li>Custo fixo cortado para R$ 16k/mês imediatamente</li>
+        <li>Ads controlado em 1,5% — não zero, não 3%+</li>
+        <li>Antecipação zerada</li>
+        <li>Preço aumentado entre 10–12%</li>
+        <li>Caixa disponível ≥ R$ 240k (para envio parcial)</li>
+        <li>Crédito disponível ≤ 3,5%/mês</li>
+        <li>Importação chegando em ≤ 30 dias após pagamento</li>
+      </ul>
+    </div>
+
+    <div class="matrix-card">
+      <div class="matrix-card-header orange">⚠ Reduzir drasticamente se:</div>
+      <ul>
+        <li>Fat. diário cair abaixo de R$ 8k por mais de 10 dias</li>
+        <li>Margem líquida real cair abaixo de 15%</li>
+        <li>Fornecedor aceita parcial mas sem prazo claro</li>
+        <li>Capital disponível entre R$ 150k e R$ 240k</li>
+        <li>Caixa disponível cair abaixo de R$ 80k</li>
+        <li>Custo fixo não conseguir cair para menos de R$ 25k/mês</li>
+        <li>Ads estiver acima de 3% do faturamento</li>
+      </ul>
+    </div>
+
+    <div class="matrix-card">
+      <div class="matrix-card-header red">✗ Fechar planejadamente se:</div>
+      <ul>
+        <li>Fornecedor exige pagamento total E você não tem R$ 520k</li>
+        <li>Capital disponível abaixo de R$ 150k (sem conseguir crédito)</li>
+        <li>Crédito disponível custa &gt; 4,5%/mês</li>
+        <li>Fat. diário já abaixo de R$ 5k sem perspectiva de melhora</li>
+        <li>Custo fixo irredutível acima de R$ 30k/mês</li>
+        <li>Passivos acumulados já consomem o caixa do fechamento</li>
+        <li>Importação com atraso &gt; 60 dias</li>
+      </ul>
+    </div>
+
+    <div class="matrix-card">
+      <div class="matrix-card-header black">🚫 Não fazer de jeito nenhum:</div>
+      <ul>
+        <li>Pagar importação total sem ter R$ 100k+ de reserva adicional</li>
+        <li>Tomar crédito com custo &gt; 4%/mês para capital de giro</li>
+        <li>Continuar com custo fixo de R$ 40k/mês sem cortar</li>
+        <li>Zerar Ads sem saber se venda é orgânica</li>
+        <li>Usar o imposto retido como capital de giro</li>
+        <li>Confundir caixa imediato (R$ 188k) com lucro real (R$ 40k)</li>
+        <li>Aumentar preço &gt; 20% de uma vez (trava o giro)</li>
+        <li>Aguardar importação sem plano para gap de estoque</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 8 ═══════════════ -->
+<div class="section" id="plano">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title">Plano Prático CFO — 7 / 30 / 60 / 90 Dias</span>
+  </div>
+
+  <div class="plan-grid">
+    <div class="plan-card">
+      <h4>⚡ 7 dias — Decisão e corte</h4>
+      <ul>
+        <li>Levantar saldo de caixa real hoje (não projetado)</li>
+        <li>Mapear todas as dívidas dos próximos 30 dias</li>
+        <li>Ligar para fornecedor: aceita envio em 3 parcelas?</li>
+        <li>Cortar custo empresa para R$ 6k/mês imediatamente</li>
+        <li>Cortar custo pessoal para R$ 10k/mês imediatamente</li>
+        <li>Zerar antecipação de recebíveis agora</li>
+        <li>Reduzir Ads para 1,5% — medir por 7 dias</li>
+        <li>Aumentar preço 10–12% em produtos com margem &lt; 30%</li>
+        <li>Separar reserva de imposto semanal (9% das vendas) — conta separada</li>
+        <li><strong>Decidir: fechar ou continuar. Prazo: 7 dias.</strong></li>
+      </ul>
+    </div>
+
+    <div class="plan-card">
+      <h4>📊 30 dias — Execução e medição</h4>
+      <ul>
+        <li>Confirmar ou descartar importação com base na resposta do fornecedor</li>
+        <li>Medir impacto real do Ads 1,5% no volume de vendas</li>
+        <li>Separar produtos por categoria: top margem × parados × negativos</li>
+        <li>Aplicar queima de margem (semáforo) nos parados</li>
+        <li>Monitorar fat. diário — meta mínima: R$ 10k/dia</li>
+        <li>Negociar parcelamento de obrigações com prazo próximo</li>
+        <li>Não usar crédito para despesas operacionais — só para importação</li>
+        <li>Calcular caixa acumulado real semanal</li>
+      </ul>
+    </div>
+
+    <div class="plan-card">
+      <h4>🔄 60 dias — Confirmação</h4>
+      <ul>
+        <li>Importação deve estar paga (1ª parcela mínimo) e com ETA confirmado</li>
+        <li>Caixa deve cobrir ≥ R$ 80k de reserva após pagar parcela</li>
+        <li>Margem líquida real semanal ≥ 18%</li>
+        <li>Custo fixo R$ 16k/mês mantido sem desvio</li>
+        <li>Ads 1,5% validado — se venda caiu &gt; 25%, revisar para 2%</li>
+        <li>Estoque atual restante: calcular quanto falta para carga chegar</li>
+        <li>Se gap de estoque &gt; 10 dias: plano emergencial de preços</li>
+      </ul>
+    </div>
+
+    <div class="plan-card">
+      <h4>🎯 90 dias — Resultados</h4>
+      <ul>
+        <li>Importação vendida em ≥ 60%</li>
+        <li>Caixa acumulado ≥ R$ 150k (operacional + reserva)</li>
+        <li>Margem líquida real ≥ 20% consistente</li>
+        <li>Fat. diário médio ≥ R$ 11k</li>
+        <li>Custo fixo ≤ R$ 16k/mês mantido</li>
+        <li>Segunda importação planejada sem crédito</li>
+        <li>Imposto em dia ou em parcelamento controlado</li>
+        <li>Dependência de crédito: zero</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SEÇÃO 9 ═══════════════ -->
+<div class="section" id="regras">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title">Regras Financeiras Objetivas</span>
+  </div>
+
+  <ul class="rule-list">
+    <li>
+      <span class="rule-icon">CAIXA</span>
+      <div>Se caixa disponível cair abaixo de <strong>R$ 80.000</strong>, suspender toda saída não essencial e ativar modo de encerramento planejado.</div>
+    </li>
+    <li>
+      <span class="rule-icon">MARGEM</span>
+      <div>Se margem líquida real ficar abaixo de <strong>15%</strong> por mais de 2 semanas, revisar precificação e cortar todos os custos variáveis controláveis (ads, antecipação, devoluções).</div>
+    </li>
+    <li>
+      <span class="rule-icon">FAT.</span>
+      <div>Se faturamento diário cair abaixo de <strong>R$ 8.000</strong> por mais de 10 dias consecutivos, acionar plano de redução drástica. Abaixo de <strong>R$ 5.000</strong> por 5 dias: acionar fechamento planejado.</div>
+    </li>
+    <li>
+      <span class="rule-icon">ADS</span>
+      <div>Manter Ads em <strong>1,5%</strong>. Se volume de vendas cair mais de 25% após redução, subir para 2%. Se não houver retorno comprovado acima de 8× em faturamento adicional, reduzir mais. Nunca ultrapassar 3%.</div>
+    </li>
+    <li>
+      <span class="rule-icon">IMPORT.</span>
+      <div>Se fornecedor exigir pagamento total e você não tiver <strong>R$ 520k+ em caixa</strong>, não pagar. Negociar envio parcial. Se fornecedor não negociar, descartar e executar fechamento planejado.</div>
+    </li>
+    <li>
+      <span class="rule-icon">CRÉDITO</span>
+      <div>Só aceitar crédito com custo ≤ <strong>3,5%/mês</strong> e apenas para financiar importação com retorno simulado ≥ 3× o custo. Crédito para despesa operacional = proibido.</div>
+    </li>
+    <li>
+      <span class="rule-icon">IMPOSTO</span>
+      <div>9% do faturamento semanal vai para conta separada toda semana. <strong>Intocável.</strong> Usar imposto retido como capital de giro é o caminho mais rápido para uma dívida tributária que pode travar tudo.</div>
+    </li>
+    <li>
+      <span class="rule-icon">CUSTO</span>
+      <div>Custo fixo total (empresa + pessoal) deve ser ≤ <strong>8% do faturamento mensal</strong>. Hoje a R$ 390k: limite R$ 31,2k. No Cenário C: R$ 16k representa 4,5% — saudável. R$ 40k representa 10,2% — insustentável.</div>
+    </li>
+    <li>
+      <span class="rule-icon green">PREÇO</span>
+      <div>Todo produto com margem bruta abaixo de <strong>28%</strong> deve ter preço revisado antes de qualquer outra ação. Meta de margem bruta: 35%. Limite de atenção: 28%.</div>
+    </li>
+    <li>
+      <span class="rule-icon green">RESERVA</span>
+      <div>Manter reserva mínima de <strong>R$ 80.000</strong> intocável no caixa operacional o tempo todo. Se for necessário usar, cortar custos imediatamente para recompor.</div>
+    </li>
+    <li>
+      <span class="rule-icon orange">VR 65%</span>
+      <div>Sempre calcular rentabilidade sobre <strong>Valor Recebido = 65% do faturamento bruto</strong>. Nunca usar faturamento bruto como base de margem — a comissão + frete do ML (35%) nunca entra no caixa e não pode ser contada como receita.</div>
+    </li>
+  </ul>
+</div>
+
+<!-- ═══════════════ SEÇÃO 10 ═══════════════ -->
+<div class="section" id="veredicto">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title">Veredicto CFO — Resposta Final</span>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-header">CONCLUSÃO DIRETA — SEM FILTRO (v2 com VR 65% corrigido)</div>
+    <div class="verdict-body">
+
+      <div class="verdict-row">
+        <div class="verdict-num">1</div>
+        <div class="verdict-label">Diagnóstico</div>
+        <div class="verdict-content"><strong>Empresa com operação viável, mas margem real de apenas 10,2% no cenário atual — sem nenhuma gordura para absorver choques.</strong> O custo fixo de R$ 40k/mês e as saídas de antecipação (2,5%) e devoluções (1%) estão consumindo margem que poderia ser lucro. A correção para Cenário C dobra o lucro sem precisar de mais venda.</div>
+      </div>
+
+      <div class="verdict-row">
+        <div class="verdict-num">2</div>
+        <div class="verdict-label">Principal risco</div>
+        <div class="verdict-content"><strong class="td-red">Estoque acabar em ~51 dias sem importação confirmada.</strong> Com margem de 10,2%, qualquer mês abaixo de R$ 195k de faturamento já gera prejuízo. A combinação de estoque curto + margem fina + custo alto é perigosa.</div>
+      </div>
+
+      <div class="verdict-row">
+        <div class="verdict-num">3</div>
+        <div class="verdict-label">Principal oportunidade</div>
+        <div class="verdict-content"><span 

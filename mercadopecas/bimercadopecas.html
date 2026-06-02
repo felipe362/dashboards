@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Business Intelligence — Mercado Peças · E-commerce Marketplace</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+:root{
+--bg:#07080c;--s1:#0d0f16;--s2:#14161f;--s3:#1c1f2b;--brd:#2a2d3d;
+--r:#f43f5e;--o:#f59e0b;--g:#22c55e;--b:#3b82f6;--c:#06b6d4;--p:#a78bfa;--pk:#ec4899;--y:#eab308;
+--t:#f1f5f9;--t2:#94a3b8;--t3:#64748b;
+--mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:14px;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+
+.hdr{background:var(--s1);border-bottom:1px solid var(--brd);padding:18px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.hdr h1{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--c);letter-spacing:.05em;text-transform:uppercase}
+.hdr .sub{font-size:11px;color:var(--t3);margin-top:3px}
+.hdr .meta{font-family:var(--mono);font-size:10px;color:var(--t3);text-align:right;line-height:1.7}
+.tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(6,182,212,.1);color:var(--c);border:1px solid rgba(6,182,212,.25);letter-spacing:.04em;text-transform:uppercase;margin-left:6px}
+
+.tb{background:var(--s1);border-bottom:1px solid var(--brd);padding:0 28px;display:flex;gap:0;overflow-x:auto}
+.tb button{font-family:var(--mono);font-size:10px;padding:10px 15px;background:none;border:none;border-bottom:2px solid transparent;color:var(--t3);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;transition:all .2s}
+.tb button:hover{color:var(--t2)}.tb button.a{color:var(--c);border-bottom-color:var(--c);background:rgba(6,182,212,.04)}
+.pn{display:none;padding:24px 28px;max-width:1300px;margin:0 auto}.pn.a{display:block}
+
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-bottom:18px}
+.k{background:var(--s2);border:1px solid var(--brd);border-radius:5px;padding:12px 14px;position:relative;overflow:hidden}
+.k::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.k.kr::before{background:var(--r)}.k.kg2::before{background:var(--g)}.k.ko::before{background:var(--o)}.k.kb::before{background:var(--b)}.k.kc::before{background:var(--c)}.k.kp::before{background:var(--p)}.k.kpk::before{background:var(--pk)}
+.k .l{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.k .v{font-family:var(--mono);font-size:18px;font-weight:700}
+.k .v.r{color:var(--r)}.k .v.g{color:var(--g)}.k .v.o{color:var(--o)}.k .v.b{color:var(--b)}.k .v.c{color:var(--c)}.k .v.p{color:var(--p)}
+.k .s{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:2px}
+
+.cd{background:var(--s2);border:1px solid var(--brd);border-radius:5px;padding:14px 16px;margin-bottom:12px}
+.cd h3{font-family:var(--mono);font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--brd)}
+.cd.hi{border-left:3px solid var(--c)}.cd.hi h3{color:var(--c)}
+
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+thead{background:var(--s3)}
+th{text-align:left;padding:7px 10px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:9px;border-bottom:1px solid var(--brd)}
+td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+tr:hover{background:rgba(255,255,255,.015)}
+.r{color:var(--r)!important;font-weight:600}.g{color:var(--g)!important;font-weight:600}.o{color:var(--o)!important;font-weight:600}.b{color:var(--b)!important;font-weight:600}.c{color:var(--c)!important;font-weight:600}.d{color:var(--t3)!important}.bd{font-weight:700}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:800px){.g2,.g3{grid-template-columns:1fr}}
+
+.br{display:grid;grid-template-columns:110px 1fr 80px;align-items:center;gap:8px;margin-bottom:3px}
+.brl{font-family:var(--mono);font-size:10px;color:var(--t3);text-align:right}
+.brt{height:20px;background:var(--s3);border-radius:3px;overflow:hidden}
+.brf{height:100%;border-radius:3px}
+.brv{font-family:var(--mono);font-size:11px;font-weight:600;text-align:right}
+
+.nt{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);border:1px solid var(--brd);padding:8px 12px;border-radius:4px;margin-bottom:12px;line-height:1.7}
+.ins{display:flex;gap:9px;padding:10px 14px;margin-bottom:7px;border-radius:5px;font-size:12px;line-height:1.6;align-items:flex-start}
+.ins.tp{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.ins.wn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins.dn{background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.2)}
+.ins .ic{font-size:15px;flex-shrink:0;margin-top:1px}
+
+.wf{background:var(--s2);border:1px solid var(--brd);border-radius:5px;padding:16px;margin-bottom:14px}
+.wfr{display:grid;grid-template-columns:180px 1fr 100px;align-items:center;gap:8px;margin-bottom:4px}
+.wfl{font-family:var(--mono);font-size:10px;color:var(--t3)}
+.wfbw{height:18px;display:flex;align-items:center}
+.wfb{height:100%;border-radius:2px;min-width:2px}
+.wfv{font-family:var(--mono);font-size:10px;font-weight:600;text-align:right}
+.wfd{height:1px;background:var(--brd);margin:6px 0}
+
+.pill{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+.pill.r{background:rgba(244,63,94,.12);color:var(--r);border:1px solid rgba(244,63,94,.25)}
+.pill.g{background:rgba(34,197,94,.1);color:var(--g);border:1px solid rgba(34,197,94,.25)}
+.pill.o{background:rgba(245,158,11,.1);color:var(--o);border:1px solid rgba(245,158,11,.25)}
+.pill.b{background:rgba(59,130,246,.1);color:var(--b);border:1px solid rgba(59,130,246,.25)}
+.pill.c{background:rgba(6,182,212,.1);color:var(--c);border:1px solid rgba(6,182,212,.25)}
+
+.comp-row{display:grid;grid-template-columns:200px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--brd);align-items:center}
+.comp-row:last-child{border-bottom:none}
+.comp-label{font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em}
+.comp-val{font-family:var(--mono);font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<div><h1>Business Intelligence · Mercado Peças<span class="tag">Para comparação</span></h1>
+<div class="sub">E-commerce de autopeças via marketplaces (Mercado Livre, Shopee) · Dados reais maio/2026</div></div>
+<div class="meta">Base: maio/2026 (24 dias)<br>Estoque: R$ 193.595,52<br>30.170 unidades · 333 SKUs<br>Dólar: R$ 5,02</div>
+</div>
+
+<div class="tb" id="tb">
+<button class="a" onclick="sp(0,this)">Modelo de Negócio</button>
+<button onclick="sp(1,this)">Unit Economics</button>
+<button onclick="sp(2,this)">P&L Detalhado</button>
+<button onclick="sp(3,this)">Caixa vs Lucro</button>
+<button onclick="sp(4,this)">Canais & Mix</button>
+<button onclick="sp(5,this)">Estoque & Giro</button>
+<button onclick="sp(6,this)">Projeções</button>
+<button onclick="sp(7,this)">Comparativo</button>
+</div>
+
+<!-- ═══ P0 MODELO DE NEGÓCIO ═══ -->
+<div class="pn a" id="p0">
+<div class="kg">
+<div class="k kc"><div class="l">Tipo de negócio</div><div class="v c" style="font-size:14px">E-commerce B2C</div><div class="s">Autopeças via marketplaces</div></div>
+<div class="k kb"><div class="l">Canais de venda</div><div class="v b">7 lojas ML + 2 Shopee</div><div class="s">+ TikTok (instável)</div></div>
+<div class="k ko"><div class="l">Ticket médio</div><div class="v o">R$ 74,68</div><div class="s">Por pedido / 83 pedidos/dia</div></div>
+<div class="k kg2"><div class="l">Markup médio</div><div class="v g">11,6×</div><div class="s">Custo R$ 6,42 → Venda R$ 74,68</div></div>
+<div class="k ko"><div class="l">Margem líquida real</div><div class="v o">5,9%</div><div class="s">Lucro R$ 4,38 por pedido</div></div>
+<div class="k kr"><div class="l">Dependência ML</div><div class="v r">~93%</div><div class="s">Quase todo faturamento</div></div>
+</div>
+
+<div class="g2">
+<div class="cd hi">
+<h3>🏗 Como o negócio funciona</h3>
+<div style="font-size:13px;line-height:1.8;color:var(--t)">
+<strong style="color:var(--c)">Modelo:</strong> Importação de autopeças da China → Estoque no Brasil → Venda via Mercado Livre e Shopee.<br><br>
+<strong style="color:var(--c)">Fluxo de receita:</strong> Cliente compra no marketplace → ML cobra comissão+frete (~32,2%) → Empresa recebe 67,8% do valor da venda.<br><br>
+<strong style="color:var(--c)">Estoque:</strong> R$ 193.596 em custo (30.170 unidades, 333 SKUs). Armazenado na matriz (80%) e nos centros Full do ML (20%).<br><br>
+<strong style="color:var(--c)">Importação:</strong> Mercadoria vem da China. CMV médio real: 26,2% do preço de venda. Custo médio por unidade: R$ 6,42.<br><br>
+<strong style="color:var(--c)">Capital necessário:</strong> Negócio intensivo em capital de giro — precisa de estoque para vender. Sem estoque = sem receita.
+</div></div>
+
+<div class="cd">
+<h3>📊 Estrutura de custos — % do faturamento bruto</h3>
+<div style="margin:12px 0">
+<div class="br"><div class="brl">Comissão+frete ML</div><div class="brt"><div class="brf" style="width:32.2%;background:var(--r)"></div></div><div class="brv r">32,2%</div></div>
+<div class="br"><div class="brl">CMV (custo prod.)</div><div class="brt"><div class="brf" style="width:26.2%;background:var(--o)"></div></div><div class="brv o">26,2%</div></div>
+<div class="br"><div class="brl">Imposto (9%)</div><div class="brt"><div class="brf" style="width:9%;background:var(--pk)"></div></div><div class="brv" style="color:var(--pk)">9,0%</div></div>
+<div class="br"><div class="brl">Ads (1,5%)</div><div class="brt"><div class="brf" style="width:1.5%;background:var(--p)"></div></div><div class="brv" style="color:var(--p)">1,5%</div></div>
+<div class="br"><div class="brl">Antecipação</div><div class="brt"><div class="brf" style="width:2.5%;background:var(--t3)"></div></div><div class="brv d">2,5%</div></div>
+<div class="br"><div class="brl">Dev/outros</div><div class="brt"><div class="brf" style="width:1%;background:var(--t3)"></div></div><div class="brv d">1,0%</div></div>
+<div class="br"><div class="brl">CF (a R$ 186k/mês)</div><div class="brt"><div class="brf" style="width:9.7%;background:var(--b)"></div></div><div class="brv b">9,7%</div></div>
+</div>
+<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--brd)">
+<div class="br"><div class="brl" style="color:var(--g);font-weight:600">= Sobra (lucro)</div><div class="brt"><div class="brf" style="width:5.9%;background:var(--g)"></div></div><div class="brv g">5,9%</div></div>
+</div>
+<div class="nt" style="margin-top:10px">Total de custos sobre faturamento: 82,1%. Custo do ML (32,2%) é o maior componente — mais que o próprio produto (26,2%). A empresa trabalha para o marketplace.</div>
+</div>
+</div>
+
+<div class="ins wn"><span class="ic">⚠</span><div><strong>Característica do modelo:</strong> Mais de 90% do faturamento depende do Mercado Livre. O ML cobra 32,2% de comissão+frete. De cada R$ 100 vendidos, R$ 32 vão para o ML, R$ 26 para o custo do produto, R$ 9 para imposto, e sobram R$ 5,90 de lucro final.</div></div>
+</div>
+
+<!-- ═══ P1 UNIT ECONOMICS ═══ -->
+<div class="pn" id="p1">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Unit Economics — Por Pedido e Por Dia</h2>
+
+<div class="kg" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+<div class="k kc"><div class="l">Ticket médio</div><div class="v c">R$ 74,68</div><div class="s">Preço médio por pedido</div></div>
+<div class="k kb"><div class="l">VR por pedido</div><div class="v b">R$ 50,62</div><div class="s">O que recebe de verdade</div></div>
+<div class="k ko"><div class="l">CMV por pedido</div><div class="v o">R$ 19,56</div><div class="s">Custo do produto</div></div>
+<div class="k kg2"><div class="l">Lucro por pedido</div><div class="v" style="color:var(--y)">R$ 4,38</div><div class="s">Após todos os custos</div></div>
+<div class="k ko"><div class="l">Pedidos/dia</div><div class="v o">83</div><div class="s">Média 18-24/05</div></div>
+<div class="k kg2"><div class="l">Custo aquisição unit.</div><div class="v g">R$ 6,42</div><div class="s">Custo médio estoque</div></div>
+</div>
+
+<div class="cd hi">
+<h3>Anatomia de um pedido médio (R$ 74,68)</h3>
+<div class="wf" style="margin:0;border:none;padding:0">
+<div class="wfr"><div class="wfl">Preço de venda (fat. bruto)</div><div class="wfbw"><div class="wfb" style="width:100%;background:var(--c)"></div></div><div class="wfv c">R$ 74,68</div></div>
+<div class="wfr"><div class="wfl">— Comissão+frete ML (32,2%)</div><div class="wfbw"><div class="wfb" style="width:32.2%;background:rgba(244,63,94,.6)"></div></div><div class="wfv r">−R$ 24,06</div></div>
+<div class="wfr" style="background:rgba(59,130,246,.04);padding:2px 0;border-radius:3px"><div class="wfl" style="font-weight:600;color:var(--b)">= Valor Recebido (67,8%)</div><div class="wfbw"><div class="wfb" style="width:67.8%;background:rgba(59,130,246,.5)"></div></div><div class="wfv b" style="font-weight:700">R$ 50,62</div></div>
+<div class="wfd"></div>
+<div class="wfr"><div class="wfl">— CMV / custo do produto</div><div class="wfbw"><div class="wfb" style="width:26.2%;background:rgba(245,158,11,.6)"></div></div><div class="wfv o">−R$ 19,56</div></div>
+<div class="wfr"><div class="wfl">— Imposto (9%)</div><div class="wfbw"><div class="wfb" style="width:9%;background:rgba(236,72,153,.5)"></div></div><div class="wfv" style="color:var(--pk)">−R$ 6,72</div></div>
+<div class="wfr"><div class="wfl">— Ads (1,5%)</div><div class="wfbw"><div class="wfb" style="width:1.5%;background:rgba(167,139,250,.5)"></div></div><div class="wfv" style="color:var(--p)">−R$ 1,12</div></div>
+<div class="wfr"><div class="wfl">— Antecipação (2,5%)</div><div class="wfbw"><div class="wfb" style="width:2.5%;background:rgba(100,116,139,.5)"></div></div><div class="wfv d">−R$ 1,87</div></div>
+<div class="wfr"><div class="wfl">— Dev/outros (1%)</div><div class="wfbw"><div class="wfb" style="width:1%;background:rgba(100,116,139,.4)"></div></div><div class="wfv d">−R$ 0,75</div></div>
+<div class="wfr"><div class="wfl">— Custo fixo rateado</div><div class="wfbw"><div class="wfb" style="width:7.2%;background:rgba(59,130,246,.4)"></div></div><div class="wfv b">−R$ 7,23</div></div>
+<div class="wfd"></div>
+<div class="wfr"><div class="wfl" style="font-weight:700;color:var(--g)">= Lucro líquido real</div><div class="wfbw"><div class="wfb" style="width:5.9%;background:var(--g)"></div></div><div class="wfv g" style="font-weight:700">R$ 4,38</div></div>
+</div></div>
+
+<div class="g2">
+<div class="cd">
+<h3>Por dia (média tendência R$ 6.209/dia)</h3>
+<table><tbody>
+<tr><td>Faturamento</td><td class="c bd">R$ 6.209</td></tr>
+<tr><td>Pedidos</td><td>~83</td></tr>
+<tr><td>Valor Recebido (67,8%)</td><td class="b">R$ 4.210</td></tr>
+<tr><td>CMV consumido</td><td class="o">R$ 1.626</td></tr>
+<tr><td>Margem bruta</td><td class="g">R$ 2.584</td></tr>
+<tr><td>Lucro líquido final</td><td class="o">R$ 364</td></tr>
+<tr><td>Caixa imediato gerado</td><td class="g">R$ 2.577</td></tr>
+</tbody></table></div>
+<div class="cd">
+<h3>Por mês (30 dias, tendência)</h3>
+<table><tbody>
+<tr><td>Faturamento</td><td class="c bd">R$ 186.270</td></tr>
+<tr><td>Pedidos</td><td>~2.493</td></tr>
+<tr><td>Valor Recebido</td><td class="b">R$ 126.271</td></tr>
+<tr><td>CMV consumido</td><td class="o">R$ 48.776</td></tr>
+<tr><td>Margem bruta</td><td class="g">R$ 77.495 (41,6%)</td></tr>
+<tr><td>EBITDA proxy</td><td class="g">R$ 74.701 (40,1%)</td></tr>
+<tr><td>Lucro líquido (CF 18k)</td><td class="o">R$ 33.417 (17,9%)</td></tr>
+<tr><td>Lucro líquido (CF 40k)</td><td class="o">R$ 11.417 (6,1%)</td></tr>
+<tr><td>Caixa imediato</td><td class="g">R$ 98.958</td></tr>
+</tbody></table></div>
+</div>
+</div>
+
+<!-- ═══ P2 P&L DETALHADO ═══ -->
+<div class="pn" id="p2">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">P&L Detalhado — Por Faixa de Faturamento</h2>
+<p style="color:var(--t3);font-size:11px;margin-bottom:14px">VR 67,8% · CMV 26,2% · Imposto 9% · Ads 1,5% · Antecipação 2,5% · Dev 1%</p>
+
+<table>
+<thead><tr><th>Linha</th><th>R$ 5k/dia</th><th style="background:rgba(244,63,94,.06)">R$ 6,2k/dia ⚠</th><th>R$ 7,9k/dia</th><th>R$ 10k/dia</th><th>R$ 13k/dia</th></tr></thead>
+<tbody>
+<tr><td>Faturamento/mês</td><td>R$ 150.000</td><td class="r"><strong>R$ 186.270</strong></td><td>R$ 235.620</td><td>R$ 300.000</td><td>R$ 390.000</td></tr>
+<tr style="background:rgba(59,130,246,.03)"><td><strong>Valor Recebido (67,8%)</strong></td><td class="b">R$ 101.684</td><td class="b"><strong>R$ 126.271</strong></td><td class="b">R$ 159.726</td><td class="b">R$ 203.368</td><td class="b">R$ 264.379</td></tr>
+<tr><td>— CMV (26,2%)</td><td class="d">R$ 39.279</td><td>R$ 48.776</td><td>R$ 61.699</td><td>R$ 78.557</td><td>R$ 102.125</td></tr>
+<tr style="background:rgba(34,197,94,.03)"><td><strong>= Margem bruta</strong></td><td class="g">R$ 62.405</td><td class="g"><strong>R$ 77.495</strong></td><td class="g">R$ 98.027</td><td class="g">R$ 124.811</td><td class="g">R$ 162.254</td></tr>
+<tr><td>Margem bruta %</td><td class="g">41,6%</td><td class="g">41,6%</td><td class="g">41,6%</td><td class="g">41,6%</td><td class="g">41,6%</td></tr>
+<tr><td>— Imposto (9%)</td><td>R$ 13.500</td><td>R$ 16.764</td><td>R$ 21.206</td><td>R$ 27.000</td><td>R$ 35.100</td></tr>
+<tr><td>— Ads (1,5%)</td><td>R$ 2.250</td><td>R$ 2.794</td><td>R$ 3.534</td><td>R$ 4.500</td><td>R$ 5.850</td></tr>
+<tr><td>— Antecipação (2,5%)</td><td>R$ 3.750</td><td>R$ 4.657</td><td>R$ 5.890</td><td>R$ 7.500</td><td>R$ 9.750</td></tr>
+<tr><td>— Dev/outros (1%)</td><td>R$ 1.500</td><td>R$ 1.863</td><td>R$ 2.356</td><td>R$ 3.000</td><td>R$ 3.900</td></tr>
+<tr style="background:rgba(6,182,212,.03)"><td><strong>= EBITDA proxy</strong></td><td class="c">R$ 41.405</td><td class="c"><strong>R$ 51.417</strong></td><td class="c">R$ 65.040</td><td class="c">R$ 82.811</td><td class="c">R$ 107.654</td></tr>
+<tr><td>EBITDA %</td><td class="c">27,6%</td><td class="c">27,6%</td><td class="c">27,6%</td><td class="c">27,6%</td><td class="c">27,6%</td></tr>
+<tr><td>— CF empresa + pessoal (18k)</td><td>R$ 18.000</td><td>R$ 18.000</td><td>R$ 18.000</td><td>R$ 18.000</td><td>R$ 18.000</td></tr>
+<tr style="background:rgba(34,197,94,.04)"><td><strong>= Lucro líquido (CF 18k)</strong></td><td class="g">R$ 23.405</td><td class="g"><strong>R$ 33.417</strong></td><td class="g">R$ 47.040</td><td class="g">R$ 64.811</td><td class="g">R$ 89.654</td></tr>
+<tr><td><strong>Margem líquida % (CF 18k)</strong></td><td class="g">15,6%</td><td class="g"><strong>17,9%</strong></td><td class="g">20,0%</td><td class="g">21,6%</td><td class="g">23,0%</td></tr>
+<tr style="background:rgba(245,158,11,.03)"><td><strong>= Lucro líquido (CF 40k)</strong></td><td class="o">R$ 1.405</td><td class="o"><strong>R$ 11.417</strong></td><td class="o">R$ 25.040</td><td class="o">R$ 42.811</td><td class="o">R$ 67.654</td></tr>
+<tr><td><strong>Margem líquida % (CF 40k)</strong></td><td class="r">0,9%</td><td class="o"><strong>6,1%</strong></td><td class="o">10,6%</td><td class="o">14,3%</td><td class="o">17,3%</td></tr>
+</tbody></table>
+
+<div class="ins tp" style="margin-top:12px"><span class="ic">💡</span><div><strong>Leitura para comparação:</strong> A margem bruta é estável em 41,6% independente do faturamento. O EBITDA proxy é 27,6%. A margem líquida varia de 15,6% a 23,0% (CF 18k) dependendo da escala — o custo fixo é o que faz a diferença. Com CF 40k, a margem cai para 0,9% a 17,3%.</div></div>
+</div>
+
+<!-- ═══ P3 CAIXA VS LUCRO ═══ -->
+<div class="pn" id="p3">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Caixa Imediato vs Lucro Econômico</h2>
+<p style="color:var(--t3);font-size:11px;margin-bottom:14px">A diferença crucial: o que entra no banco vs o que realmente sobra. Base: R$ 6.209/dia, CF R$ 18k.</p>
+
+<div class="g2">
+<div class="cd" style="border-color:rgba(34,197,94,.3)">
+<h3 style="color:var(--g)">💰 Caixa imediato — Entra no banco</h3>
+<p style="font-size:12px;line-height:1.7;color:var(--t)">O VR (67,8%) menos as saídas imediatas: Ads, antecipação, dev, custo fixo. CMV e imposto <strong>não saem agora</strong> — mas vão sair depois.</p>
+<table style="margin-top:10px"><tbody>
+<tr><td>Valor Recebido ML</td><td class="g bd">+R$ 126.271</td></tr>
+<tr><td>— Ads (1,5%)</td><td class="r">−R$ 2.794</td></tr>
+<tr><td>— Antecipação (2,5%)</td><td class="r">−R$ 4.657</td></tr>
+<tr><td>— Dev/outros (1%)</td><td class="r">−R$ 1.863</td></tr>
+<tr><td>— Custo fixo</td><td class="r">−R$ 18.000</td></tr>
+<tr style="background:rgba(34,197,94,.05)"><td><strong>= Caixa imediato</strong></td><td class="g bd" style="font-size:14px">R$ 98.958/mês</td></tr>
+</tbody></table></div>
+
+<div class="cd" style="border-color:rgba(245,158,11,.3)">
+<h3 style="color:var(--o)">📊 Lucro econômico — O que realmente sobra</h3>
+<p style="font-size:12px;line-height:1.7;color:var(--t)">Inclui CMV (precisa repor estoque) e imposto (será cobrado) como custos reais.</p>
+<table style="margin-top:10px"><tbody>
+<tr><td>Valor Recebido ML</td><td class="g bd">+R$ 126.271</td></tr>
+<tr><td>— CMV (26,2%)</td><td class="r">−R$ 48.776</td></tr>
+<tr><td>— Imposto (9%)</td><td class="r">−R$ 16.764</td></tr>
+<tr><td>— Ads + Antec + Dev</td><td class="r">−R$ 9.314</td></tr>
+<tr><td>— Custo fixo</td><td class="r">−R$ 18.000</td></tr>
+<tr style="background:rgba(245,158,11,.05)"><td><strong>= Lucro econômico real</strong></td><td class="o bd" style="font-size:14px">R$ 33.417/mês</td></tr>
+</tbody></table></div>
+</div>
+
+<div class="cd" style="border-color:rgba(244,63,94,.3)">
+<h3 style="color:var(--r)">⚠ A ilusão de caixa: R$ 65.541/mês</h3>
+<table>
+<thead><tr><th>Componente</th><th>Valor</th><th>O que é</th></tr></thead>
+<tbody>
+<tr><td>CMV "invisível"</td><td class="r bd">R$ 48.776</td><td>Custo do produto que já foi comprado — se não separar, não consegue repor estoque</td></tr>
+<tr><td>Imposto diferido</td><td class="r bd">R$ 16.764</td><td>Vai ser cobrado — se gastar, vira dívida tributária</td></tr>
+<tr style="background:rgba(244,63,94,.04)"><td><strong>Total ilusão</strong></td><td class="r bd">R$ 65.541</td><td>Diferença entre caixa (R$ 98.958) e lucro (R$ 33.417)</td></tr>
+</tbody></table>
+<div class="nt" style="margin-top:8px;border-left:3px solid var(--r);color:var(--r)">Se você gastar R$ 98.958/mês achando que "é o lucro", em 3 meses não terá capital para repor estoque e terá R$ 50k+ de imposto acumulado. O lucro real é R$ 33.417, não R$ 99k.</div>
+</div>
+</div>
+
+<!-- ═══ P4 CANAIS & MIX ═══ -->
+<div class="pn" id="p4">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Performance por Canal de Venda</h2>
+<p style="color:var(--t3);font-size:11px;margin-bottom:14px">Dados reais dos relatórios 18-24/05/2026 (7 dias filtrados)</p>
+
+<table>
+<thead><tr><th>Canal / Loja</th><th>Pedidos</th><th>Faturamento</th><th>% Fat.</th><th>Margem real</th><th>Contribuição</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>ML Marketparts</td><td>~200</td><td>R$ 18.634</td><td class="bd">42,9%</td><td class="r bd">+1,1%</td><td class="r">~R$ 200</td><td><span class="pill r">Crítico</span></td></tr>
+<tr><td>ML MercadoPeças</td><td>~90</td><td>R$ 9.894</td><td>22,8%</td><td class="g bd">9,6%</td><td class="g">~R$ 950</td><td><span class="pill g">Saudável</span></td></tr>
+<tr><td>ML Indústria MP</td><td>~55</td><td>R$ 5.483</td><td>12,6%</td><td class="o bd">8,3%</td><td class="o">~R$ 455</td><td><span class="pill g">OK</span></td></tr>
+<tr><td>ML MercadoPeças.com</td><td>~35</td><td>R$ 3.411</td><td>7,8%</td><td class="o bd">8,4%</td><td class="o">~R$ 286</td><td><span class="pill g">OK</span></td></tr>
+<tr><td>Shopee MercadoPeças II</td><td>~45</td><td>R$ 2.181</td><td>5,0%</td><td class="r bd">-3,6%</td><td class="r">−R$ 78</td><td><span class="pill r">Prejuízo</span></td></tr>
+<tr><td>ML Indústria do Ecom.</td><td>~25</td><td>R$ 1.884</td><td>4,3%</td><td class="o bd">8,4%</td><td class="o">~R$ 158</td><td><span class="pill g">OK</span></td></tr>
+<tr><td>ML Englans Distrib.</td><td>~20</td><td>R$ 1.667</td><td>3,8%</td><td class="o bd">6,7%</td><td class="o">~R$ 112</td><td><span class="pill o">Baixo</span></td></tr>
+<tr><td>Shopee MercadoPeças</td><td>~5</td><td>R$ 125</td><td>0,3%</td><td class="r bd">-10,1%</td><td class="r">−R$ 13</td><td><span class="pill r">Prejuízo</span></td></tr>
+</tbody></table>
+
+<div class="g2" style="margin-top:14px">
+<div class="ins dn"><span class="ic">🔴</span><div><strong>Marketparts = 43% das vendas com ~1% de margem.</strong> Praticamente giram produto sem gerar lucro. Um aumento de 15% no preço (mesmo com queda de 20% no volume) aumentaria o lucro total da empresa em 40–60%.</div></div>
+<div class="ins dn"><span class="ic">🔴</span><div><strong>Shopee opera com prejuízo.</strong> Ambas as lojas Shopee têm margem negativa (-3,6% e -10,1%). Cada venda na Shopee é dinheiro saindo do caixa. Desativar imediatamente ou subir preço 25%+.</div></div>
+</div>
+</div>
+
+<!-- ═══ P5 ESTOQUE & GIRO ═══ -->
+<div class="pn" id="p5">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Estoque, Giro e Decaimento</h2>
+
+<div class="kg">
+<div class="k kc"><div class="l">Estoque total</div><div class="v c">R$ 193.596</div><div class="s">26/05/2026 11h</div></div>
+<div class="k kb"><div class="l">Unidades</div><div class="v b">30.170</div><div class="s">333 SKUs</div></div>
+<div class="k ko"><div class="l">Custo médio/unidade</div><div class="v o">R$ 6,42</div><div class="s">Estoque / unidades</div></div>
+<div class="k kg2"><div class="l">Consumo diário (CMV)</div><div class="v g">R$ 1.626</div><div class="s">Média real 18-24/05</div></div>
+<div class="k ko"><div class="l">Giro mensal</div><div class="v o">0,25×</div><div class="s">Estoque gira em ~4 meses</div></div>
+<div class="k kr"><div class="l">Dias de estoque</div><div class="v r">108–120</div><div class="s">A R$ 6.209/dia, CMV 26–29%</div></div>
+</div>
+
+<div class="cd hi">
+<h3>Decaimento do estoque ao longo do tempo (R$ 6.209/dia, CMV 26,2%)</h3>
+<table>
+<thead><tr><th>Dia</th><th>Estoque restante</th><th>% original</th><th>Fat. acumulado</th><th>VR acumulado</th><th>Caixa acum. (CF 18k)</th></tr></thead>
+<tbody>
+<tr><td>0 (hoje)</td><td class="c bd">R$ 193.596</td><td>100%</td><td>R$ 0</td><td>R$ 0</td><td>R$ 0</td></tr>
+<tr><td>15</td><td>R$ 169.206</td><td>87%</td><td>R$ 93.136</td><td class="b">R$ 63.126</td><td class="g">R$ 50.718</td></tr>
+<tr><td>30</td><td>R$ 144.816</td><td>75%</td><td>R$ 186.270</td><td class="b">R$ 126.271</td><td class="g">R$ 98.958</td></tr>
+<tr><td>45</td><td>R$ 120.427</td><td>62%</td><td>R$ 279.405</td><td class="b">R$ 189.417</td><td class="g">R$ 147.197</td></tr>
+<tr><td>60</td><td>R$ 96.037</td><td>50%</td><td>R$ 372.540</td><td class="b">R$ 252.562</td><td class="g">R$ 195.437</td></tr>
+<tr><td>75</td><td>R$ 71.647</td><td>37%</td><td>R$ 465.675</td><td class="b">R$ 315.708</td><td class="g">R$ 243.676</td></tr>
+<tr><td>90</td><td>R$ 47.257</td><td>24%</td><td>R$ 558.810</td><td class="b">R$ 378.853</td><td class="g">R$ 291.916</td></tr>
+<tr><td>105</td><td>R$ 22.867</td><td>12%</td><td>R$ 651.945</td><td class="b">R$ 441.999</td><td class="g">R$ 340.155</td></tr>
+<tr style="background:rgba(244,63,94,.04)"><td class="r bd">~120 (fim)</td><td class="r">R$ 0</td><td class="r">0%</td><td class="c bd">R$ 744.598</td><td class="b bd">R$ 504.838</td><td class="g bd">R$ 388.593</td></tr>
+</tbody></table></div>
+
+<div class="g2">
+<div class="cd">
+<h3>Composição do estoque</h3>
+<table><tbody>
+<tr><td>Estoque Matriz</td><td class="c bd">R$ 154.472 (79,8%)</td></tr>
+<tr><td>Estoque Full (6 empresas)</td><td class="b">R$ 39.123 (20,2%)</td></tr>
+<tr><td>MP.COM</td><td class="d">R$ 6.002</td></tr>
+<tr><td>PONTO</td><td class="d">R$ 12.710</td></tr>
+<tr><td>INDUSTRIA</td><td class="d">R$ 7.082</td></tr>
+<tr><td>ENGLAND</td><td class="d">R$ 3.210</td></tr>
+<tr><td>IND DO ECO</td><td class="d">R$ 3.945</td></tr>
+<tr><td>MARKET</td><td class="d">R$ 6.173</td></tr>
+</tbody></table></div>
+<div class="cd">
+<h3>Métricas de eficiência</h3>
+<table><tbody>
+<tr><td>ROI do estoque (faturamento/custo)</td><td class="g bd">3,8×</td></tr>
+<tr><td>Markup médio</td><td class="g">11,6×</td></tr>
+<tr><td>Dias para girar 100% do estoque</td><td class="o">120 dias (R$ 6.209/d)</td></tr>
+<tr><td>Faturamento por R$ 1 de estoque</td><td class="g">R$ 3,85</td></tr>
+<tr><td>Lucro por R$ 1 de estoque (CF 18k)</td><td class="o">R$ 0,69</td></tr>
+<tr><td>Capital preso em estoque</td><td class="r bd">100%</td></tr>
+<tr><td>Prazo de reposição (China)</td><td class="r">60–90 dias</td></tr>
+</tbody></table></div>
+</div>
+</div>
+
+<!-- ═══ P6 PROJEÇÕES ═══ -->
+<div class="pn" id="p6">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Projeções — Se a Empresa Continuasse Operando</h2>
+<p style="color:var(--t3);font-size:11px;margin-bottom:14px">Hipotético: com estoque reabastecido, quanto geraria por mês/ano? CF R$ 18k, sem antecipação.</p>
+
+<table>
+<thead><tr><th>Métrica</th><th>R$ 5k/dia</th><th>R$ 6,2k/dia</th><th>R$ 8k/dia</th><th>R$ 10k/dia</th><th>R$ 13k/dia</th></tr></thead>
+<tbody>
+<tr><td><strong>Fat. mensal</strong></td><td>R$ 150k</td><td>R$ 186k</td><td>R$ 240k</td><td>R$ 300k</td><td>R$ 390k</td></tr>
+<tr><td><strong>Fat. anual</strong></td><td>R$ 1,8M</td><td>R$ 2,2M</td><td>R$ 2,9M</td><td>R$ 3,6M</td><td>R$ 4,7M</td></tr>
+<tr><td>VR mensal</td><td class="b">R$ 102k</td><td class="b">R$ 126k</td><td class="b">R$ 163k</td><td class="b">R$ 203k</td><td class="b">R$ 264k</td></tr>
+<tr><td>Margem bruta/mês</td><td class="g">R$ 62k</td><td class="g">R$ 77k</td><td class="g">R$ 100k</td><td class="g">R$ 125k</td><td class="g">R$ 162k</td></tr>
+<tr><td>Margem bruta %</td><td class="g" colspan="5">41,6% (estável em qualquer faixa)</td></tr>
+<tr><td>EBITDA proxy/mês</td><td class="c">R$ 41k</td><td class="c">R$ 51k</td><td class="c">R$ 67k</td><td class="c">R$ 83k</td><td class="c">R$ 108k</td></tr>
+<tr><td>EBITDA %</td><td class="c" colspan="5">27,6% (estável)</td></tr>
+<tr style="background:rgba(34,197,94,.04)"><td><strong>Lucro líquido/mês (CF 18k)</strong></td><td class="g">R$ 23k</td><td class="g"><strong>R$ 33k</strong></td><td class="g">R$ 47k</td><td class="g">R$ 65k</td><td class="g">R$ 90k</td></tr>
+<tr style="background:rgba(34,197,94,.04)"><td><strong>Lucro líquido/ano (CF 18k)</strong></td><td class="g">R$ 281k</td><td class="g"><strong>R$ 401k</strong></td><td class="g">R$ 564k</td><td class="g">R$ 778k</td><td class="g">R$ 1,08M</td></tr>
+<tr><td>Margem líquida % (CF 18k)</td><td class="g">15,6%</td><td class="g">17,9%</td><td class="g">20,0%</td><td class="g">21,6%</td><td class="g">23,0%</td></tr>
+<tr><td><strong>Caixa imediato/mês</strong></td><td class="g">R$ 76k</td><td class="g">R$ 99k</td><td class="g">R$ 133k</td><td class="g">R$ 170k</td><td class="g">R$ 227k</td></tr>
+<tr style="background:rgba(244,63,94,.03)"><td><strong>Capital de giro necessário/mês</strong></td><td class="r">R$ 39k</td><td class="r">R$ 49k</td><td class="r">R$ 63k</td><td class="r">R$ 79k</td><td class="r">R$ 102k</td></tr>
+<tr><td>Break-even diário (CF 18k)</td><td class="c" colspan="5">R$ 2.174/dia = R$ 65.209/mês</td></tr>
+</tbody></table>
+
+<div class="ins tp" style="margin-top:12px"><span class="ic">💡</span><div><strong>Para comparação:</strong> Este negócio gera R$ 401k/ano de lucro líquido na tendência atual (CF 18k) e precisa de ~R$ 49k/mês de capital de giro (CMV a repor). Com R$ 200k de estoque, gera ~R$ 33k/mês de lucro = retorno de 17%/mês sobre o capital investido em estoque. O gargalo é: o estoque demora 60–90 dias para chegar da China, e sem estoque a operação para.</div></div>
+</div>
+
+<!-- ═══ P7 COMPARATIVO ═══ -->
+<div class="pn" id="p7">
+<h2 style="font-family:var(--mono);font-size:12px;color:var(--c);text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px">Ficha Técnica para Comparação</h2>
+<p style="color:var(--t3);font-size:11px;margin-bottom:14px">Use esta aba para comparar lado a lado com outro modelo de negócio.</p>
+
+<div class="g2">
+<div class="cd hi">
+<h3>📋 Dados-chave para comparação</h3>
+<div class="comp-row"><div class="comp-label">Tipo</div><div class="comp-val" style="color:var(--c)">E-commerce B2C via marketplace</div></div>
+<div class="comp-row"><div class="comp-label">Produto</div><div class="comp-val">Autopeças importadas (China)</div></div>
+<div class="comp-row"><div class="comp-label">Canal principal</div><div class="comp-val">Mercado Livre (~93%)</div></div>
+<div class="comp-row"><div class="comp-label">Ticket médio</div><div class="comp-val" style="color:var(--o)">R$ 74,68</div></div>
+<div class="comp-row"><div class="comp-label">Pedidos/dia</div><div class="comp-val">83</div></div>
+<div class="comp-row"><div class="comp-label">Fat. diário (tendência)</div><div class="comp-val" style="color:var(--r)">R$ 6.209</div></div>
+<div class="comp-row"><div class="comp-label">Fat. mensal</div><div class="comp-val" style="color:var(--c)">R$ 186.270</div></div>
+<div class="comp-row"><div class="comp-label">Fat. anual (projetado)</div><div class="comp-val" style="color:var(--c)">R$ 2,24M</div></div>
+<div class="comp-row"><div class="comp-label">VR (% do fat.)</div><div class="comp-val" style="color:var(--b)">67,8%</div></div>
+<div class="comp-row"><div class="comp-label">Comissão ML</div><div class="comp-val" style="color:var(--r)">32,2%</div></div>
+<div class="comp-row"><div class="comp-label">CMV (%)</div><div class="comp-val" style="color:var(--o)">26,2%</div></div>
+<div class="comp-row"><div class="comp-label">Margem bruta</div><div class="comp-val" style="color:var(--g)">41,6%</div></div>
+<div class="comp-row"><div class="comp-label">EBITDA %</div><div class="comp-val" style="color:var(--c)">27,6%</div></div>
+<div class="comp-row"><div class="comp-label">Margem líquida (CF 18k)</div><div class="comp-val" style="color:var(--g)">17,9%</div></div>
+<div class="comp-row"><div class="comp-label">Margem líquida (CF 40k)</div><div class="comp-val" style="color:var(--o)">6,1%</div></div>
+<div class="comp-row"><div class="comp-label">Lucro mensal (CF 18k)</div><div class="comp-val" style="color:var(--g)">R$ 33.417</div></div>
+<div class="comp-row"><div class="comp-label">Lucro anual (CF 18k)</div><div class="comp-val" style="color:var(--g)">R$ 401.000</div></div>
+<div class="comp-row"><div class="comp-label">Break-even/dia</div><div class="comp-val">R$ 2.174</div></div>
+<div class="comp-row"><div class="comp-label">Caixa imediato/mês</div><div class="comp-val" style="color:var(--g)">R$ 98.958</div></div>
+<div class="comp-row"><div class="comp-label">Ilusão de caixa/mês</div><div class="comp-val" style="color:var(--r)">R$ 65.541</div></div>
+</div>
+
+<div class="cd">
+<h3>💼 Estrutura de capital e operação</h3>
+<div class="comp-row"><div class="comp-label">Estoque atual</div><div class="comp-val" style="color:var(--c)">R$ 193.596</div></div>
+<div class="comp-row"><div class="comp-label">Capital giro necessário/mês</div><div class="comp-val" style="color:var(--r)">~R$ 49.000 (CMV)</div></div>
+<div class="comp-row"><div class="comp-label">Custo fixo/mês (mínimo)</div><div class="comp-val">R$ 18.000</div></div>
+<div class="comp-row"><div class="comp-label">Custo fixo/mês (atual)</div><div class="comp-val" style="color:var(--r)">R$ 40.000</div></div>
+<div class="comp-row"><div class="comp-label">Capital total necessário</div><div class="comp-val" style="color:var(--r)">~R$ 250–300k</div></div>
+<div class="comp-row"><div class="comp-label">Prazo reposição estoque</div><div class="comp-val" style="color:var(--r)">60–90 dias (China)</div></div>
+<div class="comp-row"><div class="comp-label">Dívida atual</div><div class="comp-val" style="color:var(--r)">R$ 150.000 (fornecedor)</div></div>
+<div class="comp-row"><div class="comp-label">ROI mensal sobre estoque</div><div class="comp-val" style="color:var(--g)">~17%</div></div>
+<div class="comp-row"><div class="comp-label">Giro de estoque</div><div class="comp-val" style="color:var(--o)">1× a cada 4 meses</div></div>
+<div class="comp-row"><div class="comp-label">Markup</div><div class="comp-val" style="color:var(--g)">11,6×</div></div>
+<div class="comp-row"><div class="comp-label">Nº funcionários</div><div class="comp-val">Próprio + mínimo</div></div>
+<div class="comp-row"><div class="comp-label">Modelo de entrega</div><div class="comp-val">Full ML (20%) + Envio próprio (80%)</div></div>
+</div>
+</div>
+
+<div class="cd" style="border-color:rgba(34,197,94,.3)">
+<h3 style="color:var(--g)">✅ Forças (para comparação)</h3>
+<table><tbody>
+<tr><td class="g">Margem bruta alta</td><td>41,6% — produto importado com markup 11,6×</td></tr>
+<tr><td class="g">Break-even baixo</td><td>R$ 2.174/dia — operação aguenta quedas grandes</td></tr>
+<tr><td class="g">Sem necessidade de equipe grande</td><td>Operação enxuta, 1 pessoa pode gerenciar</td></tr>
+<tr><td class="g">Demanda existente</td><td>83 pedidos/dia — mercado compra</td></tr>
+<tr><td class="g">Caixa imediato alto</td><td>R$ 99k/mês entra no banco — liquidez alta</td></tr>
+</tbody></table></div>
+
+<div class="cd" style="border-color:rgba(244,63,94,.3)">
+<h3 style="color:var(--r)">❌ Fraquezas (para comparação)</h3>
+<table><tbody>
+<tr><td class="r">Dependência total do ML</td><td>93% do faturamento — ML muda regra, empresa morre</td></tr>
+<tr><td class="r">Comissão ML brutal</td><td>32,2% do faturamento vai para o marketplace</td></tr>
+<tr><td class="r">Capital de giro intensivo</td><td>Precisa de ~R$ 200k em estoque permanente + 60–90 dias p/ repor</td></tr>
+<tr><td class="r">Margem líquida fina</td><td>5,9–17,9% dependendo do CF — qualquer custo extra zera</td></tr>
+<tr><td class="r">Ilusão de caixa</td><td>R$ 65k/mês parece "caixa" mas é CMV + imposto que vão sair</td></tr>
+<tr><td class="r">Tendência de queda</td><td>Faturamento caiu de R$ 8.531 para R$ 6.209/dia em maio</td></tr>
+<tr><td class="r">Canais com prejuízo</td><td>Marketparts (43% das vendas) com ~1% margem, Shopee negativa</td></tr>
+<tr><td class="r">Lead time longo</td><td>Reposição 60–90 dias — sem estoque = sem receita</td></tr>
+</tbody></table></div>
+
+<div class="nt" style="margin-top:12px">Para comparar com outro negócio, cole os dados do outro modelo na coluna ao lado. Os números-chave: margem bruta, margem líquida, EBITDA%, capital necessário, break-even, e principalmente: quanto capital precisa investir para gerar quanto de lucro mensal.</div>
+</div>
+
+<script>
+function sp(i,b){document.querySelectorAll('.pn').forEach(p=>p.classList.remove('a'));document.querySelectorAll('.tb button').forEach(x=>x.classList.remove('a'));document.getElementById('p'+i).classList.add('a');b.classList.add('a')}
+</script>
+</body></html>

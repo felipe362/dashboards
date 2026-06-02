@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escritório Virtual ML — Especificação Técnica Completa</title>
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #1a1d26; --bg3: #22263a;
+    --border: rgba(255,255,255,.08); --border2: rgba(255,255,255,.14);
+    --text: #e8e9f0; --text2: #9ca3af; --text3: #6b7280;
+    --blue: #60a5fa; --blue-bg: rgba(96,165,250,.1);
+    --green: #4ade80; --green-bg: rgba(74,222,128,.08);
+    --amber: #fbbf24; --amber-bg: rgba(251,191,36,.08);
+    --purple: #a78bfa; --purple-bg: rgba(167,139,250,.1);
+    --red: #f87171; --red-bg: rgba(248,113,113,.08);
+    --teal: #2dd4bf; --teal-bg: rgba(45,212,191,.08);
+    --orange: #fb923c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; }
+
+  /* Layout */
+  .container { display: flex; min-height: 100vh; }
+  nav { width: 240px; flex-shrink: 0; background: var(--bg2);
+    border-right: 1px solid var(--border); padding: 24px 0;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  main { flex: 1; max-width: 900px; padding: 40px 48px; }
+
+  /* Nav */
+  .nav-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .nav-logo h2 { font-size: 13px; font-weight: 700; color: var(--orange); letter-spacing: .05em; }
+  .nav-logo p { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .nav-section { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase;
+    letter-spacing: .08em; padding: 12px 20px 4px; }
+  nav a { display: block; padding: 6px 20px; font-size: 12px; color: var(--text2);
+    text-decoration: none; transition: all .15s; border-left: 2px solid transparent; }
+  nav a:hover { color: var(--text); background: rgba(255,255,255,.04); }
+  nav a.active { color: var(--blue); border-left-color: var(--blue); background: var(--blue-bg); }
+
+  /* Sections */
+  section { margin-bottom: 64px; scroll-margin-top: 32px; }
+  h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border); }
+  h3 { font-size: 15px; font-weight: 600; margin: 24px 0 10px; color: var(--text); }
+  h4 { font-size: 13px; font-weight: 600; margin: 16px 0 6px; color: var(--text2); }
+  p { margin-bottom: 12px; color: var(--text2); }
+
+  /* Code */
+  pre { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; overflow-x: auto; font-size: 12px; line-height: 1.65;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace; margin-bottom: 16px; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px;
+    background: var(--bg3); padding: 2px 6px; border-radius: 4px; color: var(--teal); }
+  .cm { color: var(--text3); }
+  .ck { color: var(--blue); }
+  .cs { color: var(--green); }
+  .cf { color: var(--purple); }
+  .cn { color: var(--amber); }
+
+  /* Callouts */
+  .note { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
+  .note-blue { background: var(--blue-bg); border: 1px solid rgba(96,165,250,.2); color: #93c5fd; }
+  .note-green { background: var(--green-bg); border: 1px solid rgba(74,222,128,.2); color: #86efac; }
+  .note-amber { background: var(--amber-bg); border: 1px solid rgba(251,191,36,.2); color: #fcd34d; }
+  .note-red { background: var(--red-bg); border: 1px solid rgba(248,113,113,.2); color: #fca5a5; }
+
+  /* Badges */
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: .04em; margin-right: 4px; }
+  .b-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(96,165,250,.2); }
+  .b-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(74,222,128,.2); }
+  .b-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
+  .b-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,.2); }
+  .b-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,.2); }
+  .b-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(45,212,191,.2); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; background: var(--bg3);
+    color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* Flow boxes */
+  .flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding: 12px 16px; background: var(--bg2); border-radius: 8px;
+    border: 1px solid var(--border); margin-bottom: 12px; }
+  .fbox { padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    white-space: nowrap; border: 1px solid transparent; }
+  .fb-gray  { background: var(--bg3); color: var(--text2); border-color: var(--border2); }
+  .fb-blue  { background: var(--blue-bg); color: var(--blue); border-color: rgba(96,165,250,.25); }
+  .fb-green { background: var(--green-bg); color: var(--green); border-color: rgba(74,222,128,.25); }
+  .fb-amber { background: var(--amber-bg); color: var(--amber); border-color: rgba(251,191,36,.25); }
+  .fb-purple{ background: var(--purple-bg); color: var(--purple); border-color: rgba(167,139,250,.25); }
+  .fb-red   { background: var(--red-bg); color: var(--red); border-color: rgba(248,113,113,.25); }
+  .fb-teal  { background: var(--teal-bg); color: var(--teal); border-color: rgba(45,212,191,.25); }
+  .arr { color: var(--text3); font-size: 14px; }
+
+  /* Steps */
+  .steps { padding-left: 28px; position: relative; }
+  .steps::before { content: ''; position: absolute; left: 9px; top: 8px; bottom: 8px;
+    width: 1.5px; background: var(--border2); }
+  .step { position: relative; margin-bottom: 16px; }
+  .step-dot { position: absolute; left: -23px; top: 4px; width: 10px; height: 10px;
+    border-radius: 50%; border: 2px solid var(--bg); z-index: 1; }
+  .d-gray   { background: var(--text3); }
+  .d-blue   { background: var(--blue); }
+  .d-green  { background: var(--green); }
+  .d-amber  { background: var(--amber); }
+  .d-purple { background: var(--purple); }
+  .d-red    { background: var(--red); }
+  .d-teal   { background: var(--teal); }
+  .step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .step-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* Grid */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .card h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .card p { font-size: 12px; color: var(--text2); margin: 0; }
+
+  /* Agent blocks */
+  .agent { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px; margin-bottom: 20px; }
+  .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .agent-num { width: 32px; height: 32px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .agent-title { font-size: 16px; font-weight: 600; }
+  .agent-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* Dividers */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* Highlight intro */
+  .intro-box { background: linear-gradient(135deg, rgba(96,165,250,.08), rgba(167,139,250,.08));
+    border: 1px solid rgba(96,165,250,.2); border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+  .intro-box h1 { font-size: 22px; color: var(--blue); }
+  .intro-box p { color: var(--text2); margin-bottom: 0; }
+
+  /* Method labels */
+  .method { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 3px;
+    font-family: monospace; display: inline-block; margin-right: 6px; }
+  .GET  { background: rgba(96,165,250,.15); color: var(--blue); }
+  .POST { background: rgba(74,222,128,.15); color: var(--green); }
+  .PUT  { background: rgba(251,191,36,.15); color: var(--amber); }
+
+  @media print {
+    nav { display: none; }
+    main { padding: 20px; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">
+    <h2>>_ ESCRITÓRIO VIRTUAL ML</h2>
+    <p>Especificação Técnica Completa</p>
+  </div>
+  <div class="nav-section">Visão Geral</div>
+  <a href="#visao-geral">Arquitetura</a>
+  <a href="#stack">Stack Técnica</a>
+  <a href="#estrutura">Estrutura de Arquivos</a>
+
+  <div class="nav-section">Configuração</div>
+  <a href="#env">Variáveis de Ambiente</a>
+  <a href="#vercel-json">vercel.json (Crons)</a>
+  <a href="#banco">Banco de Dados</a>
+
+  <div class="nav-section">Os Ciclos</div>
+  <a href="#ciclo-coleta">Ciclo 1 — Coleta ML</a>
+  <a href="#ciclo-analise">Ciclo 2 — Análise IA</a>
+  <a href="#ciclo-execucao">Ciclo 3 — Execução ML</a>
+  <a href="#treinamento">Período de Treinamento</a>
+
+  <div class="nav-section">Os 6 Agentes</div>
+  <a href="#sac">01 SAC</a>
+  <a href="#analista">02 Analista</a>
+  <a href="#criativo">03 Criativo</a>
+  <a href="#anuncios">04 Anúncios</a>
+  <a href="#ads">05 ADS</a>
+  <a href="#gestor">06 Gestor</a>
+
+  <div class="nav-section">Integrações</div>
+  <a href="#ml-oauth">ML OAuth</a>
+  <a href="#llm-wrapper">LLM Wrapper</a>
+  <a href="#ably">Ably Realtime</a>
+  <a href="#frontend-3d">Frontend 3D</a>
+
+  <div class="nav-section">Versão 2</div>
+  <a href="#chat-llm">Chat LLM com dados ML</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main>
+
+<!-- INTRO -->
+<div class="intro-box">
+  <h1>Escritório Virtual com Agentes de IA para Mercado Livre</h1>
+  <p style="margin-top:8px">Especificação técnica completa para desenvolvimento do zero. Cobre arquitetura, banco de dados, ciclos de dados, código de cada agente, integrações externas e frontend 3D. Inclui versão alternativa com chat LLM sobre os dados da loja.</p>
+</div>
+
+<!-- SEÇÃO 1: VISÃO GERAL -->
+<section id="visao-geral">
+<h2>Arquitetura Geral</h2>
+
+<p>O sistema é composto por uma aplicação <strong>Next.js 15</strong> hospedada na <strong>Vercel</strong>, com 6 agentes de IA implementados como API Routes. Nenhum framework de orquestração externo — cada agente é uma rota HTTP chamada pelo Vercel Cron em horários definidos.</p>
+
+<div class="note note-blue"><strong>Princípio central:</strong> Os agentes NUNCA acessam a API do Mercado Livre diretamente durante a análise. Um agente coleta dados do ML e os salva no Supabase. Outros agentes leem do Supabase, consultam o LLM, e devolvem decisões ao Supabase. A execução final no ML é sempre via rota de aprovação separada.</div>
+
+<h3>Camadas do Sistema</h3>
+<table>
+<tr><th>Camada</th><th>Responsabilidade</th><th>Tecnologia</th></tr>
+<tr><td>Frontend</td><td>UI com escritório 3D isométrico, painel de aprovações, dashboards por agente</td><td>Next.js 15, React Three Fiber, Tailwind CSS</td></tr>
+<tr><td>Agendamento</td><td>Dispara cada agente no horário definido</td><td>Vercel Cron Jobs (vercel.json)</td></tr>
+<tr><td>Agentes</td><td>Lógica de coleta, análise e execução de cada domínio</td><td>Next.js API Routes (TypeScript)</td></tr>
+<tr><td>Banco de dados</td><td>Estado, snapshots, ordens, histórico, tokens OAuth</td><td>Supabase (PostgreSQL)</td></tr>
+<tr><td>IA</td><td>Decisões estratégicas, geração de texto e imagens</td><td>Anthropic Claude (texto), OpenAI gpt-image-1 (imagens)</td></tr>
+<tr><td>Realtime</td><td>Atualização ao vivo do escritório 3D quando agentes agem</td><td>Ably WebSocket</td></tr>
+<tr><td>Autenticação</td><td>Login de usuários do escritório virtual</td><td>NextAuth.js com Supabase adapter</td></tr>
+</table>
+
+<h3>Fluxo Macro (leitura → análise → escrita)</h3>
+<div class="flow">
+  <div class="fbox fb-gray">Vercel Cron</div><div class="arr">→</div>
+  <div class="fbox fb-blue">API Route</div><div class="arr">→</div>
+  <div class="fbox fb-red">ML API (leitura)</div><div class="arr">→</div>
+  <div class="fbox fb-green">Supabase (salva)</div><div class="arr">→</div>
+  <div class="fbox fb-purple">LLM (decide)</div><div class="arr">→</div>
+  <div class="fbox fb-amber">Ordem no Supabase</div><div class="arr">→</div>
+  <div class="fbox fb-red">ML API (escrita)</div>
+</div>
+</section>
+
+<!-- SEÇÃO 2: STACK -->
+<section id="stack">
+<h2>Stack Técnica Completa</h2>
+<div class="grid2">
+  <div class="card"><h4>Framework</h4><p>Next.js 15 com App Router e Turbopack. TypeScript em todo o projeto.</p></div>
+  <div class="card"><h4>Hosting + Cron</h4><p>Vercel Pro ($20/mês obrigatório para Cron Jobs). O plano gratuito não suporta crons.</p></div>
+  <div class="card"><h4>Banco de Dados</h4><p>Supabase (PostgreSQL). Usar supabase-js com service key no servidor para bypass de RLS.</p></div>
+  <div class="card"><h4>Autenticação</h4><p>NextAuth.js com Credentials Provider. Sessões JWT. Adapter Supabase para persistir usuários.</p></div>
+  <div class="card"><h4>LLM — Texto</h4><p>Anthropic Claude (claude-sonnet-4-5). Usado por SAC, Analista, Anúncios, ADS, Gestor.</p></div>
+  <div class="card"><h4>LLM — Imagens</h4><p>OpenAI gpt-image-1. Usado exclusivamente pelo agente Criativo para gerar fotos de produtos.</p></div>
+  <div class="card"><h4>Realtime</h4><p>Ably WebSocket. Servidor publica eventos, cliente React se inscreve e atualiza o escritório 3D.</p></div>
+  <div class="card"><h4>HTTP Client</h4><p>ky (fetch moderno com retry e timeout). Substitui axios de forma mais leve.</p></div>
+  <div class="card"><h4>Frontend 3D</h4><p>Three.js + React Three Fiber (@react-three/fiber) + Drei (@react-three/drei). Modelos GLTF/GLB.</p></div>
+  <div class="card"><h4>Estilos</h4><p>Tailwind CSS. shadcn/ui para componentes (botões, modals, toasts). Framer Motion para animações.</p></div>
+</div>
+
+<h3>Instalação inicial</h3>
+<pre>npx create-next-app@latest escritorio-virtual --typescript --tailwind --app --turbopack
+cd escritorio-virtual
+
+<span class="cm"># Core</span>
+npm i @supabase/supabase-js next-auth @auth/supabase-adapter
+
+<span class="cm"># LLMs</span>
+npm i @anthropic-ai/sdk openai
+
+<span class="cm"># Realtime</span>
+npm i ably
+
+<span class="cm"># HTTP e utilitários</span>
+npm i ky
+
+<span class="cm"># Frontend 3D</span>
+npm i three @react-three/fiber @react-three/drei
+
+<span class="cm"># UI</span>
+npm i framer-motion
+npx shadcn@latest init</pre>
+</section>
+
+<!-- SEÇÃO 3: ESTRUTURA -->
+<section id="estrutura">
+<h2>Estrutura Completa de Arquivos</h2>
+<pre>/
+├── app/
+│   ├── (auth)/
+│   │   └── login/
+│   │       └── page.tsx                <span class="cm">← tela de login</span>
+│   ├── (dashboard)/
+│   │   ├── layout.tsx                  <span class="cm">← auth guard + sidebar</span>
+│   │   ├── page.tsx                    <span class="cm">← escritório 3D</span>
+│   │   ├── painel/page.tsx
+│   │   ├── vendas/page.tsx
+│   │   ├── anuncios/page.tsx
+│   │   └── [agente]/page.tsx           <span class="cm">← página de cada agente</span>
+│   └── api/
+│       ├── auth/
+│       │   └── [...nextauth]/route.ts  <span class="cm">← NextAuth handler</span>
+│       ├── health/route.ts             <span class="cm">← status de todos os serviços</span>
+│       └── agents/
+│           ├── sac/
+│           │   ├── kpis/route.ts
+│           │   ├── resolve/route.ts    <span class="cm">← CRON 5min + execução</span>
+│           │   ├── treinamento/route.ts
+│           │   └── pendentes-count/route.ts
+│           ├── analista/
+│           │   ├── resumo/route.ts
+│           │   ├── run-snapshot/route.ts  <span class="cm">← CRON horário</span>
+│           │   ├── relatorio-diario/route.ts
+│           │   └── blacklist/route.ts
+│           ├── criativo/
+│           │   ├── gerar/route.ts      <span class="cm">← CRON 9h + gpt-image-1</span>
+│           │   └── resolver/route.ts
+│           ├── anuncios/
+│           │   ├── kpis/route.ts
+│           │   ├── criar-ordem/route.ts  <span class="cm">← CRON análise</span>
+│           │   ├── aprovar-ordem/route.ts
+│           │   ├── rejeitar-ordem/route.ts
+│           │   ├── ajustar-margem/route.ts
+│           │   ├── gerar-titulo/route.ts
+│           │   ├── rollback/route.ts
+│           │   ├── inflar-preco/route.ts
+│           │   ├── produto-queima/route.ts
+│           │   ├── promocao-aderir/route.ts
+│           │   └── manter-como-esta/route.ts
+│           ├── ads/
+│           │   ├── kpis/route.ts
+│           │   ├── insights-llm/route.ts  <span class="cm">← CRON 2x/dia</span>
+│           │   ├── sync/route.ts          <span class="cm">← CRON 2x/dia</span>
+│           │   ├── modo/route.ts
+│           │   ├── criar-campanha/route.ts
+│           │   ├── aprovar-ordem/route.ts
+│           │   └── marcar-executado/route.ts
+│           └── gestor/
+│               ├── reuniao/route.ts    <span class="cm">← CRON 9h diário</span>
+│               ├── snapshot/route.ts   <span class="cm">← CRON 6/6h</span>
+│               ├── aprovar-sugestao/route.ts
+│               └── rejeitar-sugestao/route.ts
+├── lib/
+│   ├── supabase.ts                     <span class="cm">← clients anon + service</span>
+│   ├── ml-api.ts                       <span class="cm">← wrapper completo ML</span>
+│   ├── llm.ts                          <span class="cm">← wrapper Anthropic + OpenAI</span>
+│   ├── ably.ts                         <span class="cm">← cliente server-side</span>
+│   ├── auth.ts                         <span class="cm">← authOptions NextAuth</span>
+│   ├── rate-limiter.ts                 <span class="cm">← fila 3 req/s para ML</span>
+│   └── treinamento.ts                  <span class="cm">← lógica dos 15 dias</span>
+├── hooks/
+│   ├── useAgentStatus.ts               <span class="cm">← Ably subscribe</span>
+│   └── useAprovacoesPendentes.ts
+├── components/
+│   ├── escritorio-3d.tsx               <span class="cm">← cena Three.js</span>
+│   ├── agent-card.tsx
+│   └── aprovacao-modal.tsx
+├── vercel.json                         <span class="cm">← TODOS os cron jobs</span>
+└── .env.local</pre>
+</section>
+
+<!-- SEÇÃO 4: ENV -->
+<section id="env">
+<h2>Variáveis de Ambiente (.env.local)</h2>
+<pre><span class="cm"># NextAuth</span>
+NEXTAUTH_SECRET=<span class="cs">gere com: openssl rand -base64 32</span>
+NEXTAUTH_URL=https://seu-projeto.vercel.app
+
+<span class="cm"># Supabase</span>
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...     <span class="cm"># público, seguro no frontend</span>
+SUPABASE_SERVICE_KEY=eyJhbGc...              <span class="cm"># NUNCA expor no cliente</span>
+
+<span class="cm"># LLMs</span>
+ANTHROPIC_API_KEY=sk-ant-api03-...
+OPENAI_API_KEY=sk-proj-...
+
+<span class="cm"># Mercado Livre (cadastrar app em developers.mercadolibre.com)</span>
+ML_CLIENT_ID=1234567890
+ML_CLIENT_SECRET=abcdefghij1234567890
+ML_REDIRECT_URI=https://seu-projeto.vercel.app/api/ml/callback
+
+<span class="cm"># Ably</span>
+ABLY_API_KEY=xVLRyA.abc123:defghijk...       <span class="cm"># servidor (publish)</span>
+NEXT_PUBLIC_ABLY_KEY=xVLRyA.abc123:...       <span class="cm"># cliente (subscribe only)</span>
+
+<span class="cm"># Proteção dos Cron Jobs</span>
+CRON_SECRET=<span class="cs">string aleatória longa e segura</span></pre>
+
+<div class="note note-amber"><strong>Atenção:</strong> No painel da Vercel, adicione todas essas variáveis em Settings → Environment Variables. Sem isso, os crons não funcionam em produção.</div>
+</section>
+
+<!-- SEÇÃO 5: VERCEL.JSON -->
+<section id="vercel-json">
+<h2>vercel.json — O Agendador Central</h2>
+<div class="note note-blue">O vercel.json define QUANDO cada agente acorda. O Vercel lê esse arquivo a cada deploy e programa os cron jobs automaticamente. <strong>Requer plano Pro ($20/mês).</strong></div>
+<pre>{
+  <span class="ck">"crons"</span>: [
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/sac/resolve"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"*/5 * * * *"</span>        <span class="cm">← a cada 5 minutos, 24h/dia</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/analista/run-snapshot"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 * * * *"</span>          <span class="cm">← todo hora (minuto 0)</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/criativo/gerar"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 12 * * *"</span>         <span class="cm">← todo dia 12h UTC = 9h BRT</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/gestor/reuniao"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 12 * * *"</span>         <span class="cm">← mesmo horário → 9h BRT</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/gestor/snapshot"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 */6 * * *"</span>        <span class="cm">← a cada 6 horas</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/ads/sync"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 */2 * * *"</span>        <span class="cm">← a cada 2 horas</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/ads/insights-llm"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"0 9,21 * * *"</span>       <span class="cm">← 9h e 21h UTC</span>
+    },
+    {
+      <span class="ck">"path"</span>: <span class="cs">"/api/agents/anuncios/criar-ordem"</span>,
+      <span class="ck">"schedule"</span>: <span class="cs">"30 * * * *"</span>         <span class="cm">← todo hora (30min) — após o snapshot</span>
+    }
+  ]
+}</pre>
+
+<h3>Como o Vercel dispara — protocolo exato</h3>
+<div class="steps">
+  <div class="step"><div class="step-dot d-gray"></div>
+    <div class="step-title">Vercel Platform faz GET para a rota</div>
+    <div class="step-desc">Envia o header: <code>Authorization: Bearer {CRON_SECRET}</code>. Timeout de 300 segundos para a função responder.</div>
+  </div>
+  <div class="step"><div class="step-dot d-blue"></div>
+    <div class="step-title">Rota valida o segredo</div>
+    <div class="step-desc">Se o header não bater, retorna 401. Isso protege de qualquer um chamar a rota manualmente sem autorização.</div>
+  </div>
+  <div class="step"><div class="step-dot d-green"></div>
+    <div class="step-title">Rota executa e retorna 200</div>
+    <div class="step-desc">O Vercel registra o run no painel em Functions → Cron. Falhas (4xx, 5xx) são visíveis no dashboard e podem configurar alertas por email.</div>
+  </div>
+</div>
+
+<h3>Padrão de autenticação em todas as rotas de cron</h3>
+<pre><span class="cm">// Início de TODA rota que pode ser chamada por cron:</span>
+<span class="ck">export async function</span> <span class="cf">GET</span>(req: NextRequest) {
+  <span class="ck">const</span> isCron = req.headers.<span class="cf">get</span>(<span class="cs">"authorization"</span>) ===
+    <span class="cs">`Bearer ${</span>process.env.CRON_SECRET<span class="cs">}`</span>
+
+  <span class="ck">if</span> (!isCron) {
+    <span class="ck">const</span> session = <span class="ck">await</span> <span class="cf">getServerSession</span>(authOptions)
+    <span class="ck">if</span> (!session) <span class="ck">return</span> NextResponse.<span class="cf">json</span>(
+      { error: <span class="cs">"Unauthorized"</span> }, { status: <span class="cn">401</span> }
+    )
+  }
+  <span class="cm">// ... continua a lógica do agente</span>
+}</pre>
+</section>
+
+<!-- SEÇÃO 6: BANCO DE DADOS -->
+<section id="banco">
+<h2>Banco de Dados — Schema Completo (Supabase / PostgreSQL)</h2>
+
+<h3>Tabela: users</h3>
+<pre><span class="ck">create table</span> users (
+  id          uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  email       text    <span class="ck">unique not null</span>,
+  name        text,
+  role        text    <span class="ck">default</span> <span class="cs">'viewer'</span>,  <span class="cm">-- 'admin' | 'viewer'</span>
+  status      text    <span class="ck">default</span> <span class="cs">'pending'</span>, <span class="cm">-- 'approved' | 'pending'</span>
+  created_at  timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: ml_tokens (OAuth do Mercado Livre)</h3>
+<pre><span class="ck">create table</span> ml_tokens (
+  id            serial  <span class="ck">primary key</span>,
+  conta         int     <span class="ck">unique not null</span>,  <span class="cm">-- 1, 2, 3... (multi-conta)</span>
+  access_token  text    <span class="ck">not null</span>,
+  refresh_token text    <span class="ck">not null</span>,
+  expires_at    timestamptz <span class="ck">not null</span>,
+  user_id_ml    text,                     <span class="cm">-- ID do vendedor no ML</span>
+  updated_at    timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: mlb_snapshots (coração do sistema)</h3>
+<pre><span class="ck">create table</span> mlb_snapshots (
+  id                uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  mlb_id            text    <span class="ck">not null</span>,
+  conta_ml          int     <span class="ck">not null</span>,
+  titulo            text,
+  categoria_id      text,
+  preco             numeric(10,2),
+  preco_original    numeric(10,2),        <span class="cm">-- antes de qualquer alteração do agente</span>
+  estoque           int,
+  vendas_30d        int,
+  visitas_7d        int,
+  conversao         numeric(5,4),         <span class="cm">-- 0.0342 = 3.42%</span>
+  posicao_ranking   int,
+  custo_produto     numeric(10,2),        <span class="cm">-- cadastrado manualmente pelo operador</span>
+  taxa_ml           numeric(10,2),        <span class="cm">-- fee do ML (vem da API)</span>
+  frete_estimado    numeric(10,2),
+  impostos          numeric(10,2),
+  margem_pct        numeric(5,2),         <span class="cm">-- calculada: (preco - custo - taxas) / preco</span>
+  margem_valor      numeric(10,2),
+  semaforo          text,                 <span class="cm">-- 'verde' | 'amarelo' | 'vermelho'</span>
+  tipo_listagem     text,                 <span class="cm">-- 'catalog' | 'traditional'</span>
+  catalog_product_id text,
+  snapshot_at       timestamptz <span class="ck">not null</span>,
+  <span class="ck">unique</span>(mlb_id, conta_ml)
+);</pre>
+
+<h3>Tabela: mlb_concorrentes</h3>
+<pre><span class="ck">create table</span> mlb_concorrentes (
+  id                uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  mlb_id            text    <span class="ck">not null</span>,
+  posicao           int     <span class="ck">not null</span>,     <span class="cm">-- 1 = mais forte</span>
+  vendedor_id       text,
+  vendedor_nome     text,
+  preco_concorrente numeric(10,2),
+  diferenca_pct     numeric(6,2),          <span class="cm">-- + = concorrente mais caro</span>
+  reputacao         text,                  <span class="cm">-- 'green' | 'light_green' | 'yellow'</span>
+  snapshot_at       timestamptz,
+  <span class="ck">unique</span>(mlb_id, posicao)
+);</pre>
+
+<h3>Tabela: ordens_agentes (fila de aprovação)</h3>
+<pre><span class="ck">create table</span> ordens_agentes (
+  id            uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  agente        text    <span class="ck">not null</span>,         <span class="cm">-- 'sac' | 'anuncios' | 'ads' | 'criativo'</span>
+  tipo          text    <span class="ck">not null</span>,         <span class="cm">-- 'alterar_preco' | 'responder_pergunta' etc</span>
+  payload       jsonb   <span class="ck">not null</span>,         <span class="cm">-- dados específicos de cada ação</span>
+  status        text    <span class="ck">default</span> <span class="cs">'pending'</span>,<span class="cm">-- 'pending'|'auto_pending'|'executed'|'rejected'|'error'</span>
+  conta_ml      int     <span class="ck">default</span> 1,
+  aprovado_por  uuid    <span class="ck">references</span> users(id),
+  rejeitado_motivo text,
+  executado_em  timestamptz,
+  erro_msg      text,
+  criado_em     timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: sac_respostas</h3>
+<pre><span class="ck">create table</span> sac_respostas (
+  id                uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  pergunta_ml_id    text    <span class="ck">unique not null</span>,
+  pergunta_texto    text,
+  mlb_id            text,
+  resposta_sugerida text,
+  resposta_final    text,                  <span class="cm">-- após edição humana (se houver)</span>
+  status            text    <span class="ck">default</span> <span class="cs">'pending_approval'</span>,
+  foi_editada       boolean <span class="ck">default false</span>, <span class="cm">-- alimenta taxa de treinamento</span>
+  custo_usd         numeric(10,6),
+  enviado_em        timestamptz,
+  criado_em         timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: agent_runs (log de execuções)</h3>
+<pre><span class="ck">create table</span> agent_runs (
+  id                    uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  agente                text    <span class="ck">not null</span>,
+  trigger               text    <span class="ck">not null</span>,   <span class="cm">-- 'cron_5min' | 'manual' | 'cron_hourly' etc</span>
+  conta_ml              int,
+  total_mlbs            int,
+  processados           int     <span class="ck">default</span> 0,
+  skipped_fresh         int     <span class="ck">default</span> 0,
+  concorrentes_capturados int   <span class="ck">default</span> 0,
+  alertas_gerados       int     <span class="ck">default</span> 0,
+  duracao_ms            int,
+  custo_usd             numeric(10,6),
+  status                text,              <span class="cm">-- 'running' | 'success' | 'partial' | 'error'</span>
+  erro_msg              text,
+  criado_em             timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: alertas</h3>
+<pre><span class="ck">create table</span> alertas (
+  id          uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  mlb_id      text,
+  tipo        text    <span class="ck">not null</span>,   <span class="cm">-- 'estoque_critico' | 'margem_negativa' | 'preco_fora'</span>
+  descricao   text,
+  prioridade  text    <span class="ck">default</span> <span class="cs">'media'</span>,
+  resolvido   boolean <span class="ck">default false</span>,
+  criado_em   timestamptz <span class="ck">default</span> now(),
+  <span class="ck">unique</span>(mlb_id, tipo)                  <span class="cm">-- evita duplicatas no upsert</span>
+);</pre>
+
+<h3>Tabela: sac_treinamento (período de aprendizado)</h3>
+<pre><span class="ck">create table</span> sac_treinamento (
+  id                  uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  conta_ml            int     <span class="ck">unique not null</span>,
+  total_dias          int     <span class="ck">default</span> 0,
+  total_respostas     int     <span class="ck">default</span> 0,
+  aprovadas_direto    int     <span class="ck">default</span> 0,     <span class="cm">-- sem edição humana</span>
+  reescritas          int     <span class="ck">default</span> 0,     <span class="cm">-- editadas antes de enviar</span>
+  rejeitadas          int     <span class="ck">default</span> 0,
+  taxa_aprovacao      numeric(4,3) <span class="ck">default</span> 0, <span class="cm">-- aprovadas_direto / total</span>
+  modo_auto           boolean <span class="ck">default false</span>,
+  ativado_em          timestamptz,
+  atualizado_em       timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: reunioes_gestor</h3>
+<pre><span class="ck">create table</span> reunioes_gestor (
+  id        uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  data      date    <span class="ck">default</span> current_date,
+  briefing  jsonb,                          <span class="cm">-- dados coletados do Supabase</span>
+  analise   jsonb,                          <span class="cm">-- resposta do Claude (JSON estruturado)</span>
+  custo_usd numeric(10,6),
+  criado_em timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: historico_precos (rollback)</h3>
+<pre><span class="ck">create table</span> historico_precos (
+  id              uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  mlb_id          text    <span class="ck">not null</span>,
+  preco_anterior  numeric(10,2),
+  preco_novo      numeric(10,2),
+  motivo          text,
+  ordem_id        uuid    <span class="ck">references</span> ordens_agentes(id),
+  criado_em       timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>Tabela: ads_campanhas</h3>
+<pre><span class="ck">create table</span> ads_campanhas (
+  id            uuid    <span class="ck">primary key default</span> gen_random_uuid(),
+  campanha_ml_id text   <span class="ck">unique</span>,
+  nome          text,
+  status        text,              <span class="cm">-- 'active' | 'paused'</span>
+  budget_diario numeric(10,2),
+  tipo          text,              <span class="cm">-- 'product_ads' | 'brand_ads'</span>
+  conta_ml      int     <span class="ck">default</span> 1,
+  sincronizado_em timestamptz,
+  criado_em     timestamptz <span class="ck">default</span> now()
+);</pre>
+
+<h3>View consolidada (usada por todos os agentes de análise)</h3>
+<pre><span class="ck">create view</span> view_mlb_completo <span class="ck">as</span>
+<span class="ck">select</span>
+  s.*,
+  c.preco_concorrente  <span class="ck">as</span> top1_preco,
+  c.diferenca_pct      <span class="ck">as</span> top1_diferenca_pct,
+  c.vendedor_nome      <span class="ck">as</span> top1_vendedor,
+  c.reputacao          <span class="ck">as</span> top1_reputacao,
+  <span class="ck">case</span>
+    <span class="ck">when</span> s.semaforo = <span class="cs">'vermelho'</span>       <span class="ck">then</span> <span class="cs">'revisar_custo'</span>
+    <span class="ck">when</span> c.diferenca_pct > <span class="cn">5</span>           <span class="ck">then</span> <span class="cs">'pode_subir_preco'</span>
+    <span class="ck">when</span> c.diferenca_pct < -<span class="cn">5</span>          <span class="ck">then</span> <span class="cs">'risco_preco'</span>
+    <span class="ck">when</span> s.estoque <= <span class="cn">3</span>               <span class="ck">then</span> <span class="cs">'estoque_critico'</span>
+    <span class="ck">else</span> <span class="cs">'ok'</span>
+  <span class="ck">end as</span> decisao_sugerida
+<span class="ck">from</span> mlb_snapshots s
+<span class="ck">left join</span> mlb_concorrentes c
+  <span class="ck">on</span> s.mlb_id = c.mlb_id <span class="ck">and</span> c.posicao = <span class="cn">1</span>
+<span class="ck">where</span> s.snapshot_at > now() - interval <span class="cs">'2 hours'</span>;</pre>
+
+<h3>Row Level Security</h3>
+<pre><span class="cm">-- Habilitar em todas as tabelas</span>
+<span class="ck">alter table</span> mlb_snapshots       <span class="ck">enable row level security</span>;
+<span class="ck">alter table</span> ordens_agentes      <span class="ck">enable row level security</span>;
+<span class="ck">alter table</span> sac_respostas       <span class="ck">enable row level security</span>;
+
+<span class="cm">-- Apenas admins autenticados leem e escrevem</span>
+<span class="ck">create policy</span> "admin_all" <span class="ck">on</span> mlb_snapshots
+  <span class="ck">for all using</span> (
+    <span class="ck">exists</span> (
+      <span class="ck">select</span> 1 <span class="ck">from</span> users
+      <span class="ck">where</span> id = auth.uid() <span class="ck">and</span> role = <span class="cs">'admin'</span>
+    )
+  );
+<span class="cm">-- Repetir para cada tabela</span>
+
+<span class="cm">-- No servidor, usar SUPABASE_SERVICE_KEY para bypass de RLS</span>
+<span class="ck">const</span> supabaseAdmin = createClient(url, process.env.SUPABASE_SERVICE_KEY)</pre>
+</section>
+
+<!-- CICLOS -->
+<section id="ciclo-coleta">
+<h2>Ciclo 1 — Coleta de Dados do Mercado Livre</h2>
+<div class="note note-blue"><strong>Quem dispara:</strong> Vercel Cron (schedule: "0 * * * *") — todo hora automaticamente.</div>
+
+<div class="flow">
+  <div class="fbox fb-gray">Vercel Cron 0 * * * *</div><div class="arr">→</div>
+  <div class="fbox fb-blue">GET /api/agents/analista/run-snapshot</div><div class="arr">→</div>
+  <div class="fbox fb-red">ML API (leitura)</div><div class="arr">→</div>
+  <div class="fbox fb-green">Supabase upsert</div><div class="arr">→</div>
+  <div class="fbox fb-gray">Ably notifica</div>
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-dot d-gray"></div>
+    <div class="step-title">1. Vercel dispara GET /api/agents/analista/run-snapshot</div>
+    <div class="step-desc">Header: <code>Authorization: Bearer {CRON_SECRET}</code>. A rota verifica o header, abre registro de run no Supabase (status: "running").</div>
+  </div>
+  <div class="step"><div class="step-dot d-red"></div>
+    <div class="step-title">2. Rota chama ML API — lista todos os MLBs ativos</div>
+    <div class="step-desc"><code>GET api.mercadolibre.com/users/{user_id}/items/search?status=active&limit=50</code> — paginado (50 por vez), repete até pegar todos os anúncios.</div>
+  </div>
+  <div class="step"><div class="step-dot d-red"></div>
+    <div class="step-title">3. Para cada MLB: busca detalhes, concorrentes, visitas</div>
+    <div class="step-desc">3 chamadas por anúncio via rate limiter (máx 3 req/s). Com 200 anúncios = ~600 chamadas = ~3 minutos. Usa <code>rateLimited()</code> para respeitar o limite do ML.</div>
+  </div>
+  <div class="step"><div class="step-dot d-amber"></div>
+    <div class="step-title">4. Calcula margem líquida (sem IA)</div>
+    <div class="step-desc">Cruza: preço do ML, custo cadastrado no Supabase, taxa do ML, frete estimado, impostos. Classifica em semáforo verde/amarelo/vermelho. Lógica de negócio pura.</div>
+  </div>
+  <div class="step"><div class="step-dot d-green"></div>
+    <div class="step-title">5. Salva snapshot e concorrentes no Supabase (UPSERT)</div>
+    <div class="step-desc">Não cria novos registros a cada hora — atualiza os existentes. Sempre tem o dado mais recente de cada MLB. Gera alertas automáticos por regras simples.</div>
+  </div>
+  <div class="step"><div class="step-dot d-blue"></div>
+    <div class="step-title">6. Fecha o run e notifica via Ably</div>
+    <div class="step-desc">Atualiza agent_runs com status/duração/custos. Publica no canal "escritorio" — o ponto verde do Analista no 3D fica animado por 3 segundos.</div>
+  </div>
+</div>
+
+<h3>Endpoints do ML usados neste ciclo</h3>
+<table>
+<tr><th>Método</th><th>Endpoint</th><th>Para quê</th></tr>
+<tr><td><span class="badge b-blue">GET</span></td><td>/users/{id}/items/search</td><td>Lista todos os anúncios do vendedor</td></tr>
+<tr><td><span class="badge b-blue">GET</span></td><td>/items/{mlb_id}</td><td>Detalhes: preço, estoque, título, taxa</td></tr>
+<tr><td><span class="badge b-blue">GET</span></td><td>/products/{catalog_id}/items</td><td>Concorrentes do mesmo catálogo</td></tr>
+<tr><td><span class="badge b-blue">GET</span></td><td>/items/{mlb_id}/visits/time_window</td><td>Visitas dos últimos 7 dias</td></tr>
+<tr><td><span class="badge b-blue">GET</span></td><td>/questions/search?status=UNANSWERED</td><td>Perguntas pendentes (SAC)</td></tr>
+</table>
+</section>
+
+<section id="ciclo-analise">
+<h2>Ciclo 2 — Análise com IA</h2>
+<div class="note note-blue"><strong>Quem dispara:</strong> Vercel Cron (30 min após o snapshot) ou gatilho manual. Os dados já estão no Supabase — nenhuma chamada ao ML aqui.</div>
+
+<div class="flow">
+  <div class="fbox fb-gray">Vercel Cron 30 * * * *</div><div class="arr">→</div>
+  <div class="fbox fb-blue">GET /api/agents/anuncios/criar-ordem</div><div class="arr">→</div>
+  <div class="fbox fb-green">SELECT Supabase (dados prontos)</div><div class="arr">→</div>
+  <div class="fbox fb-purple">LLM decide</div><div class="arr">→</div>
+  <div class="fbox fb-amber">INSERT ordens_agentes</div>
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-dot d-gray"></div>
+    <div class="step-title">1. Cron dispara o agente de análise</div>
+    <div class="step-desc">Não há chamada ao ML. O agente vai direto ao Supabase buscar os dados do último snapshot.</div>
+  </div>
+  <div class="step"><div class="step-dot d-green"></div>
+    <div class="step-title">2. SELECT na view_mlb_completo</div>
+    <div class="step-desc">Filtra anúncios com oportunidade: <code>decisao_sugerida IN ('pode_subir_preco', 'risco_preco')</code>. Retorna JSON limpo com preço, margem, concorrente top 1.</div>
+  </div>
+  <div class="step"><div class="step-dot d-purple"></div>
+    <div class="step-title">3. Para cada candidato: Claude analisa e decide</div>
+    <div class="step-desc">Envia JSON compacto ao Claude. Recebe decisão em JSON: <code>{ acao, novo_preco, justificativa, confianca }</code>. O LLM nunca recebe dados brutos da API.</div>
+  </div>
+  <div class="step"><div class="step-dot d-amber"></div>
+    <div class="step-title">4. Salva ordem no Supabase com status correto</div>
+    <div class="step-desc">Verifica modo: se treinamento → <code>status: "pending"</code> (espera humano). Se automático (dia 15+ / taxa ≥ 85%) → <code>status: "auto_pending"</code> (cron executa sozinho).</div>
+  </div>
+  <div class="step"><div class="step-dot d-blue"></div>
+    <div class="step-title">5. Notifica UI via Ably</div>
+    <div class="step-desc">Publica evento com número de ordens criadas. Badge de notificação aparece na interface para o operador revisar ou aguardar execução automática.</div>
+  </div>
+</div>
+</section>
+
+<section id="ciclo-execucao">
+<h2>Ciclo 3 — Execução de Volta para o ML</h2>
+<div class="note note-amber"><strong>Dois gatilhos possíveis:</strong> (A) Humano clica "Aprovar" na UI — durante o treinamento. (B) Cron processa ordens "auto_pending" — após os 15 dias. O código de execução é idêntico nos dois casos.</div>
+
+<div class="flow">
+  <div class="fbox fb-amber">Humano aprova UI OU Vercel Cron</div><div class="arr">→</div>
+  <div class="fbox fb-blue">POST /api/agents/{agente}/aprovar-ordem</div><div class="arr">→</div>
+  <div class="fbox fb-green">Supabase (busca ordem + histórico)</div><div class="arr">→</div>
+  <div class="fbox fb-red">ML API (PUT/POST)</div><div class="arr">→</div>
+  <div class="fbox fb-green">Supabase (atualiza)</div><div class="arr">→</div>
+  <div class="fbox fb-gray">Ably notifica</div>
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-dot d-amber"></div>
+    <div class="step-title">1. Gatilho: humano ou cron chama a rota de execução</div>
+    <div class="step-desc">A rota recebe o <code>ordem_id</code>. Busca a ordem completa no Supabase.</div>
+  </div>
+  <div class="step"><div class="step-dot d-green"></div>
+    <div class="step-title">2. Salva histórico para rollback ANTES de executar</div>
+    <div class="step-desc">INSERT em historico_precos com o valor atual. Se algo der errado ou o operador quiser desfazer, tem como voltar.</div>
+  </div>
+  <div class="step"><div class="step-dot d-red"></div>
+    <div class="step-title">3. Executa no Mercado Livre com o token OAuth</div>
+    <div class="step-desc">Usa o access_token do vendedor (renovado automaticamente se expirado). Chama o endpoint correto: PUT /items para preço/título/imagem, POST /answers para SAC, etc.</div>
+  </div>
+  <div class="step"><div class="step-dot d-green"></div>
+    <div class="step-title">4. Atualiza o Supabase com os novos valores</div>
+    <div class="step-desc">UPDATE mlb_snapshots com novo preço. UPDATE ordens_agentes status = "executed". O próximo snapshot do Analista vai confirmar os valores reais da API.</div>
+  </div>
+  <div class="step"><div class="step-dot d-blue"></div>
+    <div class="step-title">5. Notifica UI via Ably</div>
+    <div class="step-desc">Publica evento. Escritório 3D anima o agente como "trabalhando". Painel de aprovações remove o item da fila.</div>
+  </div>
+</div>
+
+<h3>Endpoints do ML usados na execução (escrita)</h3>
+<table>
+<tr><th>Método</th><th>Endpoint</th><th>Agente</th><th>Para quê</th></tr>
+<tr><td><span class="badge b-green">POST</span></td><td>/answers</td><td>SAC</td><td>Responder pergunta do comprador</td></tr>
+<tr><td><span class="badge b-green">POST</span></td><td>/claims/{id}/messages</td><td>SAC</td><td>Responder reclamação</td></tr>
+<tr><td><span class="badge b-amber">PUT</span></td><td>/items/{mlb_id}</td><td>Anúncios</td><td>Alterar preço, título, imagens, estoque</td></tr>
+<tr><td><span class="badge b-amber">PUT</span></td><td>/items/{mlb_id}/description</td><td>Anúncios</td><td>Alterar descrição (endpoint separado)</td></tr>
+<tr><td><span class="badge b-green">POST</span></td><td>/pictures</td><td>Criativo</td><td>Upload de nova imagem gerada por IA</td></tr>
+<tr><td><span class="badge b-amber">PUT</span></td><td>/ads/campaigns/{id}</td><td>ADS</td><td>Alterar budget ou lances de campanha</td></tr>
+</table>
+</section>
+
+<section id="treinamento">
+<h2>Período de Treinamento — Os 15 Dias</h2>
+<div class="note note-green">Não é IA "aprendendo a escrever melhor". É um sistema de contagem de aprovações que calcula se o padrão do agente bate com as expectativas do operador.</div>
+
+<h3>A lógica completa</h3>
+<pre><span class="cm">// lib/treinamento.ts</span>
+<span class="ck">export async function</span> <span class="cf">verificarModo</span>(conta_ml: <span class="cn">number</span>) {
+  <span class="ck">const</span> { data } = <span class="ck">await</span> supabaseAdmin
+    .from(<span class="cs">"sac_treinamento"</span>)
+    .select(<span class="cs">"*"</span>)
+    .eq(<span class="cs">"conta_ml"</span>, conta_ml)
+    .single()
+
+  <span class="ck">if</span> (!data) <span class="ck">return</span> { modo: <span class="cs">"human"</span>, diasRodando: <span class="cn">0</span>, taxa: <span class="cn">0</span> }
+
+  <span class="ck">const</span> podeAuto =
+    data.total_dias >= <span class="cn">15</span>         <span class="cm">// tempo mínimo</span>
+    && data.taxa_aprovacao >= <span class="cn">0.85</span> <span class="cm">// 85%+ aprovadas sem edição</span>
+    && data.total_respostas >= <span class="cn">50</span>  <span class="cm">// mínimo de amostras</span>
+
+  <span class="ck">return</span> {
+    modo: podeAuto ? <span class="cs">"auto"</span> : <span class="cs">"human"</span>,
+    diasRodando: data.total_dias,
+    taxa: data.taxa_aprovacao,
+  }
+}
+
+<span class="cm">// Chamado após cada aprovação humana:</span>
+<span class="ck">export async function</span> <span class="cf">registrarFeedback</span>(
+  conta_ml: <span class="cn">number</span>,
+  foiAprovadaSemEdicao: <span class="cn">boolean</span>
+) {
+  <span class="ck">await</span> supabaseAdmin.rpc(<span class="cs">"atualizar_treinamento"</span>, {
+    p_conta: conta_ml,
+    p_aprovada_direto: foiAprovadaSemEdicao,
+  })
+  <span class="cm">// Função SQL que incrementa contadores e recalcula taxa</span>
+}
+
+<span class="cm">// Situações que SEMPRE vão para humano, mesmo no modo auto:</span>
+<span class="ck">export function</span> <span class="cf">precisaHumano</span>(texto: <span class="cn">string</span>, confianca: <span class="cn">number</span>): <span class="cn">boolean</span> {
+  <span class="ck">const</span> palavrasGraves = [<span class="cs">"defeito"</span>, <span class="cs">"devoluç"</span>, <span class="cs">"reembolso"</span>, <span class="cs">"problema"</span>, <span class="cs">"quebrado"</span>]
+  <span class="ck">const</span> temPalavraGrave = palavrasGraves.<span class="cf">some</span>(p => texto.toLowerCase().<span class="cf">includes</span>(p))
+  <span class="ck">return</span> confianca < <span class="cn">0.75</span> || temPalavraGrave
+}</pre>
+
+<div class="grid2">
+  <div class="card"><h4>Dias 1–14 (modo humano)</h4><p>Toda sugestão vai para aprovação humana. O operador aprova, edita ou rejeita. Cada decisão alimenta os contadores. O sistema aprende o padrão.</p></div>
+  <div class="card"><h4>Dia 15+ (modo automático)</h4><p>Se taxa ≥ 85% e mínimo de 50 amostras: execução direta. Casos com confiança baixa ou palavras-chave graves ainda vão para humano mesmo no modo auto.</p></div>
+</div>
+</section>
+
+<!-- OS 6 AGENTES -->
+<section id="sac">
+<h2>Agente 01 — SAC (Perguntas e Respostas)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--blue-bg);color:var(--blue)">01</div>
+    <div><div class="agent-title">SAC — Serviço de Atendimento ao Comprador</div>
+    <div class="agent-sub">Responde perguntas de compradores no ML automaticamente</div></div>
+  </div>
+
+  <table>
+  <tr><th>Item</th><th>Detalhe</th></tr>
+  <tr><td>Cron</td><td><code>*/5 * * * *</code> — a cada 5 minutos, 24h/dia</td></tr>
+  <tr><td>Lê do ML</td><td>GET /questions/search?status=UNANSWERED</td></tr>
+  <tr><td>Escreve no ML</td><td>POST /answers (após aprovação)</td></tr>
+  <tr><td>LLM</td><td>Anthropic Claude — geração de resposta em texto</td></tr>
+  <tr><td>Treinamento</td><td>Sim — fica 15 dias em modo manual, depois automático</td></tr>
+  </table>
+
+<h4>Fluxo completo</h4>
+<pre><span class="cm">// app/api/agents/sac/resolve/route.ts</span>
+<span class="ck">export async function</span> <span class="cf">GET</span>(req: NextRequest) {
+  <span class="cm">// 1. Autenticar (cron ou usuário)</span>
+
+  <span class="cm">// 2. Pegar token ML do Supabase (auto-renova se expirado)</span>
+  <span class="ck">const</span> token = <span class="ck">await</span> <span class="cf">getMLToken</span>(<span class="cn">1</span>)
+
+  <span class="cm">// 3. Buscar perguntas pendentes no ML</span>
+  <span class="ck">const</span> resp = <span class="ck">await</span> ky.<span class="cf">get</span>(
+    <span class="cs">`https://api.mercadolibre.com/questions/search?seller_id=${</span>userId<span class="cs">}&status=UNANSWERED`</span>,
+    { headers: { Authorization: <span class="cs">`Bearer ${</span>token<span class="cs">}`</span> } }
+  ).<span class="cf">json</span>()
+
+  <span class="ck">for</span> (<span class="ck">const</span> q <span class="ck">of</span> resp.questions) {
+    <span class="cm">// 4. Buscar contexto do produto no Supabase (NÃO no ML)</span>
+    <span class="ck">const</span> produto = <span class="ck">await</span> supabaseAdmin.from(<span class="cs">"mlb_snapshots"</span>)
+      .select(<span class="cs">"titulo, preco, estoque"</span>).eq(<span class="cs">"mlb_id"</span>, q.item_id).single()
+
+    <span class="cm">// 5. Claude gera resposta</span>
+    <span class="ck">const</span> ai = <span class="ck">await</span> anthropic.messages.<span class="cf">create</span>({
+      model: <span class="cs">"claude-sonnet-4-5"</span>, max_tokens: <span class="cn">300</span>,
+      system: <span class="cs">`Você é o SAC de uma loja no Mercado Livre.
+Responda perguntas de compradores de forma clara e educada.
+Máximo 2 frases. Não invente informações.`</span>,
+      messages: [{
+        role: <span class="cs">"user"</span>,
+        content: <span class="cs">`Pergunta: "${</span>q.text<span class="cs">}"\nProduto: ${</span>produto.titulo<span class="cs">}\nPreço: R$ ${</span>produto.preco<span class="cs">}\nEstoque: ${</span>produto.estoque<span class="cs">}`</span>
+      }]
+    })
+    <span class="ck">const</span> resposta = ai.content[<span class="cn">0</span>].text
+    <span class="ck">const</span> confianca = <span class="cf">calcularConfianca</span>(resposta, q.text)
+
+    <span class="cm">// 6. Decidir: auto ou espera humano</span>
+    <span class="ck">const</span> modo = <span class="ck">await</span> <span class="cf">verificarModo</span>(<span class="cn">1</span>)
+
+    <span class="ck">if</span> (modo.modo === <span class="cs">"auto"</span> && !<span class="cf">precisaHumano</span>(q.text, confianca)) {
+      <span class="cm">// EXECUÇÃO DIRETA — envia para o ML agora</span>
+      <span class="ck">await</span> ky.<span class="cf">post</span>(<span class="cs">"https://api.mercadolibre.com/answers"</span>, {
+        headers: { Authorization: <span class="cs">`Bearer ${</span>token<span class="cs">}`</span> },
+        json: { question_id: q.id, text: resposta }
+      })
+      <span class="ck">await</span> <span class="cf">registrarFeedback</span>(<span class="cn">1</span>, <span class="ck">true</span>)
+    } <span class="ck">else</span> {
+      <span class="cm">// FILA HUMANA — salva pendente</span>
+      <span class="ck">await</span> supabaseAdmin.from(<span class="cs">"sac_respostas"</span>).<span class="cf">insert</span>({
+        pergunta_ml_id: q.id, resposta_sugerida: resposta,
+        status: <span class="cs">"pending_approval"</span>
+      })
+      <span class="ck">await</span> ablyServer.channels.<span class="cf">get</span>(<span class="cs">"escritorio"</span>)
+        .<span class="cf">publish</span>(<span class="cs">"sac:pendente"</span>, { count: <span class="cn">1</span> })
+    }
+  }
+}</pre>
+</div>
+</section>
+
+<section id="analista">
+<h2>Agente 02 — Analista (Inteligência de Mercado)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--teal-bg);color:var(--teal)">02</div>
+    <div><div class="agent-title">Analista — Snapshot e Inteligência Competitiva</div>
+    <div class="agent-sub">Coleta dados do ML e gera insights estratégicos diários</div></div>
+  </div>
+  <table>
+  <tr><th>Item</th><th>Detalhe</th></tr>
+  <tr><td>Crons</td><td><code>0 * * * *</code> (snapshot horário) + <code>0 7 * * *</code> (insight diário 7:30 BRT)</td></tr>
+  <tr><td>Lê do ML</td><td>Itens, concorrentes, visitas — o único agente que coleta do ML</td></tr>
+  <tr><td>Não escreve no ML</td><td>Apenas leitura e análise — nunca altera nada no ML</td></tr>
+  <tr><td>LLM</td><td>Anthropic Claude — para o insight estratégico do dia</td></tr>
+  <tr><td>Saída</td><td>mlb_snapshots, mlb_concorrentes, alertas no Supabase</td></tr>
+  </table>
+
+  <h4>Insight diário (Claude analisa o snapshot)</h4>
+<pre><span class="cm">// app/api/agents/analista/relatorio-diario/route.ts</span>
+<span class="ck">const</span> { data: resumo } = <span class="ck">await</span> supabaseAdmin
+  .from(<span class="cs">"mlb_snapshots"</span>)
+  .select(<span class="cs">"semaforo, count(*), avg(margem_pct), sum(vendas_30d)"</span>)
+  .group(<span class="cs">"semaforo"</span>)
+
+<span class="ck">const</span> { data: topAlerta } = <span class="ck">await</span> supabaseAdmin
+  .from(<span class="cs">"view_mlb_completo"</span>)
+  .select(<span class="cs">"titulo, margem_pct, top1_diferenca_pct, semaforo"</span>)
+  .neq(<span class="cs">"decisao_sugerida"</span>, <span class="cs">"ok"</span>).limit(<span class="cn">10</span>)
+
+<span class="ck">const</span> insight = <span class="ck">await</span> callLLM({
+  system: <span class="cs">`Você é analista de e-commerce especializado em Mercado Livre.
+Analise os dados da operação e produza um insight estratégico do dia.
+Seja específico: cite produtos, números, ações concretas.
+Responda em JSON: { resumo, principal_oportunidade, principal_risco, acoes_recomendadas[] }`</span>,
+  user: JSON.<span class="cf">stringify</span>({ resumo, top_alertas: topAlerta })
+})</pre>
+</div>
+</section>
+
+<section id="criativo">
+<h2>Agente 03 — Criativo (Geração de Imagens)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--purple-bg);color:var(--purple)">03</div>
+    <div><div class="agent-title">Criativo — Geração de Fotos de Produto com IA</div>
+    <div class="agent-sub">Gera imagens profissionais para anúncios usando gpt-image-1</div></div>
+  </div>
+  <table>
+  <tr><th>Item</th><th>Detalhe</th></tr>
+  <tr><td>Cron</td><td><code>0 12 * * *</code> — 9h BRT diariamente</td></tr>
+  <tr><td>Quota</td><td>30 imagens/dia (configurável)</td></tr>
+  <tr><td>LLM Imagem</td><td>OpenAI gpt-image-1 — 1024x1024, quality: high</td></tr>
+  <tr><td>Somente</td><td>Anúncios Tradicionais (catálogo tem imagem padrão do ML)</td></tr>
+  </table>
+
+  <h4>Fluxo dos 3 passos obrigatórios</h4>
+<pre><span class="cm">// PASSO 1 — Gerar imagem com OpenAI</span>
+<span class="ck">const</span> gerada = <span class="ck">await</span> openai.images.<span class="cf">generate</span>({
+  model: <span class="cs">"gpt-image-1"</span>,
+  prompt: <span class="cs">`Foto profissional para e-commerce: ${</span>produto.titulo<span class="cs">}.
+Fundo branco limpo, iluminação de estúdio, produto centralizado.
+Sem texto, sem marcas d'água, sem sombras duras.`</span>,
+  size: <span class="cs">"1024x1024"</span>, quality: <span class="cs">"high"</span>, n: <span class="cn">1</span>
+})
+<span class="ck">const</span> b64 = gerada.data[<span class="cn">0</span>].b64_json  <span class="cm">// retorna base64</span>
+
+<span class="cm">// PASSO 2 — Upload no ML</span>
+<span class="ck">const</span> form = <span class="ck">new</span> <span class="cf">FormData</span>()
+form.<span class="cf">append</span>(<span class="cs">"file"</span>, <span class="ck">new</span> <span class="cf">Blob</span>([Buffer.<span class="cf">from</span>(b64, <span class="cs">"base64"</span>)], { type: <span class="cs">"image/jpeg"</span> }), <span class="cs">"produto.jpg"</span>)
+<span class="ck">const</span> upload = <span class="ck">await</span> fetch(<span class="cs">"https://api.mercadolibre.com/pictures"</span>, {
+  method: <span class="cs">"POST"</span>, headers: { Authorization: <span class="cs">`Bearer ${</span>token<span class="cs">}`</span> }, body: form
+}).<span class="cf">then</span>(r => r.<span class="cf">json</span>())
+<span class="cm">// upload.id = "123456789-MLB"  ← o picture_id</span>
+
+<span class="cm">// PASSO 3 — Salvar como ordem (aprovação humana antes de publicar)</span>
+<span class="ck">await</span> supabaseAdmin.from(<span class="cs">"ordens_agentes"</span>).<span class="cf">insert</span>({
+  agente: <span class="cs">"criativo"</span>, tipo: <span class="cs">"trocar_imagem"</span>,
+  payload: {
+    mlb_id: produto.mlb_id,
+    picture_id_novo: upload.id,
+    picture_url_preview: upload.secure_url,
+    fotos_atuais: itemAtual.pictures,
+  },
+  status: modoAuto ? <span class="cs">"auto_pending"</span> : <span class="cs">"pending"</span>
+})
+
+<span class="cm">// Quando aprovado — atualiza o anúncio no ML:</span>
+<span class="ck">await</span> ky.<span class="cf">put</span>(<span class="cs">`https://api.mercadolibre.com/items/${</span>mlbId<span class="cs">}`</span>, {
+  headers: { Authorization: <span class="cs">`Bearer ${</span>token<span class="cs">}`</span> },
+  json: { pictures: [{ id: upload.id }, ...fotosExistentes.slice(<span class="cn">1</span>, <span class="cn">9</span>)] }
+})</pre>
+</div>
+</section>
+
+<section id="anuncios">
+<h2>Agente 04 — Anúncios (Preços e Promoções)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--amber-bg);color:var(--amber)">04</div>
+    <div><div class="agent-title">Anúncios — Precificação e Otimização</div>
+    <div class="agent-sub">Ajusta preços, títulos, promoções com base em concorrência e margem</div></div>
+  </div>
+  <table>
+  <tr><th>Ação</th><th>Endpoint ML</th><th>Aprovação</th></tr>
+  <tr><td>Alterar preço</td><td>PUT /items/{id} { price }</td><td>Sempre humano (alto impacto)</td></tr>
+  <tr><td>Alterar título</td><td>PUT /items/{id} { title }</td><td>Humano</td></tr>
+  <tr><td>Trocar imagem</td><td>PUT /items/{id} { pictures }</td><td>Humano</td></tr>
+  <tr><td>Aderir promoção</td><td>POST /seller-promotions/...</td><td>Humano</td></tr>
+  <tr><td>Pausar anúncio</td><td>PUT /items/{id} { status: "paused" }</td><td>Humano</td></tr>
+  <tr><td>Gerar insight</td><td>—</td><td>Auto (só leitura)</td></tr>
+  </table>
+</div>
+</section>
+
+<section id="ads">
+<h2>Agente 05 — ADS (Product Ads PPC)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--red-bg);color:var(--red)">05</div>
+    <div><div class="agent-title">ADS — Gestão de Campanhas Mercado Ads</div>
+    <div class="agent-sub">Monitora ROAS, sugere ajustes de lance e budget</div></div>
+  </div>
+  <table>
+  <tr><th>Item</th><th>Detalhe</th></tr>
+  <tr><td>Sync cron</td><td><code>0 */2 * * *</code> — lê métricas do ML a cada 2h</td></tr>
+  <tr><td>Insights cron</td><td><code>0 9,21 * * *</code> — Claude analisa ROAS 2x/dia</td></tr>
+  <tr><td>Meta ROAS</td><td>Configurável (ex: 12x = R$12 receita para cada R$1 gasto)</td></tr>
+  <tr><td>Ações que executa</td><td>Ajustar budget, criar campanha, pausar campanha</td></tr>
+  </table>
+
+<h4>Insight gerado pelo LLM com dados reais</h4>
+<pre><span class="cm">// Claude recebe dados já prontos do Supabase (ads_campanhas + metricas)</span>
+<span class="ck">const</span> insight = <span class="ck">await</span> callLLM({
+  system: <span class="cs">`Você é especialista em Product Ads do Mercado Livre.
+Analise as campanhas e identifique oportunidades.
+ROAS alvo: 12x. ACoS máximo: 8%.
+Responda JSON: { insights[{ prioridade, titulo, descricao, acao_sugerida }] }`</span>,
+  user: JSON.<span class="cf">stringify</span>(campanhasComMetricas)
+})
+<span class="cm">// Resultado é exatamente o que vimos no produto:</span>
+<span class="cm">// "Campanha 'All Day' com ROAS 16.89x está subfinanciada..."</span></pre>
+</div>
+</section>
+
+<section id="gestor">
+<h2>Agente 06 — Gestor (Orquestrador Central)</h2>
+<div class="agent">
+  <div class="agent-header">
+    <div class="agent-num" style="background:var(--teal-bg);color:var(--teal)">06</div>
+    <div><div class="agent-title">Gestor — Reunião Diária e Visão Estratégica</div>
+    <div class="agent-sub">Consolida dados de todos os agentes e gera análise do dia</div></div>
+  </div>
+  <div class="note note-blue">O Gestor NUNCA escreve no ML. Ele só lê do Supabase, chama o Claude e grava a análise. As execuções são sempre dos agentes especializados.</div>
+  <table>
+  <tr><th>Item</th><th>Detalhe</th></tr>
+  <tr><td>Cron reunião</td><td><code>0 12 * * *</code> — 9h BRT todo dia útil</td></tr>
+  <tr><td>Cron snapshot</td><td><code>0 */6 * * *</code> — reputação ML a cada 6h</td></tr>
+  <tr><td>Não escreve no ML</td><td>Somente análise — sem execução</td></tr>
+  </table>
+
+<h4>A reunião das 9h</h4>
+<pre><span class="cm">// Coleta briefing de TODOS os agentes via Supabase (parallel)</span>
+<span class="ck">const</span> [vendas, alertas, ads, sacPendentes, ordensP] = <span class="ck">await</span> Promise.<span class="cf">all</span>([
+  supabaseAdmin.from(<span class="cs">"mlb_snapshots"</span>)
+    .select(<span class="cs">"semaforo, count(*), avg(margem_pct)"</span>).group(<span class="cs">"semaforo"</span>),
+  supabaseAdmin.from(<span class="cs">"alertas"</span>)
+    .select(<span class="cs">"*"</span>).eq(<span class="cs">"resolvido"</span>, <span class="ck">false</span>).order(<span class="cs">"prioridade"</span>),
+  supabaseAdmin.from(<span class="cs">"ads_campanhas"</span>)
+    .select(<span class="cs">"*, ads_metricas(*)"</span>).eq(<span class="cs">"status"</span>, <span class="cs">"active"</span>),
+  supabaseAdmin.from(<span class="cs">"sac_respostas"</span>)
+    .select(<span class="cs">"count"</span>).eq(<span class="cs">"status"</span>, <span class="cs">"pending_approval"</span>),
+  supabaseAdmin.from(<span class="cs">"ordens_agentes"</span>)
+    .select(<span class="cs">"count"</span>).eq(<span class="cs">"status"</span>, <span class="cs">"pending"</span>),
+])
+
+<span class="ck">const</span> analise = <span class="ck">await</span> callLLM({
+  system: <span class="cs">`Você é o Gestor de uma operação no Mercado Livre.
+Faça a reunião do dia: identifique prioridades, riscos e ações.
+Responda JSON: { status_geral, prioridade_do_dia, alertas_criticos[], acoes[] }`</span>,
+  user: JSON.<span class="cf">stringify</span>({ vendas, alertas, ads, sacPendentes, ordensP })
+})</pre>
+</div>
+</section>
+
+<!-- INTEGRAÇÕES -->
+<section id="ml-oauth">
+<h2>Integração — ML OAuth (Token e Renovação)</h2>
+<pre><span class="cm">// lib/ml-api.ts</span>
+<span class="ck">async function</span> <span class="cf">getMLToken</span>(conta = <span class="cn">1</span>): Promise&lt;<span class="cn">string</span>&gt; {
+  <span class="ck">const</span> { data } = <span class="ck">await</span> supabaseAdmin
+    .from(<span class="cs">"ml_tokens"</span>).select(<span class="cs">"*"</span>).eq(<span class="cs">"conta"</span>, conta).single()
+
+  <span class="cm">// Renova se expira em menos de 10 minutos</span>
+  <span class="ck">if</span> (<span class="ck">new</span> <span class="cf">Date</span>(data.expires_at) < <span class="ck">new</span> <span class="cf">Date</span>(Date.<span class="cf">now</span>() + <span class="cn">600_000</span>)) {
+    <span class="ck">const</span> novo = <span class="ck">await</span> ky.<span class="cf">post</span>(<span class="cs">"https://api.mercadolibre.com/oauth/token"</span>, {
+      json: {
+        grant_type: <span class="cs">"refresh_token"</span>,
+        client_id: process.env.ML_CLIENT_ID,
+        client_secret: process.env.ML_CLIENT_SECRET,
+        refresh_token: data.refresh_token,
+      }
+    }).<span class="cf">json</span>&lt;<span class="cn">any</span>&gt;()
+
+    <span class="ck">await</span> supabaseAdmin.from(<span class="cs">"ml_tokens"</span>).<span class="cf">update</span>({
+      access_token:  novo.access_token,
+      refresh_token: novo.refresh_token,
+      expires_at:    <span class="ck">new</span> <span class="cf">Date</span>(Date.<span class="cf">now</span>() + novo.expires_in * <span class="cn">1000</span>),
+    }).<span class="cf">eq</span>(<span class="cs">"conta"</span>, conta)
+
+    <span class="ck">return</span> novo.access_token
+  }
+
+  <span class="ck">return</span> data.access_token
+}
+
+<span class="cm">// Rate limiter — respeita 3 req/s do ML</span>
+<span class="ck">export async function</span> <span class="cf">rateLimited</span>&lt;T&gt;(fn: () => Promise&lt;T&gt;): Promise&lt;T&gt; {
+  <span class="ck">return new</span> <span class="cf">Promise</span>((resolve, reject) => {
+    queue.<span class="cf">push</span>(<span class="ck">async</span> () => { <span class="ck">try</span> { <span class="cf">resolve</span>(<span class="ck">await</span> fn()) } <span class="ck">catch</span>(e) { <span class="cf">reject</span>(e) } })
+    <span class="cf">processQueue</span>()
+  })
+}</pre>
+
+<h4>Obter o primeiro token (fluxo OAuth inicial)</h4>
+<pre><span class="cm">// 1. Redirecionar o vendedor para autorizar:</span>
+<span class="ck">const</span> authUrl = <span class="cs">`https://auth.mercadolivre.com.br/authorization
+  ?response_type=code
+  &client_id=${</span>ML_CLIENT_ID<span class="cs">}
+  &redirect_uri=${</span>encodeURIComponent(REDIRECT_URI)<span class="cs">}`</span>
+
+<span class="cm">// 2. ML redireciona de volta com ?code=ABC123</span>
+<span class="cm">// 3. Trocar o code pelo token:</span>
+<span class="ck">const</span> tokens = <span class="ck">await</span> ky.<span class="cf">post</span>(<span class="cs">"https://api.mercadolibre.com/oauth/token"</span>, {
+  json: {
+    grant_type: <span class="cs">"authorization_code"</span>, code: authCode,
+    client_id: ML_CLIENT_ID, client_secret: ML_CLIENT_SECRET,
+    redirect_uri: REDIRECT_URI,
+  }
+}).<span class="cf">json</span>()
+<span class="cm">// Salvar tokens.access_token + tokens.refresh_token no Supabase</span></pre>
+</section>
+
+<section id="llm-wrapper">
+<h2>Integração — LLM Wrapper (Anthropic + OpenAI)</h2>
+<pre><span class="cm">// lib/llm.ts</span>
+<span class="ck">export async function</span> <span class="cf">callLLM</span>({ provider = <span class="cs">"anthropic"</span>, system, user, maxTokens = <span class="cn">500</span> }) {
+
+  <span class="ck">if</span> (provider === <span class="cs">"anthropic"</span>) {
+    <span class="ck">const</span> res = <span class="ck">await</span> anthropic.messages.<span class="cf">create</span>({
+      model: <span class="cs">"claude-sonnet-4-5"</span>, max_tokens: maxTokens,
+      system, messages: [{ role: <span class="cs">"user"</span>, content: user }]
+    })
+    <span class="ck">const</span> text = res.content[<span class="cn">0</span>].text
+    <span class="ck">return</span> {
+      content: <span class="cf">parseJSON</span>(text),   <span class="cm">// tenta parsear JSON, retorna texto se falhar</span>
+      usage: {
+        input: res.usage.input_tokens,
+        output: res.usage.output_tokens,
+        custo_usd: (res.usage.input_tokens * <span class="cn">0.000003</span>) + (res.usage.output_tokens * <span class="cn">0.000015</span>)
+      }
+    }
+  }
+
+  <span class="ck">if</span> (provider === <span class="cs">"openai-text"</span>) {
+    <span class="ck">const</span> res = <span class="ck">await</span> openai.chat.completions.<span class="cf">create</span>({
+      model: <span class="cs">"gpt-4o-mini"</span>, max_tokens: maxTokens,
+      response_format: { type: <span class="cs">"json_object"</span> },
+      messages: [{ role: <span class="cs">"system"</span>, content: system }, { role: <span class="cs">"user"</span>, content: user }]
+    })
+    <span class="ck">return</span> { content: JSON.<span class="cf">parse</span>(res.choices[<span class="cn">0</span>].message.content!), usage: {} }
+  }
+}</pre>
+</section>
+
+<section id="ably">
+<h2>Integração — Ably Realtime</h2>
+<pre><span class="cm">// lib/ably.ts (servidor — publica eventos)</span>
+<span class="ck">import</span> Ably <span class="ck">from</span> <span class="cs">"ably"</span>
+<span class="ck">export const</span> ablyServer = <span class="ck">new</span> Ably.<span class="cf">Rest</span>(process.env.ABLY_API_KEY!)
+
+<span class="cm">// Usar em qualquer agente após executar:</span>
+<span class="ck">await</span> ablyServer.channels.<span class="cf">get</span>(<span class="cs">"escritorio"</span>).<span class="cf">publish</span>(<span class="cs">"agente:status"</span>, {
+  agente: <span class="cs">"sac"</span>, status: <span class="cs">"working"</span>,
+  mensagem: <span class="cs">"3 perguntas respondidas"</span>,
+  timestamp: Date.<span class="cf">now</span>()
+})
+
+<span class="cm">// hooks/useAgentStatus.ts (cliente — escuta)</span>
+<span class="ck">const</span> ably = <span class="ck">new</span> Ably.<span class="cf">Realtime</span>(process.env.NEXT_PUBLIC_ABLY_KEY!)
+
+<span class="ck">export function</span> <span class="cf">useAgentStatus</span>() {
+  <span class="ck">const</span> [status, setStatus] = <span class="cf">useState</span>({
+    sac: <span class="cs">"idle"</span>, analista: <span class="cs">"idle"</span>, criativo: <span class="cs">"idle"</span>,
+    anuncios: <span class="cs">"idle"</span>, ads: <span class="cs">"idle"</span>, gestor: <span class="cs">"idle"</span>,
+  })
+
+  <span class="cf">useEffect</span>(() => {
+    <span class="ck">const</span> channel = ably.channels.<span class="cf">get</span>(<span class="cs">"escritorio"</span>)
+    channel.<span class="cf">subscribe</span>(<span class="cs">"agente:status"</span>, (msg) => {
+      setStatus(prev => ({ ...prev, [msg.data.agente]: msg.data.status }))
+      <span class="cf">setTimeout</span>(() => setStatus(prev => ({ ...prev, [msg.data.agente]: <span class="cs">"idle"</span> })), <span class="cn">3000</span>)
+    })
+    <span class="ck">return</span> () => channel.<span class="cf">unsubscribe</span>()
+  }, [])
+
+  <span class="ck">return</span> status
+}</pre>
+</section>
+
+<section id="frontend-3d">
+<h2>Frontend 3D — Escritório Isométrico</h2>
+<div class="note note-blue">O escritório 3D não é um serviço terceirizado. É código próprio com Three.js + React Three Fiber. Os modelos 3D (personagens, móveis) são assets GLTF comprados ou baixados gratuitamente.</div>
+
+<h3>Fontes de assets 3D (gratuitos)</h3>
+<table>
+<tr><th>Site</th><th>O que tem</th><th>Licença</th></tr>
+<tr><td>quaternius.com</td><td>Personagens low-poly animados (idle, sit, walk) — estilo do produto</td><td>CC0 (domínio público)</td></tr>
+<tr><td>sketchfab.com/tags/gltf</td><td>Salas de escritório completas com móveis, já em GLTF</td><td>Varia (CC BY)</td></tr>
+<tr><td>kenney.nl/assets</td><td>Packs de objetos de escritório em GLTF</td><td>CC0</td></tr>
+<tr><td>mixamo.com</td><td>Animações para personagens (sit, type, idle)</td><td>Gratuito com Adobe ID</td></tr>
+</table>
+
+<pre><span class="cm">// components/escritorio-3d.tsx</span>
+<span class="ck">import</span> { Canvas } <span class="ck">from</span> <span class="cs">"@react-three/fiber"</span>
+<span class="ck">import</span> { OrbitControls, useGLTF, Html } <span class="ck">from</span> <span class="cs">"@react-three/drei"</span>
+
+<span class="ck">export function</span> <span class="cf">Escritorio3D</span>() {
+  <span class="ck">const</span> agentStatus = <span class="cf">useAgentStatus</span>()   <span class="cm">// hook Ably</span>
+
+  <span class="ck">return</span> (
+    &lt;<span class="cf">Canvas</span> camera={{ position: [<span class="cn">10</span>, <span class="cn">8</span>, <span class="cn">10</span>], fov: <span class="cn">45</span> }}&gt;
+      &lt;<span class="cf">ambientLight</span> intensity={<span class="cn">0.6</span>} /&gt;
+      &lt;<span class="cf">directionalLight</span> position={[<span class="cn">5</span>, <span class="cn">10</span>, <span class="cn">5</span>]} intensity={<span class="cn">1</span>} /&gt;
+
+      <span class="cm">// Modelo do escritório (carregado do .glb)</span>
+      &lt;<span class="cf">EscritorioModelo</span> /&gt;
+
+      <span class="cm">// Badge de cada agente com status em tempo real</span>
+      {AGENTES.<span class="cf">map</span>(agente => (
+        &lt;<span class="cf">Html</span> position={agente.position}&gt;
+          &lt;div className={<span class="cs">`badge ${</span>agentStatus[agente.id] === <span class="cs">"working"</span> ? <span class="cs">"badge-active"</span> : <span class="cs">""</span><span class="cs">}`</span>}&gt;
+            &lt;span className="dot" /&gt;
+            {agente.nome}
+          &lt;/div&gt;
+        &lt;/<span class="cf">Html</span>&gt;
+      ))}
+
+      &lt;<span class="cf">OrbitControls</span> enableZoom={<span class="ck">false</span>} enablePan={<span class="ck">false</span>}
+        minPolarAngle={Math.PI/<span class="cn">4</span>} maxPolarAngle={Math.PI/<span class="cn">3</span>} /&gt;
+    &lt;/<span class="cf">Canvas</span>&gt;
+  )
+}</pre>
+</section>
+
+<!-- SEÇÃO: VERSÃO 2 — CHAT LLM -->
+<section id="chat-llm">
+<h2>Versão 2 — Chat LLM com Dados da Loja</h2>
+<div class="note note-green">Uma interface de chat onde o operador faz perguntas em linguagem natural sobre a loja e o Claude responde com dados reais do Supabase. Ex: "Quais produtos estão com margem negativa?" ou "Qual foi meu ROAS essa semana?"</div>
+
+<h3>Arquitetura da versão chat</h3>
+<div class="flow">
+  <div class="fbox fb-gray">Usuário pergunta</div><div class="arr">→</div>
+  <div class="fbox fb-blue">API Route /api/chat</div><div class="arr">→</div>
+  <div class="fbox fb-green">SELECT contexto Supabase</div><div class="arr">→</div>
+  <div class="fbox fb-purple">Claude (pergunta + dados)</div><div class="arr">→</div>
+  <div class="fbox fb-gray">Resposta com dados reais</div>
+</div>
+
+<pre><span class="cm">// app/api/chat/route.ts</span>
+<span class="ck">export async function</span> <span class="cf">POST</span>(req: NextRequest) {
+  <span class="ck">const</span> { pergunta, historico } = <span class="ck">await</span> req.<span class="cf">json</span>()
+
+  <span class="cm">// 1. Carregar contexto relevante do Supabase</span>
+  <span class="ck">const</span> [snapshots, alertas, reuniaoHoje, adsKpis] = <span class="ck">await</span> Promise.<span class="cf">all</span>([
+    supabaseAdmin.from(<span class="cs">"view_mlb_completo"</span>).select(<span class="cs">"*"</span>).limit(<span class="cn">50</span>),
+    supabaseAdmin.from(<span class="cs">"alertas"</span>).select(<span class="cs">"*"</span>).eq(<span class="cs">"resolvido"</span>, <span class="ck">false</span>),
+    supabaseAdmin.from(<span class="cs">"reunioes_gestor"</span>)
+      .select(<span class="cs">"*"</span>).order(<span class="cs">"criado_em"</span>, { ascending: <span class="ck">false</span> }).limit(<span class="cn">1</span>).single(),
+    supabaseAdmin.from(<span class="cs">"ads_campanhas"</span>).select(<span class="cs">"*, ads_metricas(*)"</span>),
+  ])
+
+  <span class="cm">// 2. Construir contexto para o LLM</span>
+  <span class="ck">const</span> contexto = {
+    data_hoje: <span class="ck">new</span> <span class="cf">Date</span>().<span class="cf">toLocaleDateString</span>(<span class="cs">"pt-BR"</span>),
+    resumo_anuncios: {
+      total: snapshots.data?.length,
+      verdes:    snapshots.data?.<span class="cf">filter</span>(s => s.semaforo === <span class="cs">"verde"</span>).length,
+      amarelos:  snapshots.data?.<span class="cf">filter</span>(s => s.semaforo === <span class="cs">"amarelo"</span>).length,
+      vermelhos: snapshots.data?.<span class="cf">filter</span>(s => s.semaforo === <span class="cs">"vermelho"</span>).length,
+      margem_media: (snapshots.data?.reduce((a,b) => a + b.margem_pct, <span class="cn">0</span>) / snapshots.data?.length).<span class="cf">toFixed</span>(<span class="cn">1</span>),
+    },
+    alertas_ativos: alertas.data?.<span class="cf">slice</span>(<span class="cn">0</span>, <span class="cn">10</span>),
+    analise_gestor_hoje: reuniaoHoje.data?.analise,
+    campanhas_ads: adsKpis.data,
+    produtos: snapshots.data?.<span class="cf">slice</span>(<span class="cn">0</span>, <span class="cn">20</span>),  <span class="cm">// top 20 para não estouro o contexto</span>
+  }
+
+  <span class="cm">// 3. Claude responde com streaming</span>
+  <span class="ck">const</span> stream = <span class="ck">await</span> anthropic.messages.<span class="cf">stream</span>({
+    model: <span class="cs">"claude-sonnet-4-5"</span>, max_tokens: <span class="cn">1000</span>,
+    system: <span class="cs">`Você é o assistente de inteligência de negócios de uma loja no Mercado Livre.
+Responda perguntas sobre a operação usando os dados fornecidos.
+Seja direto, cite números específicos quando relevante.
+Se não houver dados suficientes para responder, diga claramente.
+
+CONTEXTO ATUAL DA LOJA:
+${</span>JSON.<span class="cf">stringify</span>(contexto, <span class="ck">null</span>, <span class="cn">2</span>)<span class="cs">}`</span>,
+    messages: [
+      ...historico,
+      { role: <span class="cs">"user"</span>, content: pergunta }
+    ]
+  })
+
+  <span class="cm">// Retornar como stream de texto para a UI</span>
+  <span class="ck">return new</span> Response(stream.toReadableStream())
+}
+
+<span class="cm">// Exemplos de perguntas que o operador pode fazer:</span>
+<span class="cm">// "Quais produtos têm margem negativa hoje?"</span>
+<span class="cm">// "Qual foi o ROAS das campanhas essa semana?"</span>
+<span class="cm">// "Quais anúncios posso subir o preço sem perder vendas?"</span>
+<span class="cm">// "Tem algum produto com estoque crítico?"</span>
+<span class="cm">// "O que o gestor recomendou na reunião de hoje?"</span></pre>
+
+<h3>Componente de chat no frontend</h3>
+<pre><span class="cm">// components/chat-assistente.tsx</span>
+<span class="ck">export function</span> <span class="cf">ChatAssistente</span>() {
+  <span class="ck">const</span> [msgs, setMsgs] = <span class="cf">useState</span>([])
+  <span class="ck">const</span> [input, setInput] = <span class="cf">useState</span>(<span class="cs">""</span>)
+  <span class="ck">const</span> [loading, setLoading] = <span class="cf">useState</span>(<span class="ck">false</span>)
+
+  <span class="ck">async function</span> <span class="cf">enviar</span>() {
+    <span class="ck">if</span> (!input.trim()) <span class="ck">return</span>
+    <span class="ck">const</span> novaMsgs = [...msgs, { role: <span class="cs">"user"</span>, content: input }]
+    setMsgs(novaMsgs); setInput(<span class="cs">""</span>); setLoading(<span class="ck">true</span>)
+
+    <span class="ck">const</span> res = <span class="ck">await</span> fetch(<span class="cs">"/api/chat"</span>, {
+      method: <span class="cs">"POST"</span>,
+      body: JSON.<span class="cf">stringify</span>({ pergunta: input, historico: msgs })
+    })
+
+    <span class="cm">// Streaming response</span>
+    <span class="ck">const</span> reader = res.body!.<span class="cf">getReader</span>()
+    <span class="ck">let</span> resposta = <span class="cs">""</span>
+    <span class="ck">while</span> (<span class="ck">true</span>) {
+      <span class="ck">const</span> { done, value } = <span class="ck">await</span> reader.<span class="cf">read</span>()
+      <span class="ck">if</span> (done) <span class="ck">break</span>
+      resposta += <span class="ck">new</span> <span class="cf">TextDecoder</span>().<span class="cf">decode</span>(value)
+      setMsgs([...novaMsgs, { role: <span class="cs">"assistant"</span>, content: resposta }])
+    }
+    setLoading(<span class="ck">false</span>)
+  }
+
+  <span class="ck">return</span> (
+    &lt;div className="chat-container"&gt;
+      {msgs.<span class="cf">map</span>((m, i) => &lt;MessageBubble key={i} msg={m} /&gt;)}
+      &lt;input value={input} <span class="cf">onChange</span={e => setInput(e.target.value)}
+        onKeyDown={e => e.key === <span class="cs">"Enter"</span> && <span class="cf">enviar</span>()}
+        placeholder="Pergunte sobre sua loja..." /&gt;
+    &lt;/div&gt;
+  )
+}</pre>
+
+<div class="note note-amber"><strong>Atenção ao tamanho do contexto:</strong> Com 200 produtos o contexto pode ficar grande. Use estratégia de relevância: antes de enviar ao Claude, faça uma busca semântica simples no Supabase para pegar só os dados relevantes à pergunta. Ou use pgvector (extensão do Supabase) para busca vetorial.</div>
+</section>
+
+<div class="divider"></div>
+<div style="text-align:center;color:var(--text3);font-size:12px;padding:20px 0">
+  Especificação gerada com base em engenharia reversa do produto HyperClub / >_ We {Stack}<br>
+  Todos os dados e endpoints confirmados via inspeção de código e APIs abertas.
+</div>
+
+</main>
+</div>
+
+<script>
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('section[id]')
+const links = document.querySelectorAll('nav a')
+window.addEventListener('scroll', () => {
+  let current = ''
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id
+  })
+  links.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + current)
+  })
+})
+</script>
+</body>
+</html>
