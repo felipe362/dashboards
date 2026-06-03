@@ -615,6 +615,48 @@ function showMultiple(query, matches, base) {
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${items}</div>${extra}`;
 }
 
+// ── Download All ──────────────────────────────
+let _dlAll = []; // lista atual de {code, fname, base}
+
+async function downloadAll() {
+  if (!_dlAll.length) return;
+  const btn = document.getElementById('dlAllBtn');
+  const zip = new JSZip();
+  const total = _dlAll.length;
+  let done = 0;
+
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Preparando 0/${total}…`;
+
+  const BATCH = 10;
+  for (let i = 0; i < _dlAll.length; i += BATCH) {
+    const chunk = _dlAll.slice(i, i + BATCH);
+    await Promise.all(chunk.map(async ({code, fname, base}) => {
+      try {
+        const res = await fetch(base + '/' + code + '/' + fname);
+        if (res.ok) {
+          const blob = await res.blob();
+          zip.file(code + '_' + fname, blob);
+        }
+      } catch(e) {}
+      done++;
+      if (btn) btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Baixando ${done}/${total}…`;
+    }));
+  }
+
+  const code = _dlAll[0].code;
+  const zipBlob = await zip.generateAsync({type:'blob', compression:'STORE'});
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement('a');
+  a.href = url; a.download = code + '_imagens.zip';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Baixar Todas (${total})`;
+}
+
 // ── Lightbox ──────────────────────────────────
 const lb      = document.getElementById('lightbox');
 const lbImg   = document.getElementById('lbImg');
