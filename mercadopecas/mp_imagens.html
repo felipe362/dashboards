@@ -390,21 +390,6 @@
     </button>
   </div>
   
-  <!-- TABS -->
-  <div style="display:flex;justify-content:center;gap:0;margin-top:28px;">
-    <button id="tabItece" onclick="setTab('itece')"
-      style="padding:10px 32px;font-family:Impact,sans-serif;font-size:15px;letter-spacing:1px;
-             background:#fac800;color:#000391;border:none;border-radius:30px 0 0 30px;
-             cursor:pointer;font-weight:900;transition:all .2s;outline:none;">
-      ITECE
-    </button>
-    <button id="tabML" onclick="setTab('ml')"
-      style="padding:10px 32px;font-family:Impact,sans-serif;font-size:15px;letter-spacing:1px;
-             background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);border:none;border-radius:0 30px 30px 0;
-             cursor:pointer;font-weight:900;transition:all .2s;outline:none;">
-      MERCADO LIVRE
-    </button>
-  </div>
   <p class="search-hint">Pressione <strong>Enter</strong> para buscar &nbsp;·&nbsp; <span id="totalCount"></span></p>
 </div>
 
@@ -441,36 +426,14 @@ const BASE_ML = "https://pub-6362111499284cd397bd62d08338e9d2.r2.dev";
 
 
 
-// ── Tab state ─────────────────────────────────
-let activeTab = 'itece';
-function setTab(tab) {
-  activeTab = tab;
-  const btnI = document.getElementById('tabItece');
-  const btnM = document.getElementById('tabML');
-  if (tab === 'itece') {
-    btnI.style.background = '#fac800';
-    btnI.style.color = '#000391';
-    btnM.style.background = 'rgba(255,255,255,.15)';
-    btnM.style.color = 'rgba(255,255,255,.7)';
-  } else {
-    btnM.style.background = '#fac800';
-    btnM.style.color = '#000391';
-    btnI.style.background = 'rgba(255,255,255,.15)';
-    btnI.style.color = 'rgba(255,255,255,.7)';
-  }
-  input.placeholder = tab === 'itece' ? 'Ex: M7000061501' : 'Ex: 1008131001';
-  showEmpty();
-  input.focus();
-}
-
 // ── Init ──────────────────────────────────────
 const totalCodes = Object.keys(DATA).length;
 const totalImgs  = Object.values(DATA).reduce((a,v)=>a+v.length,0);
 const mlCodes = Object.keys(DATA_ML).length;
 const mlImgs  = Object.values(DATA_ML).reduce((a,v)=>a+v.length,0);
 document.getElementById('totalCount').textContent =
-  totalCodes.toLocaleString('pt-BR') + ' produtos itece · ' + totalImgs.toLocaleString('pt-BR') + ' imgs · ' +
-  mlCodes.toLocaleString('pt-BR') + ' produtos ML · ' + mlImgs.toLocaleString('pt-BR') + ' imgs';
+  (totalCodes + mlCodes).toLocaleString('pt-BR') + ' produtos · ' +
+  (totalImgs + mlImgs).toLocaleString('pt-BR') + ' imagens';
 
 // ── Search ────────────────────────────────────
 const input   = document.getElementById('searchInput');
@@ -503,34 +466,31 @@ function doSearch() {
   const raw = input.value.trim();
   if (!raw) { showEmpty(); return; }
 
-  // Normaliza: descarta prefixo M7 e sufixo 67
   const normalized = normalizeCode(raw);
-  const activeData = activeTab === 'itece' ? DATA : DATA_ML;
-  const activeBase = activeTab === 'itece' ? PUBLIC_BASE : BASE_ML;
 
-  // Try exact match first, then padded zeros
-  let code = normalized;
-  let imgs = activeData[code];
-
-  // Try zero-padded to 9 digits
-  if (!imgs) {
-    const padded = normalized.padStart(9, '0');
-    if (activeData[padded]) { code = padded; imgs = activeData[code]; }
-  }
-
-  // Try partial match if still not found
-  if (!imgs) {
-    const matches = Object.keys(activeData).filter(k => k.includes(normalized));
-    if (matches.length === 1) {
-      code = matches[0];
-      imgs = DATA[code];
-    } else if (matches.length > 1) {
-      showMultiple(raw, matches);
-      return;
+  function findIn(dataset, base) {
+    let code = normalized;
+    let imgs = dataset[code];
+    if (!imgs) {
+      const padded = normalized.padStart(9, '0');
+      if (dataset[padded]) { code = padded; imgs = dataset[code]; }
     }
+    if (!imgs) {
+      const matches = Object.keys(dataset).filter(k => k.includes(normalized));
+      if (matches.length === 1) { code = matches[0]; imgs = dataset[code]; }
+      else if (matches.length > 1) return { multi: matches, base };
+    }
+    return imgs ? { code, imgs, base } : null;
   }
 
-  if (!imgs || imgs.length === 0) {
+  const r1 = findIn(DATA,    PUBLIC_BASE);
+  const r2 = findIn(DATA_ML, BASE_ML);
+
+  // Multi-match handling (prefer itece first)
+  if (r1 && r1.multi) { showMultiple(normalized, r1.multi, PUBLIC_BASE); return; }
+  if (r2 && r2.multi) { showMultiple(normalized, r2.multi, BASE_ML);    return; }
+
+  if (!r1 && !r2) {
     results.innerHTML = `
       <div class="not-found">
         <h2>PRODUTO NÃO ENCONTRADO</h2>
@@ -542,7 +502,52 @@ function doSearch() {
     return;
   }
 
-  renderImages(code, imgs);
+  const total = (r1 ? r1.imgs.length : 0) + (r2 ? r2.imgs.length : 0);
+  const displayCode = (r1 || r2).code;
+  statusMsg.textContent = 'Produto: ' + displayCode;
+  statusBadge.innerHTML = '<span class="badge yellow">' + total + ' imagem' + (total>1?'s':'') + '</span>';
+
+  let html = `<div class="result-header">
+      <h2>Produto</h2>
+      <span class="code-chip">${displayCode}</span>
+      <span class="count">${total} imagem${total>1?'s':''}</span>
+    </div>`;
+
+  function buildCards(code, imgs, base, label) {
+    let out = '';
+    if (label) out += `<div style="grid-column:1/-1;padding:6px 0 2px;font-size:12px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;">${label}</div>`;
+    imgs.forEach((fname, idx) => {
+      const url = base + '/' + code + '/' + fname;
+      out += `<div class="card" data-idx="${idx}" data-code="${code}" data-base="${base}">
+        <img class="card-img" src="${url}" alt="${fname}" loading="lazy"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'><rect width=\'200\' height=\'200\' fill=\'%23f0f0f0\'/><text x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'%23bbb\' font-size=\'13\'>Sem imagem</text></svg>'"/>
+        <div class="card-footer">
+          <span class="card-name">${fname}</span>
+          <a class="card-dl" href="${url}" download="${code}_${fname}" target="_blank">⬇</a>
+        </div>
+      </div>`;
+    });
+    return out;
+  }
+
+  const showLabels = r1 && r2;
+  let cards = '';
+  if (r1) cards += buildCards(r1.code, r1.imgs, r1.base, showLabels ? 'Itece' : '');
+  if (r2) cards += buildCards(r2.code, r2.imgs, r2.base, showLabels ? 'Mercado Livre' : '');
+
+  results.innerHTML = html + `<div class="grid">${cards}</div>`;
+
+  // Collect all images for lightbox (merged)
+  const allImgs = [];
+  if (r1) r1.imgs.forEach(f => allImgs.push({ code: r1.code, fname: f, base: r1.base }));
+  if (r2) r2.imgs.forEach(f => allImgs.push({ code: r2.code, fname: f, base: r2.base }));
+
+  results.querySelectorAll('.card').forEach((card, i) => {
+    card.addEventListener('click', e => {
+      if (e.target.classList.contains('card-dl')) return;
+      openLightbox(allImgs, i);
+    });
+  });
 }
 
 function renderImages(code, imgs) {
@@ -578,7 +583,7 @@ function renderImages(code, imgs) {
   });
 }
 
-function showMultiple(query, matches) {
+function showMultiple(query, matches, base) {
   statusMsg.textContent = matches.length + ' produtos encontrados para "' + query + '"';
   statusBadge.innerHTML = '<span class="badge">' + matches.length + ' resultados</span>';
   const items = matches.slice(0, 50).map(code =>
@@ -601,30 +606,30 @@ const lbCap   = document.getElementById('lbCaption');
 const lbPrev  = document.getElementById('lbPrev');
 const lbNext  = document.getElementById('lbNext');
 
-let lbBase = PUBLIC_BASE;
-function openLightbox(code, imgs, idx, base) {
-  lbCode = code; lbImgs = imgs; lbIdx = idx; lbBase = base || PUBLIC_BASE;
+let lbAll = [], lbIdx = 0;
+function openLightbox(all, idx) {
+  lbAll = all; lbIdx = idx;
   updateLightbox();
   lb.classList.add('open');
 }
 function updateLightbox() {
-  const fname = lbImgs[lbIdx];
-  lbImg.src = lbBase + '/' + lbCode + '/' + fname;
-  lbCap.textContent = lbCode + ' · ' + fname + ' · ' + (lbIdx+1) + ' / ' + lbImgs.length;
+  const item = lbAll[lbIdx];
+  lbImg.src = item.base + '/' + item.code + '/' + item.fname;
+  lbCap.textContent = item.code + ' · ' + item.fname + ' · ' + (lbIdx+1) + ' / ' + lbAll.length;
   lbPrev.disabled = lbIdx === 0;
-  lbNext.disabled = lbIdx === lbImgs.length - 1;
+  lbNext.disabled = lbIdx === lbAll.length - 1;
 }
 document.getElementById('lbClose').onclick = () => lb.classList.remove('open');
 lbPrev.onclick = () => { if (lbIdx > 0) { lbIdx--; updateLightbox(); } };
-lbNext.onclick = () => { if (lbIdx < lbImgs.length-1) { lbIdx++; updateLightbox(); } };
+lbNext.onclick = () => { if (lbIdx < lbAll.length-1) { lbIdx++; updateLightbox(); } };
 lb.addEventListener('click', e => { if (e.target === lb) lb.classList.remove('open'); });
 
 // ── Keyboard ──────────────────────────────────
 input.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 document.addEventListener('keydown', e => {
   if (lb.classList.contains('open')) {
-    if (e.key === 'ArrowLeft' && lbIdx > 0)                { lbIdx--; updateLightbox(); }
-    if (e.key === 'ArrowRight' && lbIdx < lbImgs.length-1) { lbIdx++; updateLightbox(); }
+    if (e.key === 'ArrowLeft'  && lbIdx > 0)             { lbIdx--; updateLightbox(); }
+    if (e.key === 'ArrowRight' && lbIdx < lbAll.length-1) { lbIdx++; updateLightbox(); }
     if (e.key === 'Escape') lb.classList.remove('open');
   }
 });
