@@ -468,25 +468,33 @@ function doSearch() {
 
   const normalized = normalizeCode(raw);
 
-  function findIn(dataset, base) {
-    let code = normalized;
-    let imgs = dataset[code];
-    if (!imgs) {
-      const padded = normalized.padStart(9, '0');
-      if (dataset[padded]) { code = padded; imgs = dataset[code]; }
-    }
-    if (!imgs) {
-      const matches = Object.keys(dataset).filter(k => k.includes(normalized));
-      if (matches.length === 1) { code = matches[0]; imgs = dataset[code]; }
-      else if (matches.length > 1) return { multi: matches, base };
-    }
-    return imgs ? { code, imgs, base } : null;
+  // Fase 1: match exato ou zero-padded (sem partial)
+  function findExact(dataset, base) {
+    if (dataset[normalized]) return { code: normalized, imgs: dataset[normalized], base };
+    const padded = normalized.padStart(9, '0');
+    if (dataset[padded]) return { code: padded, imgs: dataset[padded], base };
+    return null;
   }
 
-  const r1 = findIn(DATA,    PUBLIC_BASE);
-  const r2 = findIn(DATA_ML, BASE_ML);
+  // Fase 2: partial match — só se não houve nenhum exato e query tem ≥ 4 chars
+  function findPartial(dataset, base) {
+    if (normalized.length < 4) return null;
+    const matches = Object.keys(dataset).filter(k => k.includes(normalized));
+    if (matches.length === 1) return { code: matches[0], imgs: dataset[matches[0]], base };
+    if (matches.length > 1)  return { multi: matches, base };
+    return null;
+  }
 
-  // Multi-match handling (prefer itece first)
+  let r1 = findExact(DATA,    PUBLIC_BASE);
+  let r2 = findExact(DATA_ML, BASE_ML);
+
+  // Se nenhum exato → tenta partial
+  if (!r1 && !r2) {
+    r1 = findPartial(DATA,    PUBLIC_BASE);
+    r2 = findPartial(DATA_ML, BASE_ML);
+  }
+
+  // Multi-match: se algum retornou lista, mostra seleção
   if (r1 && r1.multi) { showMultiple(normalized, r1.multi, PUBLIC_BASE); return; }
   if (r2 && r2.multi) { showMultiple(normalized, r2.multi, BASE_ML);    return; }
 
