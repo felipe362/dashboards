@@ -558,6 +558,7 @@ function doSearch() {
   const allImgs = [];
   if (r1) r1.imgs.forEach(f => allImgs.push({ code: r1.code, fname: f, base: r1.base }));
   if (r2) r2.imgs.forEach(f => allImgs.push({ code: r2.code, fname: f, base: r2.base }));
+  _dlAll = allImgs; // expõe para downloadAll()
 
   results.querySelectorAll('.card').forEach((card, i) => {
     card.addEventListener('click', e => {
