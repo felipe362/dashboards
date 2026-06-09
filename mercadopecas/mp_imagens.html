@@ -31,58 +31,69 @@
     padding: 0 40px;
     display: flex;
     align-items: center;
-    gap: 20px;
-    height: 72px;
-    box-shadow: 0 3px 12px rgba(0,0,0,.35);
+    gap: 24px;
+    height: 80px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   .logo-wrap {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0;
     text-decoration: none;
     flex-shrink: 0;
   }
-  .logo-icon svg { width: 44px; height: 44px; }
-  .logo-text {
-    font-family: Arial, sans-serif;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    line-height: 1;
+  .logo-img {
+    height: 56px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+    transition: transform .2s;
   }
-  .logo-text span.m { color: var(--yellow); }
-  .logo-text span.p { color: var(--white); }
+  .logo-wrap:hover .logo-img { transform: scale(1.04); }
   .header-subtitle {
-    margin-left: 8px;
-    color: rgba(255,255,255,.55);
-    font-size: 13px;
-    letter-spacing: 1.5px;
+    margin-left: 4px;
+    color: rgba(255,255,255,.50);
+    font-size: 12px;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    font-weight: 400;
-    border-left: 2px solid rgba(255,255,255,.2);
-    padding-left: 16px;
+    font-weight: 600;
+    border-left: 2px solid rgba(250,200,0,.35);
+    padding-left: 20px;
   }
 
   /* ── HERO / SEARCH ──────────────────────────── */
   .hero {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
-    padding: 52px 40px 44px;
+    background: linear-gradient(160deg, #0a0ea8 0%, var(--blue-dk) 55%, #000220 100%);
+    padding: 64px 40px 56px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(250,200,0,.07) 0%, transparent 70%);
+    pointer-events: none;
   }
   .hero h1 {
     font-family: Impact, Arial Black, sans-serif;
-    font-size: clamp(28px, 4vw, 46px);
+    font-size: clamp(30px, 5vw, 52px);
     color: var(--white);
-    letter-spacing: 1px;
-    margin-bottom: 6px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
     text-transform: uppercase;
+    text-shadow: 0 2px 16px rgba(0,0,0,.4);
   }
   .hero h1 span { color: var(--yellow); }
   .hero p {
-    color: rgba(255,255,255,.65);
+    color: rgba(255,255,255,.60);
     font-size: 14px;
-    margin-bottom: 32px;
-    letter-spacing: .3px;
+    margin-bottom: 36px;
+    letter-spacing: .5px;
   }
 
   .search-box {
@@ -170,9 +181,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
     border-bottom: 3px solid var(--yellow);
+    background: linear-gradient(90deg, rgba(250,200,0,.05) 0%, transparent 80%);
+    padding-top: 10px;
+    padding-left: 12px;
+    border-radius: 8px 8px 0 0;
   }
   .result-header h2 {
     font-family: Impact, sans-serif;
@@ -205,14 +220,14 @@
     background: var(--white);
     border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    border: 1px solid var(--gray);
-    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    border: 1.5px solid var(--gray);
+    transition: transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, border-color .2s;
     cursor: pointer;
   }
   .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,3,145,.15);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0,3,145,.18);
     border-color: var(--yellow);
   }
   .card-img {
