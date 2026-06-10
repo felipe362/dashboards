@@ -213,10 +213,41 @@
   footer b{font-family:'Fredoka'; color:var(--ink)}
 
   @media (max-width:640px){
+    .wrap{padding:0 16px}
     .qb-nav{display:none}
-    .hero{padding:46px 18px 100px}
-    section{padding:40px 0}
+    .qb-logo{font-size:.95rem}
+    .questbar .wrap{padding:8px 16px; gap:10px}
+    .hero{padding:46px 16px 96px}
+    section{padding:38px 0}
+    .m-top{padding:20px 18px}
     .m-top::after{font-size:5rem}
+    .m-top h3{font-size:1.45rem}
+    .m-body{padding:20px 18px}
+    .sec-title{font-size:1.7rem}
+    .medal-callout{flex-wrap:wrap}
+    .hstat{min-width:96px; padding:10px 14px}
+
+    /* Tabela de rotina vira cartões empilhados (sem rolagem lateral) */
+    .routine-table thead{display:none}
+    .routine-table,.routine-table tbody,.routine-table tr,.routine-table td{display:block; width:100%}
+    .routine-table{border-spacing:0}
+    .routine-table tr{background:#fff; border:1px solid var(--line); border-radius:14px; margin-bottom:12px;
+      padding:4px 2px; box-shadow:var(--shadow-s)}
+    .routine-table td{border:0 !important; border-radius:0 !important; background:transparent !important; padding:8px 14px !important}
+    .routine-table td:first-child{font-size:1.05rem; color:var(--c-empre);
+      border-bottom:1px dashed var(--line) !important; padding-bottom:10px !important; margin-bottom:2px}
+    .routine-table td:nth-child(2)::before{content:'🎯 Treino: '; font-weight:800; color:var(--ink-soft)}
+    .routine-table td:nth-child(3)::before{content:'🏠 Em casa: '; font-weight:800; color:var(--ink-soft)}
+
+    /* Botões fixos compactos */
+    .printbtn{padding:11px 16px; font-size:.88rem; right:14px; bottom:14px}
+    .resetbtn{right:14px; bottom:62px; font-size:.74rem}
+  }
+  @media (max-width:380px){
+    .hero h1{font-size:2rem}
+    .qb-logo .shield{font-size:1.1rem}
+    .printbtn{font-size:.8rem; padding:10px 13px}
+    .hstat{min-width:84px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important; scroll-behavior:auto!important}}
 
@@ -310,8 +341,8 @@
     font-size:5rem; color:var(--cc); opacity:.16; line-height:1}
   .creed .mantra{font-family:'Fredoka'; font-weight:500; font-size:1.12rem; color:#fff; position:relative; z-index:1}
   .creed .mantra b{color:var(--cc); filter:brightness(1.35)}
-  .creed .selo{display:inline-flex; align-items:center; gap:8px; margin-top:12px; background:var(--cc);
-    color:#fff; padding:5px 14px 5px 12px; border-radius:99px; font-weight:800; font-size:.92rem;
+  .creed .selo{display:inline-flex; align-items:center; flex-wrap:wrap; gap:4px 8px; max-width:100%; margin-top:12px; background:var(--cc);
+    color:#fff; padding:6px 14px 6px 12px; border-radius:18px; font-weight:800; font-size:.92rem; line-height:1.25;
     box-shadow:0 4px 12px rgba(0,0,0,.25)}
   .creed .selo small{font-weight:700; opacity:.85; font-size:.72rem; text-transform:uppercase; letter-spacing:.5px}
   .creed .creed-link{display:block; margin-top:10px; font-size:.82rem; color:#cfc9f0; text-decoration:none; font-weight:700}
