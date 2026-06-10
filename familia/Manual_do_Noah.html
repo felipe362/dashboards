@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia dos Heróis — Manual do Noah Sain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parch:#FBF6EC; --parch2:#F4EAD6; --ink:#2A2548; --ink-soft:#5B547E;
+    --night1:#1E1B4B; --night2:#3F2C8A; --night3:#5B4BC4;
+    --gold:#F4B740; --gold-d:#D6900A; --gold-l:#FFE08A;
+    --c-coragem:#E94B5A; --c-socorro:#23A06A; --c-empre:#F0962A; --c-emo:#8B5CF6; --c-org:#11B0A0;
+    --c-forca:#FB7138; --c-leitura:#3B82F6; --c-musica:#EC4899; --c-disc:#6366F1; --c-resp:#0EA5E9;
+    --line:#E6D8BC; --shadow:0 10px 30px rgba(42,37,72,.13); --shadow-s:0 4px 14px rgba(42,37,72,.12);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; font-family:'Nunito',system-ui,Segoe UI,Roboto,sans-serif;
+    color:var(--ink); background:var(--parch);
+    background-image:radial-gradient(circle at 12% 8%,rgba(244,183,64,.10),transparent 32%),
+                     radial-gradient(circle at 88% 22%,rgba(139,92,246,.08),transparent 34%);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; line-height:1.12; margin:0}
+  p{margin:0 0 .7em}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 20px}
+
+  /* QUEST BAR */
+  .questbar{position:sticky; top:0; z-index:50; background:rgba(30,27,75,.94);
+    backdrop-filter:blur(8px); color:#fff; border-bottom:3px solid var(--gold);}
+  .questbar .wrap{display:flex; align-items:center; gap:14px; padding:10px 20px; flex-wrap:wrap}
+  .qb-logo{font-family:'Fredoka'; font-weight:700; font-size:1.05rem; display:flex; align-items:center; gap:8px}
+  .qb-logo .shield{font-size:1.3rem}
+  .qb-prog{flex:1; min-width:160px; display:flex; align-items:center; gap:10px}
+  .qb-track{flex:1; height:13px; background:rgba(255,255,255,.18); border-radius:99px; overflow:hidden;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
+  .qb-fill{height:100%; width:0%; border-radius:99px;
+    background:linear-gradient(90deg,var(--gold-l),var(--gold)); transition:width .6s cubic-bezier(.2,.9,.3,1)}
+  .qb-pct{font-family:'Fredoka'; font-weight:600; font-size:.95rem; min-width:42px; text-align:right; color:var(--gold-l)}
+  .qb-nav{display:flex; gap:4px; flex-wrap:wrap}
+  .qb-nav a{color:#d9d4f5; text-decoration:none; font-size:.82rem; font-weight:700;
+    padding:4px 9px; border-radius:99px; transition:.2s}
+  .qb-nav a:hover{background:rgba(255,255,255,.14); color:#fff}
+
+  /* HERO */
+  .hero{position:relative; overflow:hidden; color:#fff; text-align:center;
+    background:radial-gradient(120% 130% at 50% -10%,var(--night3),var(--night2) 45%,var(--night1) 100%);
+    padding:64px 20px 120px;}
+  .stars{position:absolute; inset:0; pointer-events:none}
+  .stars i{position:absolute; background:#fff; border-radius:50%; opacity:.8; animation:tw 3s infinite ease-in-out}
+  @keyframes tw{0%,100%{opacity:.25; transform:scale(.8)}50%{opacity:.95; transform:scale(1.15)}}
+  .hero-badge{display:inline-block; font-family:'Fredoka'; font-weight:600; letter-spacing:.5px;
+    background:rgba(244,183,64,.16); color:var(--gold-l); border:1.5px solid rgba(244,183,64,.5);
+    padding:6px 16px; border-radius:99px; font-size:.85rem; margin-bottom:22px}
+  .hero h1{font-size:clamp(2.4rem,7vw,4.3rem); font-weight:700; text-shadow:0 4px 0 rgba(0,0,0,.18)}
+  .hero h1 .name{color:var(--gold)}
+  .hero .sub{font-size:clamp(1.05rem,2.6vw,1.35rem); max-width:640px; margin:18px auto 0; color:#e4e0fb}
+  .hero .crest-big{font-size:4.4rem; margin-bottom:6px; filter:drop-shadow(0 8px 12px rgba(0,0,0,.35))}
+  .hero-stats{display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:30px}
+  .hstat{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:16px; padding:12px 20px; min-width:120px}
+  .hstat b{font-family:'Fredoka'; font-size:1.7rem; display:block; color:var(--gold-l)}
+  .hstat span{font-size:.8rem; color:#cfc9f0; text-transform:uppercase; letter-spacing:.5px}
+  .hero-wave{position:absolute; left:0; right:0; bottom:-1px; line-height:0}
+  .hero-wave svg{width:100%; height:70px; display:block}
+
+  /* SECTION */
+  section{padding:54px 0}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Fredoka'; font-weight:600;
+    color:var(--ink-soft); text-transform:uppercase; letter-spacing:1.5px; font-size:.78rem; margin-bottom:8px}
+  .eyebrow::before{content:''; width:26px; height:3px; background:var(--gold); border-radius:2px}
+  .sec-title{font-size:clamp(1.8rem,4.5vw,2.6rem); margin-bottom:8px}
+  .sec-intro{color:var(--ink-soft); max-width:680px; font-size:1.05rem}
+
+  /* OATH + RULES card band */
+  .band{background:linear-gradient(180deg,#fff,var(--parch2)); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+  .oath-card{background:var(--night1); color:#fff; border-radius:var(--radius); padding:34px 30px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden; text-align:center}
+  .oath-card::before{content:'⚔️'; position:absolute; font-size:9rem; opacity:.06; right:-10px; top:-20px}
+  .oath-card h3{color:var(--gold); font-size:1.5rem; margin-bottom:14px}
+  .oath-line{font-family:'Fredoka'; font-size:1.15rem; margin:8px 0; color:#efeafe}
+  .oath-line span{color:var(--gold-l)}
+  .rules-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:26px}
+  .rule{background:#fff; border:1px solid var(--line); border-left:5px solid var(--gold);
+    border-radius:16px; padding:16px 18px; box-shadow:var(--shadow-s)}
+  .rule b{font-family:'Fredoka'; display:block; margin-bottom:3px; font-size:1.05rem}
+  .rule small{color:var(--ink-soft); font-size:.92rem}
+
+  /* MISSION */
+  .mission{--c:var(--gold); background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+    border:1px solid var(--line); overflow:hidden; margin-bottom:34px; position:relative}
+  .m-top{padding:24px 26px; color:#fff; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 70%,#000 18%))}
+  .m-top::after{content:attr(data-emoji); position:absolute; right:-6px; top:50%; transform:translateY(-50%);
+    font-size:7rem; opacity:.18}
+  .m-tag{font-family:'Fredoka'; font-weight:600; font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase;
+    background:rgba(255,255,255,.22); padding:4px 12px; border-radius:99px; display:inline-block; margin-bottom:8px}
+  .m-top h3{font-size:1.7rem; display:flex; align-items:center; gap:12px}
+  .m-top h3 .emo{font-size:1.9rem}
+  .m-top .m-sub{margin-top:6px; color:rgba(255,255,255,.92); max-width:560px; font-size:1rem}
+  .m-body{padding:24px 26px}
+  .m-h{font-family:'Fredoka'; font-weight:600; font-size:1.12rem; color:var(--c); display:flex; align-items:center; gap:8px; margin:22px 0 10px}
+  .m-h:first-child{margin-top:0}
+  .story{background:var(--parch); border:1px dashed var(--c); border-radius:14px; padding:16px 18px; font-size:1.02rem}
+  .story b{color:var(--c)}
+  .treinos{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px}
+  .treino{background:var(--parch2); border-radius:13px; padding:13px 15px; font-size:.95rem; border:1px solid var(--line)}
+  .treino b{font-family:'Fredoka'; display:block; color:var(--ink)}
+
+  /* DESAFIOS / XP */
+  .xpwrap{margin:8px 0 16px; display:flex; align-items:center; gap:12px}
+  .xptrack{flex:1; height:16px; background:var(--parch2); border-radius:99px; overflow:hidden; border:1px solid var(--line)}
+  .xpfill{height:100%; width:0%; border-radius:99px; transition:width .5s cubic-bezier(.2,.9,.3,1);
+    background:linear-gradient(90deg,color-mix(in srgb,var(--c) 60%,#fff),var(--c))}
+  .xplabel{font-family:'Fredoka'; font-weight:600; color:var(--c); font-size:.92rem; min-width:96px}
+  .desafios{list-style:none; padding:0; margin:0; display:grid; gap:9px}
+  .desafio{display:flex; align-items:flex-start; gap:12px; background:var(--parch); border:1px solid var(--line);
+    border-radius:13px; padding:12px 14px; cursor:pointer; transition:.15s; user-select:none}
+  .desafio:hover{border-color:var(--c); transform:translateX(2px)}
+  .desafio input{position:absolute; opacity:0; width:0; height:0}
+  .box{flex:none; width:26px; height:26px; border-radius:8px; border:2.5px solid var(--c);
+    display:grid; place-items:center; font-size:1rem; color:#fff; background:#fff; transition:.18s; margin-top:1px}
+  .desafio input:checked + .box{background:var(--c); transform:scale(1.05)}
+  .desafio input:checked + .box::after{content:'✓'; font-weight:900}
+  .d-text b{font-family:'Fredoka'; font-weight:600}
+  .desafio input:checked ~ .d-text{opacity:.6; text-decoration:line-through; text-decoration-color:var(--c)}
+
+  .levels{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  .level{flex:1; min-width:120px; text-align:center; background:var(--parch2); border:1px solid var(--line);
+    border-radius:12px; padding:10px 8px; opacity:.5; transition:.3s}
+  .level.on{opacity:1; border-color:var(--c); background:#fff; box-shadow:var(--shadow-s)}
+  .level .lv-ic{font-size:1.5rem}
+  .level b{font-family:'Fredoka'; display:block; font-size:.95rem}
+  .level small{color:var(--ink-soft); font-size:.78rem}
+
+  .medal-callout{display:flex; align-items:center; gap:16px; margin-top:20px; padding:16px 18px;
+    border-radius:16px; background:linear-gradient(135deg,var(--gold-l),#fff); border:1px solid var(--gold)}
+  .medal-callout .crest{flex:none}
+  .medal-callout .mc-txt b{font-family:'Fredoka'; font-size:1.1rem; display:block; color:var(--gold-d)}
+  .medal-callout .mc-txt small{color:var(--ink-soft)}
+
+  /* CREST (medal) */
+  .crest{width:62px; height:62px; border-radius:50%; display:grid; place-items:center; position:relative;
+    background:radial-gradient(circle at 35% 30%,var(--gold-l),var(--gold) 55%,var(--gold-d));
+    box-shadow:0 4px 10px rgba(214,144,10,.4), inset 0 2px 4px rgba(255,255,255,.6);
+    border:3px solid #fff; font-size:1.7rem}
+  .crest::before{content:''; position:absolute; bottom:-12px; width:20px; height:18px; background:var(--c,#E94B5A);
+    clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%); opacity:.9}
+  .crest.locked{filter:grayscale(1) brightness(.92); opacity:.55; background:radial-gradient(circle at 35% 30%,#ddd,#aaa)}
+  .crest.locked::after{content:'🔒'; position:absolute; font-size:1.1rem}
+  .crest.locked .crest-ic{opacity:0}
+
+  /* PARENTS */
+  .parents{margin-top:20px; border-radius:16px; overflow:hidden; border:1.5px dashed var(--ink-soft)}
+  .parents summary{cursor:pointer; list-style:none; padding:14px 18px; background:#F3EFFA;
+    font-family:'Fredoka'; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+  .parents summary::-webkit-details-marker{display:none}
+  .parents summary .chev{margin-left:auto; transition:.25s}
+  .parents[open] summary .chev{transform:rotate(180deg)}
+  .parents .p-body{padding:18px 20px; background:#FAF8FF; font-size:.96rem}
+  .parents h5{font-family:'Fredoka'; font-weight:600; font-size:1rem; color:var(--c); margin:14px 0 4px; display:flex; gap:7px}
+  .parents h5:first-child{margin-top:0}
+  .parents ul{margin:0 0 4px; padding-left:20px}
+  .parents li{margin-bottom:4px}
+  .pill{display:inline-block; background:var(--parch2); border:1px solid var(--line); border-radius:8px;
+    padding:1px 8px; font-size:.85rem; font-weight:700; color:var(--ink-soft)}
+
+  /* ROUTINE */
+  .routine-table{width:100%; border-collapse:separate; border-spacing:0 8px}
+  .routine-table th{font-family:'Fredoka'; text-align:left; padding:6px 12px; color:var(--ink-soft); font-size:.82rem; text-transform:uppercase; letter-spacing:1px}
+  .routine-table td{background:#fff; padding:13px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.95rem}
+  .routine-table td:first-child{border-left:1px solid var(--line); border-radius:12px 0 0 12px; font-family:'Fredoka'; font-weight:600}
+  .routine-table td:last-child{border-right:1px solid var(--line); border-radius:0 12px 12px 0}
+  .day-dot{font-weight:800; color:var(--c-empre)}
+
+  /* TROPHY ROOM */
+  .trophyroom{background:radial-gradient(120% 120% at 50% 0%,var(--night2),var(--night1)); color:#fff; border-radius:28px; padding:40px 26px; text-align:center}
+  .trophyroom h2{font-size:2.2rem; color:var(--gold)}
+  .trophyroom .sec-intro{color:#d6d1f3; margin:8px auto 26px}
+  .tr-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:18px; max-width:760px; margin:0 auto}
+  .tr-item{display:flex; flex-direction:column; align-items:center; gap:8px}
+  .tr-item .crest{width:74px; height:74px; font-size:2rem}
+  .tr-item span{font-family:'Fredoka'; font-weight:500; font-size:.85rem; color:#e8e5fb}
+  .grand{margin-top:34px; padding:26px; border-radius:20px; background:rgba(244,183,64,.12); border:2px solid var(--gold)}
+  .grand .crest{width:90px; height:90px; font-size:2.6rem; margin:0 auto 12px}
+  .grand h3{color:var(--gold-l); font-size:1.5rem}
+  .grand p{color:#e8e5fb; max-width:520px; margin:8px auto 0}
+
+  /* PRINT BTN */
+  .printbtn{position:fixed; right:18px; bottom:18px; z-index:60; background:var(--night1); color:#fff;
+    border:2px solid var(--gold); border-radius:99px; padding:12px 20px; font-family:'Fredoka'; font-weight:600;
+    cursor:pointer; box-shadow:var(--shadow); display:flex; align-items:center; gap:8px; font-size:.95rem}
+  .printbtn:hover{background:var(--night2)}
+  .resetbtn{position:fixed; right:18px; bottom:70px; z-index:60; background:#fff; color:var(--ink-soft);
+    border:1.5px solid var(--line); border-radius:99px; padding:7px 14px; font-size:.8rem; cursor:pointer; font-weight:700}
+  .resetbtn:hover{color:var(--c-coragem); border-color:var(--c-coragem)}
+
+  /* TOAST */
+  .toast{position:fixed; left:50%; top:24px; transform:translateX(-50%) translateY(-140%); z-index:80;
+    background:var(--night1); color:#fff; border:2px solid var(--gold); border-radius:18px; padding:14px 22px;
+    box-shadow:var(--shadow); display:flex; align-items:center; gap:14px; transition:transform .5s cubic-bezier(.2,1.3,.4,1); max-width:90vw}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast .crest{width:52px; height:52px; font-size:1.5rem}
+  .toast b{font-family:'Fredoka'; color:var(--gold-l); display:block}
+  .toast small{color:#d6d1f3}
+
+  footer{text-align:center; padding:34px 20px 50px; color:var(--ink-soft); font-size:.9rem}
+  footer b{font-family:'Fredoka'; color:var(--ink)}
+
+  @media (max-width:640px){
+    .qb-nav{display:none}
+    .hero{padding:46px 18px 100px}
+    section{padding:40px 0}
+    .m-top::after{font-size:5rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important; scroll-behavior:auto!important}}
+
+  @media print{
+    .questbar,.printbtn,.resetbtn,.toast{display:none!important}
+    body{background:#fff}
+    .hero{background:var(--night1)!important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .mission,.oath-card,.trophyroom,.m-top,.crest,.rule{box-shadow:none; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .parents{display:block} .parents .p-body{display:block!important}
+    .mission{page-break-inside:avoid}
+    section{padding:24px 0}
+  }
+</style>
+</head>
+<body>
+
+<!-- QUEST BAR -->
+<div class="questbar">
+  <div class="wrap">
+    <div class="qb-logo"><span class="shield">🛡️</span> Academia dos Heróis</div>
+    <div class="qb-prog">
+      <div class="qb-track"><div class="qb-fill" id="qbFill"></div></div>
+      <div class="qb-pct" id="qbPct">0%</div>
+    </div>
+    <nav class="qb-nav">
+      <a href="#codigo">Código</a>
+      <a href="#missoes">Missões</a>
+      <a href="#rotina">Rotina</a>
+      <a href="#trofeus">Troféus</a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="stars" id="stars"></div>
+  <div class="crest-big">🦁</div>
+  <div class="hero-badge">⭐ Academia dos Heróis Fortes, Inteligentes e Corajosos ⭐</div>
+  <h1>Olá, <span class="name">Noah!</span><br>Sua aventura começa agora.</h1>
+  <p class="sub">Este é o seu Manual de Herói. Aqui você vai treinar o corpo, a mente e o coração para virar um menino forte, valente e do bem. Cada missão tem desafios, e cada desafio vencido te dá uma <b>medalha de verdade</b>. Pronto, herói?</p>
+  <div class="hero-stats">
+    <div class="hstat"><b>10</b><span>Missões</span></div>
+    <div class="hstat"><b id="heroMedals">0</b><span>Medalhas</span></div>
+    <div class="hstat"><b id="heroPct">0%</b><span>Aventura</span></div>
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="#FBF6EC" d="M0,40 C240,75 480,5 720,30 C960,55 1200,15 1440,38 L1440,70 L0,70 Z"></path></svg>
+  </div>
+</header>
+
+<!-- OATH + RULES -->
+<section class="band">
+  <div class="wrap">
+    <div class="oath-card">
+      <h3>🤚 O Juramento do Pequeno Herói</h3>
+      <p class="oath-line">Eu, <span>Noah</span>, prometo treinar todo dia um pouquinho.</p>
+      <p class="oath-line">Prometo ser <span>corajoso</span>, mas nunca usar minha força pra machucar.</p>
+      <p class="oath-line">Prometo <span>respeitar</span> e ajudar minha família.</p>
+      <p class="oath-line">Prometo que, quando eu errar, eu <span>tento de novo</span>.</p>
+      <p class="oath-line">Porque todo herói cai... e todo herói <span>levanta!</span> 🦁</p>
+    </div>
+
+    <div style="margin-top:40px">
+      <span class="eyebrow">Antes de começar</span>
+      <h2 class="sec-title">As 5 Regras de Ouro da Academia</h2>
+      <p class="sec-intro">Todo herói segue um código. Estas são as regras que valem em todas as missões.</p>
+      <div class="rules-grid">
+        <div class="rule"><b>1. Dever antes da diversão</b><small>Primeiro as tarefas, depois brincar. Sempre nessa ordem.</small></div>
+        <div class="rule"><b>2. Usou, guardou</b><small>Brincou com algo? Guarda. Sujou? Ajuda a limpar. Sem "depois eu faço".</small></div>
+        <div class="rule"><b>3. Eu faço parte</b><small>Mesmo que não tenha sido eu, eu ajudo. A família é um time.</small></div>
+        <div class="rule"><b>4. Sentir pode, descontrolar não</b><small>Posso ficar bravo ou triste. Mas não grito, não bato, não quebro.</small></div>
+        <div class="rule"><b>5. Caiu? Levanta!</b><small>Errar faz parte de aprender. Herói tenta de novo.</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓDIGO DO HERÓI (MANTRAS) -->
+<style>
+  .codigo{background:radial-gradient(120% 130% at 50% -10%,#2a2560,var(--night1) 70%); color:#fff}
+  .codigo .eyebrow{color:var(--gold-l)}
+  .codigo .eyebrow::before{background:var(--gold)}
+  .codigo .sec-title{color:#fff}
+  .codigo .sec-intro{color:#d6d1f3}
+  .codigo .how{display:inline-flex; gap:8px; align-items:center; margin-top:14px; background:rgba(244,183,64,.12);
+    border:1px solid rgba(244,183,64,.45); color:var(--gold-l); padding:8px 16px; border-radius:99px; font-weight:700; font-size:.9rem}
+  .creed-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:26px}
+  .creed{--cc:var(--gold); position:relative; overflow:hidden; background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.12); border-left:5px solid var(--cc); border-radius:16px; padding:18px 20px 16px}
+  .creed::after{content:attr(data-n); position:absolute; right:6px; top:-14px; font-family:'Fredoka'; font-weight:700;
+    font-size:5rem; color:var(--cc); opacity:.16; line-height:1}
+  .creed .mantra{font-family:'Fredoka'; font-weight:500; font-size:1.12rem; color:#fff; position:relative; z-index:1}
+  .creed .mantra b{color:var(--cc); filter:brightness(1.35)}
+  .creed .selo{display:inline-flex; align-items:center; gap:8px; margin-top:12px; background:var(--cc);
+    color:#fff; padding:5px 14px 5px 12px; border-radius:99px; font-weight:800; font-size:.92rem;
+    box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  .creed .selo small{font-weight:700; opacity:.85; font-size:.72rem; text-transform:uppercase; letter-spacing:.5px}
+  .creed .creed-link{display:block; margin-top:10px; font-size:.82rem; color:#cfc9f0; text-decoration:none; font-weight:700}
+  .creed .creed-link:hover{color:var(--gold-l)}
+  .creed-note{margin-top:22px; background:rgba(255,255,255,.06); border:1px dashed rgba(255,255,255,.28);
+    border-radius:14px; padding:14px 18px; color:#d6d1f3; font-size:.92rem}
+  .creed-note b{color:var(--gold-l)}
+  @media print{.codigo{background:var(--night1)!important} .creed{break-inside:avoid}}
+</style>
+<section id="codigo" class="codigo">
+  <div class="wrap">
+    <span class="eyebrow">O código secreto do herói</span>
+    <h2 class="sec-title">Os 10 Mantras do Noah 📜</h2>
+    <p class="sec-intro">Todo herói tem um código que guarda no coração. Estes são os seus, Noah. Cada um te dá um superpoder — e o nome dele.</p>
+    <div class="how">🗣️ Leia em voz alta: um por dia, ou todos de manhã, como um juramento de herói.</div>
+
+    <div class="creed-grid">
+      <div class="creed" data-n="1" style="--cc:var(--c-coragem)">
+        <div class="mantra">Se eu quero algo, eu <b>falo com palavras</b> — chorar sozinho não resolve.</div>
+        <span class="selo"><small>isso se chama</small> Expressar ✨</span>
+        <a class="creed-link" href="#m4">→ treina na Missão do Mestre das Emoções</a>
+      </div>
+      <div class="creed" data-n="2" style="--cc:var(--c-socorro)">
+        <div class="mantra">As minhas coisas, <b>eu mesmo faço</b>. Não dependo dos outros.</div>
+        <span class="selo"><small>isso se chama</small> Independência 🦅</span>
+        <a class="creed-link" href="#m9">→ treina na Missão da Disciplina</a>
+      </div>
+      <div class="creed" data-n="3" style="--cc:var(--c-empre)">
+        <div class="mantra">Depois de brincar, eu <b>coloco tudo de volta</b> no lugar.</div>
+        <span class="selo"><small>isso se chama</small> Ordem 📦</span>
+        <a class="creed-link" href="#m5">→ treina na Missão da Organização</a>
+      </div>
+      <div class="creed" data-n="4" style="--cc:var(--c-emo)">
+        <div class="mantra">Eu <b>nunca falo palavrão</b>.</div>
+        <span class="selo"><small>isso se chama</small> Boa educação 🎩</span>
+        <a class="creed-link" href="#m10">→ treina na Missão do Respeito</a>
+      </div>
+      <div class="creed" data-n="5" style="--cc:var(--c-org)">
+        <div class="mantra">Quando eu erro, eu <b>peço desculpas de verdade</b>.</div>
+        <span class="selo"><small>isso se chama</small> Responsabilidade 🤝</span>
+        <a class="creed-link" href="#m10">→ treina na Missão do Respeito</a>
+      </div>
+      <div class="creed" data-n="6" style="--cc:var(--c-forca)">
+        <div class="mantra">Quando encontro alguém conhecido, eu <b>cumprimento</b>.</div>
+        <span class="selo"><small>isso se chama</small> Cortesia 👋</span>
+        <a class="creed-link" href="#m10">→ treina na Missão do Respeito</a>
+      </div>
+      <div class="creed" data-n="7" style="--cc:var(--c-leitura)">
+        <div class="mantra">Eu <b>ajudo o papai e a mamãe</b> sem ninguém pedir.</div>
+        <span class="selo"><small>isso se chama</small> Compartilhar responsabilidade 👨‍👩‍👦</span>
+        <a class="creed-link" href="#m5">→ treina na Missão da Organização</a>
+      </div>
+      <div class="creed" data-n="8" style="--cc:var(--c-musica)">
+        <div class="mantra">Eu <b>sempre cumpro o que prometo</b>.</div>
+        <span class="selo"><small>isso se chama</small> Honestidade 💎</span>
+        <a class="creed-link" href="#m9">→ treina na Missão da Disciplina</a>
+      </div>
+      <div class="creed" data-n="9" style="--cc:var(--c-disc)">
+        <div class="mantra">Eu <b>não perco a paciência</b> — respiro e me acalmo.</div>
+        <span class="selo"><small>isso se chama</small> Gestão emocional 🧘</span>
+        <a class="creed-link" href="#m4">→ treina na Missão do Mestre das Emoções</a>
+      </div>
+      <div class="creed" data-n="10" style="--cc:var(--c-resp)">
+        <div class="mantra">Eu <b>estudo todo dia</b>, sem desistir.</div>
+        <span class="selo"><small>isso se chama</small> Persistência 🔥</span>
+        <a class="creed-link" href="#m9">→ treina na Missão da Disciplina</a>
+      </div>
+    </div>
+
+    <div class="creed-note">💡 <b>Nota para os pais (mantra 1):</b> o objetivo aqui é ensinar o Noah a <b>usar palavras em vez de só chorar para se comunicar</b> — não que sentir ou chorar seja errado. Sentimento é sempre permitido; o que se treina é a habilidade de <b>expressar</b>. Isso conversa direto com a Missão do Mestre das Emoções: sentir pode, descontrolar não.</div>
+  </div>
+</section>
+
+<!-- MISSIONS INTRO -->
+<section id="missoes">
+  <div class="wrap">
+    <span class="eyebrow">O mapa da aventura</span>
+    <h2 class="sec-title">As 10 Missões do Noah 🗺️</h2>
+    <p class="sec-intro">Cada missão treina um superpoder diferente. Marque cada desafio que você conseguir — a barra enche, você sobe de nível e ganha a medalha. Pais: cada missão tem um <b>"Cofre dos Pais"</b> no final, com o passo a passo de como ensinar.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- ===== MISSÃO 1: CORAGEM ===== -->
+<article class="mission" id="m1" style="--c:var(--c-coragem)">
+  <div class="m-top" data-emoji="🥋">
+    <span class="m-tag">Missão 01 · Corpo & Coragem</span>
+    <h3><span class="emo">🦁</span> A Missão da Coragem</h3>
+    <p class="m-sub">Aqui você aprende jiu-jitsu e a ser valente. Mas atenção, herói: ser forte é proteger, nunca assustar.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Todo grande herói tem coragem. Mas você sabia que o herói mais forte não é o que bate mais — é o que <b>se controla</b> e <b>protege quem é menor</b>? No jiu-jitsu você vai cair, levantar, suar e treinar. E vai descobrir uma coisa importante: <b>quem é forte de verdade não precisa intimidar ninguém.</b></div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>Saudação do guerreiro</b>Cumprimente o professor e o colega antes e depois do treino.</div>
+      <div class="treino"><b>Rolamento</b>Aprenda a cair e rolar sem se machucar — coragem é também saber cair.</div>
+      <div class="treino"><b>O "PARA" mágico</b>Na brincadeira de luta, quando alguém diz "para", para na hora. Sempre.</div>
+      <div class="treino"><b>Escudo do amigo</b>Treine ficar do lado de quem está sendo provocado, sem brigar.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m1"></div></div><div class="xplabel" id="xplbl-m1">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m1"><span class="box"></span><span class="d-text"><b>Fui a um treino e cumprimentei o professor</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m1"><span class="box"></span><span class="d-text"><b>Aprendi a cair e rolar sem chorar</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m1"><span class="box"></span><span class="d-text"><b>Parei na hora quando alguém disse "para"</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m1"><span class="box"></span><span class="d-text"><b>Disse a frase do herói: "sou forte pra proteger, não pra assustar"</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m1"><span class="box"></span><span class="d-text"><b>Treinei por 4 semanas sem desistir</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m1">
+      <div class="level"><div class="lv-ic">🥚</div><b>Iniciante</b><small>Tá começando!</small></div>
+      <div class="level"><div class="lv-ic">🐯</div><b>Aprendiz</b><small>Já cai e levanta</small></div>
+      <div class="level"><div class="lv-ic">🦁</div><b>Guerreiro</b><small>Forte e calmo</small></div>
+      <div class="level"><div class="lv-ic">👑</div><b>Mestre</b><small>Herói da coragem</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m1" style="--c:var(--c-coragem)"><span class="crest-ic">🦁</span></div>
+      <div class="mc-txt"><b>Medalha do Corajoso</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-coragem)">
+      <summary>🧭 Cofre dos Pais — Missão da Coragem <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>A academia ensina a técnica. <b>Seu papel é reforçar o valor:</b> respeito ao professor, gratidão ao colega, não desistir no meio.</li>
+          <li>Repita o lema até virar identidade dele: <span class="pill">"forte é proteger, não assustar"</span>.</li>
+        </ul>
+        <h5>🤸 Como conduzir em casa</h5>
+        <ul>
+          <li>5 min de "luta de almofada" com regra única: <b>para quando alguém fala "para"</b>. Isso ensina limite e consentimento pelo corpo.</li>
+          <li>Depois do treino, pergunte: "o que foi difícil? O que você conseguiu?" — transforma esforço em orgulho.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6 anos:</b> foco em cair/rolar, brincadeira e respeito. Nada de competição séria.</li>
+          <li><b>8+:</b> dá para introduzir defesa pessoal real e cenários de "o que fazer se te empurram na escola".</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele cumprimenta sem mandar, perde uma luta sem surtar, e ajuda um colega menor.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Se usar a força para intimidar irmãos/colegas: pausa imediata do treino + conversa no frio. "Força de herói não machuca. Quando você usar assim, a gente para." Consequência calma e consistente, sem grito.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 2: PRIMEIROS SOCORROS ===== -->
+<article class="mission" id="m2" style="--c:var(--c-socorro)">
+  <div class="m-top" data-emoji="🚑">
+    <span class="m-tag">Missão 02 · Segurança & Vida</span>
+    <h3><span class="emo">🚑</span> A Missão do Herói da Segurança</h3>
+    <p class="m-sub">Heróis sabem ajudar e sabem pedir ajuda. Você vai aprender o que fazer quando alguém se machuca — e quando chamar um adulto.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Imagina que você é o herói que mantém a calma quando algo dá errado. Você não precisa resolver tudo sozinho — o <b>superpoder número 1</b> é saber a hora de <b>chamar um adulto e pedir socorro</b>. Vamos treinar isso como um jogo de simulação!</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>O número mágico</b>Decore o telefone do papai e da mamãe (vira musiquinha!).</div>
+      <div class="treino"><b>Engasgou!</b>Treine reconhecer: a pessoa não consegue falar nem respirar → chama adulto AGORA.</div>
+      <div class="treino"><b>Fogo e fumaça</b>Se tiver fumaça: anda <b>abaixado</b>, cobre o nariz com a roupa, sai pela porta mais perto e <b>nunca volta</b> pra buscar nada.</div>
+      <div class="treino"><b>Curativo de herói</b>Lavar um machucado pequeno e colocar o band-aid (treine no ursinho).</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m2"></div></div><div class="xplabel" id="xplbl-m2">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m2"><span class="box"></span><span class="d-text"><b>Sei o telefone do papai e da mamãe de cabeça</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m2"><span class="box"></span><span class="d-text"><b>Sei reconhecer uma emergência e chamar um adulto</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m2"><span class="box"></span><span class="d-text"><b>Treinei sair abaixado e proteger o rosto da fumaça</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m2"><span class="box"></span><span class="d-text"><b>Cuidei de um machucado pequeno sozinho</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m2"><span class="box"></span><span class="d-text"><b>Venci o "jogo da simulação" de emergência</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m2">
+      <div class="level"><div class="lv-ic">🩹</div><b>Iniciante</b><small>Tá começando!</small></div>
+      <div class="level"><div class="lv-ic">📞</div><b>Aprendiz</b><small>Sabe pedir ajuda</small></div>
+      <div class="level"><div class="lv-ic">🚒</div><b>Guerreiro</b><small>Calmo na emergência</small></div>
+      <div class="level"><div class="lv-ic">🦸</div><b>Mestre</b><small>Herói da segurança</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m2" style="--c:var(--c-socorro)"><span class="crest-ic">🚑</span></div>
+      <div class="mc-txt"><b>Medalha do Herói da Segurança</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-socorro)">
+      <summary>🧭 Cofre dos Pais — Primeiros Socorros <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Método: <b>assistir vídeo infantil de primeiros socorros juntos → encenar → ele te ensina de volta</b> (explicar fixa o aprendizado).</li>
+          <li>A mensagem central nesta idade é <b>"reconhecer e chamar adulto"</b>, não executar manobras técnicas.</li>
+        </ul>
+        <h5>🤸 Como conduzir (jogo de simulação)</h5>
+        <ul>
+          <li>Você finge engasgar/cair/se cortar; ele pratica a resposta certa. Faça leve e divertido, nunca assustador.</li>
+          <li>Incêndio: faça um "treino de evacuação" da casa — rota de saída, andar abaixado, ponto de encontro lá fora. Vire brincadeira mensal.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6 anos:</b> telefone de cor, reconhecer emergência, sair de casa, curativo simples.</li>
+          <li><b>8–9:</b> introduza a manobra de engasgo de forma supervisionada e o conceito de checar se a pessoa responde.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Faça uma "simulação surpresa" leve e veja se ele mantém a calma e chama ajuda em vez de congelar.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Se ele brincar de "emergência falsa" para chamar atenção, explique a diferença entre brincar e o pedido de socorro de verdade — sem dramatizar.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 3: EMPREENDEDOR ===== -->
+<article class="mission" id="m3" style="--c:var(--c-empre)">
+  <div class="m-top" data-emoji="💰">
+    <span class="m-tag">Missão 03 · Dinheiro & Decisões</span>
+    <h3><span class="emo">💰</span> A Missão do Pequeno Empreendedor</h3>
+    <p class="m-sub">Você vai aprender a comprar, vender, negociar e — o mais importante — a decidir com sabedoria o que fazer com o seu dinheiro.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Dinheiro é como energia de herói: dá pra gastar agora... ou <b>guardar pra uma missão maior</b>. Os heróis mais espertos sabem esperar. Você vai abrir a sua loja, fazer trocos e descobrir o segredo: <b>só porque dá pra comprar, não quer dizer que vale a pena.</b></div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>A loja do Noah</b>Monte uma lojinha/cabaninha em casa. O papai "compra" e "vende" com você, com dinheiro de brinquedo (ou real, supervisionado).</div>
+      <div class="treino"><b>3 cofrinhos</b>Gastar · Guardar · Doar. Todo dinheiro que chegar, divide nos três.</div>
+      <div class="treino"><b>A pergunta de ouro</b>Antes de comprar: "eu preciso ou só quero? E se eu precisar do dinheiro depois?"</div>
+      <div class="treino"><b>Matemática do dinheiro</b>Conte moedas, some notas, faça troco. 2+2 e 5+2 usando dinheiro de verdade.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m3"></div></div><div class="xplabel" id="xplbl-m3">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m3"><span class="box"></span><span class="d-text"><b>Montei minha lojinha e fiz uma "venda"</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m3"><span class="box"></span><span class="d-text"><b>Separei meu dinheiro em Gastar, Guardar e Doar</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m3"><span class="box"></span><span class="d-text"><b>Escolhi GUARDAR em vez de gastar tudo de uma vez</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m3"><span class="box"></span><span class="d-text"><b>Fiz contas e dei troco certo com dinheiro de verdade</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m3"><span class="box"></span><span class="d-text"><b>Juntei dinheiro com paciência pra comprar algo maior</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m3">
+      <div class="level"><div class="lv-ic">🪙</div><b>Iniciante</b><small>Conhece o dinheiro</small></div>
+      <div class="level"><div class="lv-ic">🛒</div><b>Aprendiz</b><small>Compra e vende</small></div>
+      <div class="level"><div class="lv-ic">🏦</div><b>Guerreiro</b><small>Sabe poupar</small></div>
+      <div class="level"><div class="lv-ic">💎</div><b>Mestre</b><small>Pequeno empreendedor</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m3" style="--c:var(--c-empre)"><span class="crest-ic">💰</span></div>
+      <div class="mc-txt"><b>Medalha do Pequeno Empreendedor</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-empre)">
+      <summary>🧭 Cofre dos Pais — Empreendedorismo & Finanças <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Aos 6 o conceito é concreto, não teórico: <b>trabalho → dinheiro → escolha</b>. Use dinheiro físico, cofrinho transparente, decisões reais.</li>
+          <li>Mesada por <b>tarefas extras</b> (lavar o carro com você), nunca pelas obrigações (cama, dente). Senão vira chantagem para o que já é dever.</li>
+        </ul>
+        <h5>🛒 Como conduzir "A loja"</h5>
+        <ul>
+          <li>Monte uma loja em casa. Você é o cliente OU o vendedor. Dê a ele R$ X de brinquedo e situações reais: "você tem 200, esse brinquedo custa 200 — se comprar, fica sem nada. E se amanhã aparecer algo melhor?".</li>
+          <li>Ensine <b>lucro x custo</b> com gibi: "comprei por 2, vendi por 5, ganhei 3". Visual, com moedas na mesa.</li>
+          <li>Trabalhe <b>gratificação adiada</b>: ofereça 1 doce agora OU 2 se ele esperar 10 min. Vá aumentando o tempo.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6:</b> contar moedas, somar notas, troco simples, 3 cofrinhos.</li>
+          <li><b>8+:</b> meta de poupança com prazo, juros simples ("seu dinheiro cresce se esperar"), pequeno negócio de verdade.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele faz a "pergunta de ouro" sozinho antes de querer comprar algo, e às vezes escolhe guardar.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Se gastar tudo por impulso, deixe a <b>consequência natural</b> agir (ficou sem para o que queria depois). Não resgate na hora — a frustração é a aula. Converse depois com gentileza.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+</div>
+
+<div class="wrap">
+
+<!-- ===== MISSÃO 4: EMOÇÕES ===== -->
+<article class="mission" id="m4" style="--c:var(--c-emo)">
+  <div class="m-top" data-emoji="🧘">
+    <span class="m-tag">Missão 04 · Coração & Calma</span>
+    <h3><span class="emo">🧠</span> A Missão do Mestre das Emoções</h3>
+    <p class="m-sub">Sentir raiva, medo ou tristeza é normal — até super-heróis sentem! O treino é não deixar a emoção te controlar.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Dentro de você mora um dragãozinho chamado Raiva. Ele não é mau — só fica grande quando você não cuida dele. O herói não <b>prende</b> o dragão nem deixa ele <b>destruir tudo</b>. Ele aprende a <b>respirar e acalmar</b> o dragão. Aí você fica no comando — e não a emoção.</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>Respiração do balão</b>Puxa o ar pelo nariz enchendo a barriga, solta devagar pela boca. 5 vezes.</div>
+      <div class="treino"><b>O Cantinho da Calma</b>Um lugar fofo só seu pra ir quando o dragão crescer. Não é castigo — é o quartel-general.</div>
+      <div class="treino"><b>Nome da emoção</b>Aprenda a dizer: "estou bravo", "estou triste", "estou com ciúme". Dar nome já acalma.</div>
+      <div class="treino"><b>STOP do herói</b>Parar → Respirar → Pensar → Conversar. Nessa ordem, sempre.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m4"></div></div><div class="xplabel" id="xplbl-m4">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m4"><span class="box"></span><span class="d-text"><b>Aprendi a respiração do balão</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m4"><span class="box"></span><span class="d-text"><b>Usei o Cantinho da Calma quando fiquei bravo</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m4"><span class="box"></span><span class="d-text"><b>Falei o nome do que eu estava sentindo</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m4"><span class="box"></span><span class="d-text"><b>Fiquei bravo mas NÃO bati, gritei nem quebrei nada</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m4"><span class="box"></span><span class="d-text"><b>Me acalmei sozinho e depois conversei sobre o que houve</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m4">
+      <div class="level"><div class="lv-ic">🌧️</div><b>Iniciante</b><small>O dragão manda</small></div>
+      <div class="level"><div class="lv-ic">🌤️</div><b>Aprendiz</b><small>Sabe respirar</small></div>
+      <div class="level"><div class="lv-ic">☀️</div><b>Guerreiro</b><small>Acalma sozinho</small></div>
+      <div class="level"><div class="lv-ic">🧘</div><b>Mestre</b><small>Mestre da calma</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m4" style="--c:var(--c-emo)"><span class="crest-ic">🧘</span></div>
+      <div class="mc-txt"><b>Medalha do Mestre da Calma</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-emo)">
+      <summary>🧭 Cofre dos Pais — Controle Emocional <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li><b>Não proíba a emoção, ensine o caminho de volta.</b> "Não chore" ensina a esconder e vira adulto que explode. O alvo é o descontrole, não o sentimento.</li>
+          <li>Ensine as técnicas <b>no momento calmo</b>. No momento quente só dá para usar o que já foi treinado.</li>
+        </ul>
+        <h5>🧘 Como conduzir</h5>
+        <ul>
+          <li><b>Cantinho da Calma</b> = ferramenta, não punição. "Pode ficar bravo, mas não pode bater. Vamos respirar e depois conversar."</li>
+          <li><b>Você co-regula:</b> fica calmo, voz baixa, perto. A criança espelha o seu sistema nervoso — se você grita pra ele parar de gritar, ensinou a gritar.</li>
+          <li>Termômetro das emoções com carinhas: pergunte todo dia "que cor está seu dia?".</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6:</b> respiração, nomear emoção, cantinho. 5 min de "silêncio do herói" (mini-meditação guiada).</li>
+          <li><b>8+:</b> identificar o gatilho antes da explosão e escolher a resposta; diário de emoções.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: o tempo entre o gatilho e a explosão aumenta, e ele consegue se acalmar com menos ajuda sua.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Bateu/quebrou: pare a ação com firmeza calma ("não deixo você bater"), leve ao cantinho, conserte <b>depois</b> que baixar — nunca eduque no auge da crise.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 5: ORGANIZAÇÃO ===== -->
+<article class="mission" id="m5" style="--c:var(--c-org)">
+  <div class="m-top" data-emoji="🧹">
+    <span class="m-tag">Missão 05 · Ordem & Responsabilidade</span>
+    <h3><span class="emo">📦</span> A Missão da Organização</h3>
+    <p class="m-sub">Herói cuida do seu reino! Aqui você treina guardar o que usou, limpar o que sujou e ajudar mesmo sem ninguém mandar.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Um herói não deixa o castelo virar bagunça. A regra é simples e mágica: <b>usou, guardou</b>. E tem um superpoder secreto que poucos têm — <b>ajudar antes de alguém pedir</b>. Quem faz isso ganha o respeito de todo o reino (e da família!).</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>Usou, guardou</b>Terminou de brincar? Guarda na hora. Sem "depois eu faço".</div>
+      <div class="treino"><b>Sujou, limpou</b>Fez bagunça? Ajuda a limpar — mesmo que não tenha sido só você.</div>
+      <div class="treino"><b>Olho de águia</b>Procure UMA coisa pra organizar ou ajudar sem ninguém pedir.</div>
+      <div class="treino"><b>Time da família</b>"Eu faço parte" — ajudo a guardar tudo, não só o meu.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m5"></div></div><div class="xplabel" id="xplbl-m5">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m5"><span class="box"></span><span class="d-text"><b>Guardei meus brinquedos sem ninguém mandar</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m5"><span class="box"></span><span class="d-text"><b>Ajudei a limpar uma bagunça que não era só minha</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m5"><span class="box"></span><span class="d-text"><b>Ajudei a tirar a mesa / arrumar a casa por conta própria</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m5"><span class="box"></span><span class="d-text"><b>Fiz minha cama de manhã</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m5"><span class="box"></span><span class="d-text"><b>Mantive o quarto organizado por uma semana inteira</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m5">
+      <div class="level"><div class="lv-ic">🌀</div><b>Iniciante</b><small>Tá começando</small></div>
+      <div class="level"><div class="lv-ic">🧺</div><b>Aprendiz</b><small>Guarda o seu</small></div>
+      <div class="level"><div class="lv-ic">🤝</div><b>Guerreiro</b><small>Ajuda o time</small></div>
+      <div class="level"><div class="lv-ic">⭐</div><b>Mestre</b><small>Organizador-mor</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m5" style="--c:var(--c-org)"><span class="crest-ic">📦</span></div>
+      <div class="mc-txt"><b>Medalha do Organizador & Ajudante da Família</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-org)">
+      <summary>🧭 Cofre dos Pais — Organização & Ajudar <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Transforme em ritual, não em bronca: "brincou, guardou" pode virar música ou corrida ("quem guarda mais rápido?").</li>
+          <li>Espontaneidade <b>não se ordena, se cultiva</b>: deixe ajudar de verdade (mesmo malfeito) + agradeça o esforço específico + faça junto no começo.</li>
+        </ul>
+        <h5>🧹 Como conduzir</h5>
+        <ul>
+          <li>Dê tarefas fixas de "membro da família" (pôr o guardanapo, separar a roupa por cor). Ele se sente parte, não empregado.</li>
+          <li>Combata o "não fui eu" com a frase-time: <span class="pill">"a gente é uma família, todo mundo ajuda"</span>. Modele isso ajudando você também.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6:</b> guardar brinquedos, fazer a cama, pôr/tirar a mesa, regar plantas.</li>
+          <li><b>8+:</b> responsabilidades rotativas, cuidar de um pet, organizar a própria mochila/agenda.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele guarda sem você pedir e oferece ajuda espontânea pelo menos algumas vezes na semana.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li><b>Consequência natural</b>: não guardou → o brinquedo "descansa" 1 dia numa caixa. Sem grito, sem drama. A ação tem resultado.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 6: FORÇA FÍSICA ===== -->
+<article class="mission" id="m6" style="--c:var(--c-forca)">
+  <div class="m-top" data-emoji="🏃">
+    <span class="m-tag">Missão 06 · Corpo Forte</span>
+    <h3><span class="emo">⚡</span> A Missão da Força Física</h3>
+    <p class="m-sub">O corpo é o veículo do herói. Aqui você treina força, equilíbrio e energia — brincando, nunca como castigo.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Assim como você treina a mente lendo, você treina o corpo se mexendo! Herói forte corre, pula, escala e se equilibra. E o melhor: <b>quanto mais você treina, mais energia você tem</b> pra brincar. Bora montar um circuito de obstáculos?</div>
+
+    <div class="m-h">💪 Seus treinos (formato brincadeira)</div>
+    <div class="treinos">
+      <div class="treino"><b>Circuito de obstáculos</b>Almofadas, cadeiras e fita no chão viram uma pista de herói.</div>
+      <div class="treino"><b>Animais da selva</b>Pula como sapo, anda como caranguejo, voa como avião (equilíbrio numa perna só).</div>
+      <div class="treino"><b>Super-séries</b>Flexões no joelho, agachamentos (sentar/levantar), pular corda — poucas e divertidas.</div>
+      <div class="treino"><b>Corrida & escalada</b>Correr no parque, escalar no playground com segurança.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m6"></div></div><div class="xplabel" id="xplbl-m6">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m6"><span class="box"></span><span class="d-text"><b>Completei um circuito de obstáculos</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m6"><span class="box"></span><span class="d-text"><b>Me equilibrei numa perna só contando até 10</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m6"><span class="box"></span><span class="d-text"><b>Fiz minhas super-séries (agachamento + flexão no joelho)</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m6"><span class="box"></span><span class="d-text"><b>Pulei corda ou corri no parque</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m6"><span class="box"></span><span class="d-text"><b>Me mexi todos os dias por uma semana</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m6">
+      <div class="level"><div class="lv-ic">🐢</div><b>Iniciante</b><small>Tá começando</small></div>
+      <div class="level"><div class="lv-ic">🐇</div><b>Aprendiz</b><small>Pega o ritmo</small></div>
+      <div class="level"><div class="lv-ic">🐆</div><b>Guerreiro</b><small>Cheio de energia</small></div>
+      <div class="level"><div class="lv-ic">⚡</div><b>Mestre</b><small>Herói da força</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m6" style="--c:var(--c-forca)"><span class="crest-ic">⚡</span></div>
+      <div class="mc-txt"><b>Medalha da Força</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-forca)">
+      <summary>🧭 Cofre dos Pais — Exercício & Saúde <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Movimento aos 6 é <b>brincadeira</b>, nunca treino sério ou punição. O objetivo é criar amor pelo corpo ativo.</li>
+          <li>Nada de peso ou carga. Use o peso do próprio corpo, jogos e imitação de animais.</li>
+        </ul>
+        <h5>🤸 Como conduzir</h5>
+        <ul>
+          <li>Monte circuitos com o que tem em casa. Cronometre e comemore recordes pessoais (compare só com ele mesmo).</li>
+          <li>Inclua você no jogo — criança imita pai ativo, não pai no sofá mandando ela se mexer.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6:</b> coordenação, equilíbrio, brincadeiras de correr/pular. Sessões curtas (15–20 min).</li>
+          <li><b>9+:</b> introduzir resistência leve, esportes coletivos, metas de repetição.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele pede pra brincar de se mexer e tem mais disposição e melhor sono.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Nunca use exercício como castigo ("faz 10 flexões de castigo") — isso mata o hábito. Se faltar energia/vontade, reduza o tempo e aumente o lúdico.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+</div>
+
+<div class="wrap">
+
+<!-- ===== MISSÃO 7: LEITURA ===== -->
+<article class="mission" id="m7" style="--c:var(--c-leitura)">
+  <div class="m-top" data-emoji="📚">
+    <span class="m-tag">Missão 07 · Mente Curiosa</span>
+    <h3><span class="emo">📚</span> A Missão da Leitura</h3>
+    <p class="m-sub">Cada livro é um portal pra um mundo novo. Ler todo dia deixa o herói mais esperto, criativo e cheio de ideias.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Sabia que os livros guardam todos os segredos e aventuras do mundo? Quando você lê, é como se ganhasse <b>memórias e poderes de mil pessoas</b>. Os heróis mais sábios são sempre leitores. E o melhor: você pode visitar dragões, planetas e piratas sem sair da sua cama!</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>15 minutos mágicos</b>Todo dia, um pouquinho de leitura antes de dormir.</div>
+      <div class="treino"><b>Ler junto, ler sozinho</b>O papai lê uma página, você lê outra.</div>
+      <div class="treino"><b>Detetive da história</b>No fim, conte com suas palavras o que aconteceu e por quê.</div>
+      <div class="treino"><b>Aprenda 1 coisa nova</b>Todo dia descubra um fato curioso e conte pra alguém.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m7"></div></div><div class="xplabel" id="xplbl-m7">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m7"><span class="box"></span><span class="d-text"><b>Li (ou ouvi) uma história até o fim</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m7"><span class="box"></span><span class="d-text"><b>Li uma página sozinho pro papai ou pra mamãe</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m7"><span class="box"></span><span class="d-text"><b>Contei com minhas palavras o que aconteceu na história</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m7"><span class="box"></span><span class="d-text"><b>Aprendi um fato novo e ensinei pra alguém</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m7"><span class="box"></span><span class="d-text"><b>Li todos os dias por uma semana</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m7">
+      <div class="level"><div class="lv-ic">🌱</div><b>Iniciante</b><small>Curioso</small></div>
+      <div class="level"><div class="lv-ic">🔖</div><b>Aprendiz</b><small>Lê um pouco</small></div>
+      <div class="level"><div class="lv-ic">📖</div><b>Guerreiro</b><small>Lê todo dia</small></div>
+      <div class="level"><div class="lv-ic">🦉</div><b>Mestre</b><small>Herói leitor</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m7" style="--c:var(--c-leitura)"><span class="crest-ic">📚</span></div>
+      <div class="mc-txt"><b>Medalha do Leitor</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-leitura)">
+      <summary>🧭 Cofre dos Pais — Leitura & Mente <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Leitura diária (15–20 min) é o investimento mais subestimado da lista. Você lê → ele lê → comentem juntos.</li>
+          <li>Deixe-o <b>escolher os livros</b> — autonomia gera interesse. Tela longe do quarto à noite.</li>
+        </ul>
+        <h5>📚 Como conduzir</h5>
+        <ul>
+          <li>Faça perguntas abertas: "por que você acha que o personagem fez isso?". Treina pensamento, não só decodificação.</li>
+          <li>Inclua 5–10 min de "silêncio do herói" (mini-meditação/respiração) como parte do ritual de mente calma.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul>
+          <li><b>6:</b> livros ilustrados, ele lê palavras/frases simples. Releitura dos favoritos é ótima.</li>
+          <li><b>8+:</b> capítulos, resumo escrito, escolher temas de interesse para aprofundar.</li>
+        </ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele pede para ler, recontа histórias e usa palavras novas no dia a dia.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Se resistir, nunca transforme leitura em punição. Reduza o tempo, aumente a diversão (voz de personagens, deixá-lo escolher).</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 8: MÚSICA ===== -->
+<article class="mission" id="m8" style="--c:var(--c-musica)">
+  <div class="m-top" data-emoji="🎵">
+    <span class="m-tag">Missão 08 · Som & Ritmo</span>
+    <h3><span class="emo">🎵</span> A Missão da Música</h3>
+    <p class="m-sub">Música é magia que se ouve! Você vai descobrir como o som nasce e treinar o ouvido, o ritmo e a paciência de um maestro.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Todo som do mundo é uma <b>vibração</b>. Quando você bate num tambor, o couro treme e empurra o ar até o seu ouvido. Quando dedilha uma corda, ela balança rapidinho e canta. A flauta faz o ar dançar dentro dela. Música é ciência <b>e</b> sentimento — e você vai virar um maestro!</div>
+
+    <div class="m-h">💪 Seus treinos (descobertas)</div>
+    <div class="treinos">
+      <div class="treino"><b>Ritmo</b>É a batida, o "tum-tá". Bata palmas seguindo uma música — esse é o ritmo!</div>
+      <div class="treino"><b>Melodia</b>É a musiquinha que dá pra cantarolar. Tente assobiar ou cantar uma.</div>
+      <div class="treino"><b>Harmonia</b>É quando vários sons combinam juntos, como amigos cantando em time.</div>
+      <div class="treino"><b>Como o som nasce</b>Corda (treme), tambor (couro vibra), flauta (ar dança). Experimente os três!</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m8"></div></div><div class="xplabel" id="xplbl-m8">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m8"><span class="box"></span><span class="d-text"><b>Bati palmas seguindo o ritmo de uma música</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m8"><span class="box"></span><span class="d-text"><b>Descobri como o som sai de uma corda, um tambor e uma flauta</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m8"><span class="box"></span><span class="d-text"><b>Cantarolei ou toquei uma melodia</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m8"><span class="box"></span><span class="d-text"><b>Aprendi uma musiquinha num instrumento</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m8"><span class="box"></span><span class="d-text"><b>Pratiquei música por várias vezes na semana</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m8">
+      <div class="level"><div class="lv-ic">👂</div><b>Iniciante</b><small>Ouve com atenção</small></div>
+      <div class="level"><div class="lv-ic">🥁</div><b>Aprendiz</b><small>Pega o ritmo</small></div>
+      <div class="level"><div class="lv-ic">🎹</div><b>Guerreiro</b><small>Toca melodias</small></div>
+      <div class="level"><div class="lv-ic">🎼</div><b>Mestre</b><small>Pequeno maestro</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m8" style="--c:var(--c-musica)"><span class="crest-ic">🎵</span></div>
+      <div class="mc-txt"><b>Medalha do Maestro</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-musica)">
+      <summary>🧭 Cofre dos Pais — Música <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar (mesmo sem saber música)</h5>
+        <ul>
+          <li>Você não precisa tocar. Explique por <b>experiência</b>: encoste no alto-falante e sinta a vibração; veja uma corda de violão tremer; bata num pote (tambor).</li>
+          <li>Conceitos pra criança: <b>ritmo</b> = a batida (palmas); <b>melodia</b> = a parte que dá pra cantar; <b>harmonia</b> = sons que combinam juntos.</li>
+        </ul>
+        <h5>🎹 Como conduzir</h5>
+        <ul>
+          <li>Instrumento sugerido aos 6: <b>teclado</b> (aperta e sai som certo, gratificação imediata) ou violão.</li>
+          <li>Prática diária curtíssima (5–10 min): aquecer com o que já sabe → 1 coisa nova → terminar tocando a favorita (acaba no prazer).</li>
+          <li>Brincadeiras: adivinhar instrumentos pelo som, criar instrumentos com potes e elásticos, "estátua musical".</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul><li><b>6:</b> ouvido, ritmo, exploração. <b>8+:</b> leitura de partitura simples, prática mais estruturada.</li></ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: ele mantém o ritmo, reconhece músicas e pede para tocar.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Nunca force prática tensa — vira trauma. Se resistir muito, troque de instrumento antes de desistir da música.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 9: DISCIPLINA ===== -->
+<article class="mission" id="m9" style="--c:var(--c-disc)">
+  <div class="m-top" data-emoji="🎖️">
+    <span class="m-tag">Missão 09 · Hábitos & Rotina</span>
+    <h3><span class="emo">🎖️</span> A Missão da Disciplina</h3>
+    <p class="m-sub">Disciplina é o superpoder de fazer o que precisa ser feito, mesmo sem vontade. É o que separa o herói do resto.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Tem um segredo que os super-heróis sabem: <b>vontade vai e volta, mas o hábito fica</b>. Quem treina todo dia um pouquinho fica mais forte que quem treina muito só de vez em quando. A regra de ouro é: <b>primeiro o dever, depois a diversão</b>. E quando você cai, você levanta — porque herói tenta de novo!</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>Dever primeiro</b>Tarefa e obrigações antes de brincar. Sempre nessa ordem.</div>
+      <div class="treino"><b>Rotina de herói</b>Mesma sequência todo dia: acordar, arrumar, escola, treino, leitura, oração.</div>
+      <div class="treino"><b>A palavra mágica: "ainda"</b>"Eu não consigo... AINDA." Errar não é fracasso, é treino.</div>
+      <div class="treino"><b>Terminar o que começa</b>Começou? Vai até o fim, mesmo que fique difícil no meio.</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m9"></div></div><div class="xplabel" id="xplbl-m9">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m9"><span class="box"></span><span class="d-text"><b>Fiz minhas tarefas ANTES de brincar</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m9"><span class="box"></span><span class="d-text"><b>Segui minha rotina sem reclamar</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m9"><span class="box"></span><span class="d-text"><b>Terminei algo difícil sem desistir no meio</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m9"><span class="box"></span><span class="d-text"><b>Errei, falei "ainda não consegui" e tentei de novo</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m9"><span class="box"></span><span class="d-text"><b>Cumpri minha rotina por uma semana inteira</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m9">
+      <div class="level"><div class="lv-ic">🌥️</div><b>Iniciante</b><small>Depende de lembrete</small></div>
+      <div class="level"><div class="lv-ic">📋</div><b>Aprendiz</b><small>Segue a rotina</small></div>
+      <div class="level"><div class="lv-ic">🎯</div><b>Guerreiro</b><small>Faz sozinho</small></div>
+      <div class="level"><div class="lv-ic">🎖️</div><b>Mestre</b><small>Disciplina de herói</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m9" style="--c:var(--c-disc)"><span class="crest-ic">🎖️</span></div>
+      <div class="mc-txt"><b>Medalha da Disciplina</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-disc)">
+      <summary>🧭 Cofre dos Pais — Disciplina & Hábitos <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li><b>Rotina visual fixa</b> (com ícones na parede) é o que mais gera disciplina nessa idade — previsibilidade reduz birra.</li>
+          <li>Ordem inegociável e calma: <b>dever antes da diversão</b>. Não negocie no calor; combine antes.</li>
+        </ul>
+        <h5>🧭 Como conduzir</h5>
+        <ul>
+          <li>Use a <b>mentalidade de crescimento</b>: elogie o esforço ("você tentou de novo, isso é ser forte"), não o resultado nem o rótulo.</li>
+          <li>Quadro de hábitos com ✔/adesivos: ver o progresso motiva muito mais que dinheiro nessa idade.</li>
+        </ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul><li><b>6:</b> 2–3 hábitos-chave por vez. <b>8+:</b> mais autonomia, ele mesmo monta parte da rotina e metas.</li></ul>
+        <h5>📊 Avaliar progresso</h5>
+        <ul><li>Sinal verde: precisa de menos lembretes e começa a iniciar as obrigações por conta própria.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Consistência dos dois pais é tudo — ele acha a brecha em segundos. Falhou na rotina? Sem sermão: aponte com calma e recomece no dia seguinte. Construa devagar; 3 hábitos firmes > 10 frouxos.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+<!-- ===== MISSÃO 10: RESPEITO ===== -->
+<article class="mission" id="m10" style="--c:var(--c-resp)">
+  <div class="m-top" data-emoji="🤝">
+    <span class="m-tag">Missão 10 · Coração Nobre</span>
+    <h3><span class="emo">🤝</span> A Missão do Respeito</h3>
+    <p class="m-sub">O herói trata todos bem, fala a verdade e escuta com atenção. E aprende uma regra de segurança muito importante.</p>
+  </div>
+  <div class="m-body">
+    <div class="m-h">📖 A história</div>
+    <div class="story">Um herói de verdade é <b>educado e gentil</b>. Ele respeita os pais, escuta os mais velhos e fala a verdade mesmo quando é difícil. Respeitar não é ter medo — é cuidar e ser justo. E tem uma regra mágica de proteção que todo herói precisa saber (está logo abaixo!).</div>
+
+    <div class="m-h">💪 Seus treinos</div>
+    <div class="treinos">
+      <div class="treino"><b>Palavras mágicas</b>"Por favor", "obrigado", "com licença", "desculpa". Usar todo dia.</div>
+      <div class="treino"><b>Escuta de herói</b>Olhar nos olhos, não interromper, esperar a vez de falar.</div>
+      <div class="treino"><b>Verdade sempre</b>Falar a verdade e conversar quando tiver um problema, em vez de esconder.</div>
+      <div class="treino"><b>🛡️ Regra do escudo (segurança)</b>Meu corpo é meu. Posso dizer "não" a um abraço que eu não quero. E <b>nenhum adulto pode me pedir pra guardar segredo do papai e da mamãe</b> — se pedir, eu conto na hora!</div>
+    </div>
+
+    <div class="m-h">🎯 Desafios da missão</div>
+    <div class="xpwrap"><div class="xptrack"><div class="xpfill" id="xp-m10"></div></div><div class="xplabel" id="xplbl-m10">Nível 1</div></div>
+    <ul class="desafios">
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m10"><span class="box"></span><span class="d-text"><b>Usei as palavras mágicas o dia todo</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m10"><span class="box"></span><span class="d-text"><b>Escutei sem interromper e esperei minha vez</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m10"><span class="box"></span><span class="d-text"><b>Falei a verdade mesmo sendo difícil</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m10"><span class="box"></span><span class="d-text"><b>Pedi desculpa de verdade (o que fiz + o que vou fazer diferente)</b></span></label></li>
+      <li><label class="desafio"><input type="checkbox" class="chk" data-m="m10"><span class="box"></span><span class="d-text"><b>Aprendi a Regra do Escudo: ninguém guarda segredo comigo dos meus pais</b></span></label></li>
+    </ul>
+
+    <div class="m-h">🏅 Seus níveis</div>
+    <div class="levels" data-levels="m10">
+      <div class="level"><div class="lv-ic">🌼</div><b>Iniciante</b><small>Aprendendo</small></div>
+      <div class="level"><div class="lv-ic">🙏</div><b>Aprendiz</b><small>Educado</small></div>
+      <div class="level"><div class="lv-ic">💛</div><b>Guerreiro</b><small>Gentil e justo</small></div>
+      <div class="level"><div class="lv-ic">👑</div><b>Mestre</b><small>Coração nobre</small></div>
+    </div>
+
+    <div class="medal-callout">
+      <div class="crest locked" id="crest-m10" style="--c:var(--c-resp)"><span class="crest-ic">🤝</span></div>
+      <div class="mc-txt"><b>Medalha do Respeito</b><small>Complete todos os desafios para desbloquear.</small></div>
+    </div>
+
+    <details class="parents" style="--c:var(--c-resp)">
+      <summary>🧭 Cofre dos Pais — Respeito & Segurança <span class="chev">▾</span></summary>
+      <div class="p-body">
+        <h5>🎓 Como ensinar</h5>
+        <ul>
+          <li>Respeito se ensina por <b>modelo</b>: ele trata os outros como vê você tratando as pessoas (inclusive como você trata a mãe dele).</li>
+          <li>Ensine <b>escutar com atenção</b> (olho no olho, sem interromper) — diferente de obediência cega.</li>
+        </ul>
+        <h5>🛡️ Segurança — o item mais importante</h5>
+        <ul>
+          <li>Respeito aos mais velhos <b>SIM; obediência cega NÃO.</b> Criança treinada para "obedecer todo adulto sempre" é a mais vulnerável a abuso.</li>
+          <li>Ensine, sem dramatizar: <b>o corpo é dele</b> (pode recusar toque, inclusive de parentes — não force beijinho/abraço); partes íntimas têm nome certo e ninguém toca; <b>nenhum adulto guarda segredo com criança</b> — se pedirem, ele conta na hora e nunca leva bronca por isso.</li>
+        </ul>
+        <h5>🤝 Desculpa de verdade (3 partes)</h5>
+        <ul><li>"O que eu fiz" + "reconheço que te machucou" + "o que vou fazer diferente". Treine isso — vale para a vida toda.</li></ul>
+        <h5>📏 Adaptar por idade</h5>
+        <ul><li><b>6:</b> palavras mágicas, escuta, regra do escudo simples. <b>8+:</b> empatia mais profunda, resolver conflitos sozinho, segurança online.</li></ul>
+        <h5>🛠️ Corrigir comportamento</h5>
+        <ul><li>Respondeu com grosseria? Corrija o tom com calma ("pode discordar, mas com respeito") e modele a forma certa. Nunca exija respeito gritando — incoerente e não funciona.</li></ul>
+      </div>
+    </details>
+  </div>
+</article>
+
+</div>
+
+<!-- ROTINA -->
+<section id="rotina" class="band">
+  <div class="wrap">
+    <span class="eyebrow">O dia de um herói</span>
+    <h2 class="sec-title">A Rotina da Semana 🗓️</h2>
+    <p class="sec-intro">Treinar todo dia um pouquinho vale mais que treinar muito de vez em quando. Aqui vai um modelo — pais, ajustem aos horários de vocês. Não precisa fazer tudo: escolham as âncoras da semana.</p>
+    <table class="routine-table">
+      <thead><tr><th>Dia</th><th>Treino principal</th><th>Lição em casa (10–15 min)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="day-dot">●</span> Segunda</td><td>🥋 Jiu-jitsu / corpo</td><td>📚 Leitura + 1 regra de convívio</td></tr>
+        <tr><td><span class="day-dot">●</span> Terça</td><td>🎵 Música</td><td>🧠 Emoções (nomear sentimentos)</td></tr>
+        <tr><td><span class="day-dot">●</span> Quarta</td><td>🌳 Brincadeira livre / natureza</td><td>📦 Organização + tarefa de casa</td></tr>
+        <tr><td><span class="day-dot">●</span> Quinta</td><td>🥋 Jiu-jitsu / corpo</td><td>💰 Empreendedorismo / dinheiro</td></tr>
+        <tr><td><span class="day-dot">●</span> Sexta</td><td>🎵 Música</td><td>🚑 Primeiros socorros (lúdico)</td></tr>
+        <tr><td><span class="day-dot">●</span> Sábado</td><td>👨‍👩‍👧 Projeto em família</td><td>🧦 Habilidade de vida nova</td></tr>
+        <tr><td><span class="day-dot">●</span> Domingo</td><td>😌 Descanso / livre</td><td>🙏 Gratidão + conversa da semana</td></tr>
+      </tbody>
+    </table>
+    <div class="rules-grid" style="margin-top:22px">
+      <div class="rule" style="border-left-color:var(--c-leitura)"><b>Todo dia, sem falta</b><small>Ler junto · arrumar a cama · guardar os brinquedos · oração antes de dormir.</small></div>
+      <div class="rule" style="border-left-color:var(--c-emo)"><b>Pergunta da noite</b><small>"Qual foi a melhor parte do seu dia?" — treina gratidão e conversa.</small></div>
+      <div class="rule" style="border-left-color:var(--c-forca)"><b>Sem sobrecarga</b><small>Máx. 2–3 atividades estruturadas/semana. Tédio e brincadeira livre também formam o herói.</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- TROFÉUS -->
+<section id="trofeus">
+  <div class="wrap">
+    <div class="trophyroom">
+      <span class="eyebrow" style="color:var(--gold-l)">A glória do herói</span>
+      <h2>🏆 Sala dos Troféus do Noah</h2>
+      <p class="sec-intro">Aqui ficam todas as suas medalhas. As cinzas estão trancadas 🔒 — complete as missões para iluminá-las!</p>
+      <div class="tr-grid">
+        <div class="tr-item"><div class="crest locked" data-trophy="m1" style="--c:var(--c-coragem)"><span class="crest-ic">🦁</span></div><span>Corajoso</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m2" style="--c:var(--c-socorro)"><span class="crest-ic">🚑</span></div><span>Segurança</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m3" style="--c:var(--c-empre)"><span class="crest-ic">💰</span></div><span>Empreendedor</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m4" style="--c:var(--c-emo)"><span class="crest-ic">🧘</span></div><span>Mestre da Calma</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m5" style="--c:var(--c-org)"><span class="crest-ic">📦</span></div><span>Organizador</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m6" style="--c:var(--c-forca)"><span class="crest-ic">⚡</span></div><span>Força</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m7" style="--c:var(--c-leitura)"><span class="crest-ic">📚</span></div><span>Leitor</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m8" style="--c:var(--c-musica)"><span class="crest-ic">🎵</span></div><span>Maestro</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m9" style="--c:var(--c-disc)"><span class="crest-ic">🎖️</span></div><span>Disciplina</span></div>
+        <div class="tr-item"><div class="crest locked" data-trophy="m10" style="--c:var(--c-resp)"><span class="crest-ic">🤝</span></div><span>Respeito</span></div>
+      </div>
+      <div class="grand" id="grandPrize">
+        <div class="crest locked" id="grandCrest" style="--c:var(--gold-d)"><span class="crest-ic">🏆</span></div>
+        <h3>Troféu do Pequeno Homem Forte</h3>
+        <p>Conquiste as 10 medalhas para desbloquear o maior troféu da Academia. Você está a <b id="grandLeft">10</b> medalha(s) de distância, herói!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Manual de Formação do Noah Sain</b> · Academia dos Heróis 🦁</p>
+  <p>Feito com carinho para um menino forte, corajoso e do bem. O progresso fica salvo neste navegador.</p>
+</footer>
+
+<button class="printbtn" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+<button class="resetbtn" id="resetBtn">↺ Recomeçar progresso</button>
+
+<div class="toast" id="toast">
+  <div class="crest" id="toastCrest"><span>🏅</span></div>
+  <div><b id="toastTitle">Medalha desbloqueada!</b><small id="toastSub"></small></div>
+</div>
+
+<script>
+(function(){
+  // estrelas do hero
+  var stars=document.getElementById('stars');
+  if(stars){for(var i=0;i<40;i++){var s=document.createElement('i');var sz=Math.random()*2.6+1;
+    s.style.width=sz+'px';s.style.height=sz+'px';s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*78+'%';s.style.animationDelay=(Math.random()*3)+'s';stars.appendChild(s);}}
+
+  var missions=['m1','m2','m3','m4','m5','m6','m7','m8','m9','m10'];
+  var medalNames={m1:'Medalha do Corajoso',m2:'Herói da Segurança',m3:'Pequeno Empreendedor',m4:'Mestre da Calma',
+    m5:'Organizador da Família',m6:'Medalha da Força',m7:'Medalha do Leitor',m8:'Medalha do Maestro',
+    m9:'Medalha da Disciplina',m10:'Medalha do Respeito'};
+  var medalIcon={m1:'🦁',m2:'🚑',m3:'💰',m4:'🧘',m5:'📦',m6:'⚡',m7:'📚',m8:'🎵',m9:'🎖️',m10:'🤝'};
+  var levelNames=['Iniciante','Aprendiz','Guerreiro','Mestre'];
+  var thresholds=[0,40,75,100];
+  var KEY='noah_academia_v1';
+  var state={};
+  try{state=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){state={};}
+
+  // restaurar checkboxes
+  document.querySelectorAll('.chk').forEach(function(c,idx){c.dataset.idx=idx;
+    if(state[idx]) c.checked=true;});
+
+  function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+  function missionPct(m){
+    var all=document.querySelectorAll('.chk[data-m="'+m+'"]');
+    if(!all.length)return 0;var done=0;all.forEach(function(c){if(c.checked)done++;});
+    return Math.round(done/all.length*100);
+  }
+
+  var prevUnlocked={};
+
+  function renderMission(m){
+    var pct=missionPct(m);
+    var xp=document.getElementById('xp-'+m); if(xp)xp.style.width=pct+'%';
+    // nivel
+    var lvl=0; for(var i=0;i<thresholds.length;i++){if(pct>=thresholds[i])lvl=i;}
+    var lbl=document.getElementById('xplbl-'+m); if(lbl)lbl.textContent='Nível '+(lvl+1)+' · '+levelNames[lvl];
+    var lvBox=document.querySelector('.levels[data-levels="'+m+'"]');
+    if(lvBox){var lvs=lvBox.querySelectorAll('.level');lvs.forEach(function(el,i){el.classList.toggle('on',i<=lvl);});}
+    // medalha
+    var unlocked=pct>=100;
+    var crest=document.getElementById('crest-'+m);
+    var trophy=document.querySelector('.crest[data-trophy="'+m+'"]');
+    if(crest)crest.classList.toggle('locked',!unlocked);
+    if(trophy)trophy.classList.toggle('locked',!unlocked);
+    if(unlocked && prevUnlocked[m]===false){celebrate(m);}
+    prevUnlocked[m]=unlocked;
+    return unlocked;
+  }
+
+  function renderAll(animate){
+    var totalDone=0,totalAll=0,medals=0;
+    document.querySelectorAll('.chk').forEach(function(c){totalAll++;if(c.checked)totalDone++;});
+    missions.forEach(function(m){if(renderMission(m))medals++;});
+    var pct=totalAll?Math.round(totalDone/totalAll*100):0;
+    document.getElementById('qbFill').style.width=pct+'%';
+    document.getElementById('qbPct').textContent=pct+'%';
+    document.getElementById('heroPct').textContent=pct+'%';
+    document.getElementById('heroMedals').textContent=medals;
+    var left=10-medals;
+    document.getElementById('grandLeft').textContent=left;
+    var gc=document.getElementById('grandCrest');
+    if(gc)gc.classList.toggle('locked',medals<10);
+    if(medals>=10){document.getElementById('grandPrize').querySelector('p').innerHTML='🎉 <b>VOCÊ CONSEGUIU, NOAH!</b> Todas as 10 medalhas conquistadas. Você é oficialmente um Pequeno Homem Forte! 🦁👑';}
+  }
+
+  var toast=document.getElementById('toast'),toastT=null;
+  function celebrate(m){
+    document.getElementById('toastCrest').innerHTML='<span>'+medalIcon[m]+'</span>';
+    document.getElementById('toastCrest').style.setProperty('--c','var(--gold-d)');
+    document.getElementById('toastTitle').textContent='🎉 Medalha desbloqueada!';
+    document.getElementById('toastSub').textContent=medalNames[m]+' — parabéns, Noah!';
+    toast.classList.add('show');
+    clearTimeout(toastT);toastT=setTimeout(function(){toast.classList.remove('show');},3600);
+  }
+
+  document.querySelectorAll('.chk').forEach(function(c){
+    c.addEventListener('change',function(){
+      state[c.dataset.idx]=c.checked;saveState();renderAll(true);
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    if(confirm('Recomeçar todo o progresso do Noah? As medalhas serão zeradas.')){
+      state={};saveState();
+      document.querySelectorAll('.chk').forEach(function(c){c.checked=false;});
+      missions.forEach(function(m){prevUnlocked[m]=null;});
+      renderAll(false);window.scrollTo({top:0,behavior:'smooth'});
+    }
+  });
+
+  // init prevUnlocked sem disparar toast no carregamento
+  missions.forEach(function(m){prevUnlocked[m]=missionPct(m)>=100;});
+  renderAll(false);
+})();
+</script>
+</body>
+</html>
