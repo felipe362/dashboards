@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia dos Heróis — Guia da Família (Yasmin, Felipe & Alexia)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parch:#FBF6EC; --parch2:#F4EAD6; --ink:#2A2548; --ink-soft:#5B547E;
+    --night1:#1E1B4B; --night2:#3F2C8A; --night3:#5B4BC4;
+    --gold:#F4B740; --gold-d:#D6900A; --gold-l:#FFE08A;
+    --c-coragem:#E94B5A; --c-socorro:#23A06A; --c-empre:#F0962A; --c-emo:#8B5CF6; --c-org:#11B0A0;
+    --c-forca:#FB7138; --c-leitura:#3B82F6; --c-musica:#EC4899; --c-disc:#6366F1; --c-resp:#0EA5E9;
+    --line:#E6D8BC; --shadow:0 10px 30px rgba(42,37,72,.13); --shadow-s:0 4px 14px rgba(42,37,72,.10);
+    --tip:#1E9E6A; --warn:#D6900A; --key:#6366F1; --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; font-family:'Nunito',system-ui,Segoe UI,Roboto,sans-serif; color:var(--ink);
+    background:var(--parch); line-height:1.62; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 90% 4%,rgba(99,102,241,.07),transparent 34%);}
+  h1,h2,h3,h4,h5{font-family:'Fredoka',sans-serif; font-weight:600; line-height:1.15; margin:0}
+  p{margin:0 0 .8em}
+  a{color:var(--c-disc)}
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+
+  /* TOPBAR */
+  .topbar{position:sticky; top:0; z-index:50; background:rgba(30,27,75,.95); backdrop-filter:blur(8px);
+    color:#fff; border-bottom:3px solid var(--gold)}
+  .topbar .wrap{display:flex; align-items:center; gap:14px; padding:10px 22px; max-width:1040px}
+  .tb-logo{font-family:'Fredoka'; font-weight:700; font-size:1rem; display:flex; align-items:center; gap:8px; white-space:nowrap}
+  .tb-links{display:flex; gap:3px; flex-wrap:wrap; margin-left:auto}
+  .tb-links a{color:#d9d4f5; text-decoration:none; font-size:.8rem; font-weight:700; padding:5px 10px; border-radius:99px; transition:.2s}
+  .tb-links a:hover{background:rgba(255,255,255,.14); color:#fff}
+
+  /* GLOBAL SEARCH */
+  .searchbar-row{border-top:1px solid rgba(255,255,255,.12)}
+  .searchbar{position:relative; display:flex; align-items:center; gap:8px; max-width:1040px; margin:0 auto; padding:8px 22px 11px}
+  .searchbar .si-ic{position:absolute; left:34px; top:50%; transform:translateY(-50%); font-size:1rem; pointer-events:none; opacity:.85}
+  .searchbar input{flex:1; width:100%; padding:11px 40px 11px 40px; border-radius:12px; border:2px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.1); color:#fff; font-family:'Nunito'; font-size:.98rem}
+  .searchbar input::placeholder{color:#c9c3ef}
+  .searchbar input:focus{outline:none; border-color:var(--gold); background:rgba(255,255,255,.17)}
+  .si-clear{position:absolute; right:30px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.18);
+    color:#fff; border:0; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:.8rem; line-height:1}
+  .si-clear:hover{background:rgba(255,255,255,.32)}
+  .gsearch-results{position:absolute; left:22px; right:22px; top:calc(100% - 2px); background:#fff; color:var(--ink);
+    border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); max-height:64vh; overflow:auto; z-index:70; display:none}
+  .gsearch-results.open{display:block}
+  .gres-head{padding:8px 16px; font-size:.74rem; text-transform:uppercase; letter-spacing:.6px; color:var(--ink-soft);
+    background:var(--parch2); border-bottom:1px solid var(--line); position:sticky; top:0}
+  .gres{display:block; padding:11px 16px; border-bottom:1px solid var(--line); cursor:pointer; text-decoration:none; color:var(--ink)}
+  .gres:last-child{border-bottom:0}
+  .gres:hover,.gres.active{background:var(--parch)}
+  .gres .gr-title{font-family:'Fredoka'; font-weight:600; font-size:.98rem}
+  .gres .gr-sec{font-size:.7rem; text-transform:uppercase; letter-spacing:.5px; color:#fff; background:var(--c-disc);
+    padding:1px 7px; border-radius:99px; margin-left:8px; vertical-align:middle}
+  .gres .gr-snip{font-size:.86rem; color:#4a4470; margin-top:3px; line-height:1.4}
+  .gres mark, .gsearch-results mark{background:var(--gold-l); color:var(--ink); border-radius:3px; padding:0 2px}
+  .gres-empty{padding:16px; color:var(--ink-soft); font-style:italic}
+  [data-gs]{scroll-margin-top:140px}
+  .flash-hit{animation:flashHit 2s ease-out}
+  @keyframes flashHit{0%{box-shadow:0 0 0 4px var(--gold)}70%{box-shadow:0 0 0 4px var(--gold)}100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}}
+
+  /* HERO */
+  .phero{color:#fff; text-align:center; padding:56px 22px 64px;
+    background:radial-gradient(120% 130% at 50% -20%,var(--night3),var(--night2) 48%,var(--night1) 100%)}
+  .phero .tag{display:inline-block; font-family:'Fredoka'; font-weight:600; letter-spacing:.5px;
+    background:rgba(244,183,64,.16); color:var(--gold-l); border:1.5px solid rgba(244,183,64,.5);
+    padding:6px 16px; border-radius:99px; font-size:.82rem; margin-bottom:18px}
+  .phero h1{font-size:clamp(2rem,5.5vw,3.1rem); font-weight:700}
+  .phero h1 b{color:var(--gold)}
+  .phero p{max-width:620px; margin:16px auto 0; color:#e4e0fb; font-size:1.05rem}
+
+  /* SECTIONS */
+  section{padding:50px 0; border-bottom:1px solid var(--line)}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'Fredoka'; font-weight:600;
+    color:var(--ink-soft); text-transform:uppercase; letter-spacing:1.4px; font-size:.76rem; margin-bottom:10px}
+  .eyebrow::before{content:''; width:26px; height:3px; background:var(--gold); border-radius:2px}
+  .sec-title{font-size:clamp(1.6rem,4vw,2.2rem); margin-bottom:10px}
+  .lead{color:var(--ink-soft); font-size:1.06rem; max-width:680px}
+
+  .card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; box-shadow:var(--shadow-s); margin-top:18px}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:18px}
+
+  .callout{border-radius:14px; padding:14px 16px 14px 18px; margin:16px 0; border-left:5px solid var(--key); background:#F3F2FB}
+  .callout.tip{border-color:var(--tip); background:#EBF7F1}
+  .callout.warn{border-color:var(--warn); background:#FBF3E2}
+  .callout b{font-family:'Fredoka'; font-weight:600}
+  .callout . co-h{display:flex; align-items:center; gap:8px; font-family:'Fredoka'; font-weight:600; margin-bottom:3px}
+
+  /* GLOSSARY */
+  .glo-search{position:relative; margin:6px 0 20px; max-width:480px}
+  .glo-search input{width:100%; padding:13px 16px 13px 44px; border:2px solid var(--line); border-radius:14px;
+    font-family:'Nunito'; font-size:1rem; background:#fff; color:var(--ink)}
+  .glo-search input:focus{outline:none; border-color:var(--c-disc)}
+  .glo-search::before{content:'🔎'; position:absolute; left:15px; top:50%; transform:translateY(-50%); font-size:1.05rem}
+  .glo-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px}
+  .glo-item{background:#fff; border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:14px; padding:15px 17px; box-shadow:var(--shadow-s)}
+  .glo-item h4{font-size:1.08rem; color:var(--ink); margin-bottom:5px; display:flex; align-items:center; gap:8px}
+  .glo-item p{margin:0; font-size:.96rem; color:#403a5e}
+  .glo-item .ex{display:block; margin-top:7px; font-size:.88rem; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:7px}
+  .glo-item .ex b{color:var(--c-disc)}
+  .glo-empty{color:var(--ink-soft); font-style:italic; padding:14px 4px}
+  mark{background:var(--gold-l); color:var(--ink); border-radius:4px; padding:0 2px}
+
+  /* MISSION GUIDE */
+  .mg{--c:var(--gold); background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:14px; border-top:4px solid var(--c)}
+  .mg h3{font-size:1.18rem; color:var(--c); display:flex; align-items:center; gap:9px; margin-bottom:6px}
+  .mg h3 .n{font-size:.74rem; background:var(--c); color:#fff; padding:2px 9px; border-radius:99px; font-weight:700}
+  .mg .row{display:grid; grid-template-columns:120px 1fr; gap:6px 14px; margin-top:8px; font-size:.96rem}
+  .mg .row dt{font-family:'Fredoka'; font-weight:600; color:var(--ink-soft); font-size:.9rem}
+  .mg .row dd{margin:0}
+
+  /* FAQ */
+  .faq{border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:12px; background:#fff}
+  .faq summary{cursor:pointer; list-style:none; padding:15px 18px; font-family:'Fredoka'; font-weight:600;
+    font-size:1.04rem; display:flex; align-items:center; gap:10px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .q{flex:none; color:var(--c-disc)}
+  .faq summary .chev{margin-left:auto; transition:.25s; color:var(--ink-soft)}
+  .faq[open] summary .chev{transform:rotate(180deg)}
+  .faq .a{padding:0 18px 16px 18px; color:#403a5e}
+
+  /* STEPS */
+  .steps{counter-reset:s; margin-top:18px; display:grid; gap:12px}
+  .step{position:relative; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px 16px 58px; box-shadow:var(--shadow-s)}
+  .step::before{counter-increment:s; content:counter(s); position:absolute; left:14px; top:14px; width:30px; height:30px;
+    background:var(--night1); color:var(--gold-l); border-radius:50%; display:grid; place-items:center; font-family:'Fredoka'; font-weight:700}
+  .step b{font-family:'Fredoka'}
+
+  ul.clean{margin:.4em 0 .2em; padding-left:20px}
+  ul.clean li{margin-bottom:6px}
+
+  .printbtn{position:fixed; right:16px; bottom:16px; z-index:60; background:var(--night1); color:#fff;
+    border:2px solid var(--gold); border-radius:99px; padding:11px 18px; font-family:'Fredoka'; font-weight:600;
+    cursor:pointer; box-shadow:var(--shadow); font-size:.9rem}
+  .printbtn:hover{background:var(--night2)}
+
+  footer{text-align:center; padding:34px 22px 48px; color:var(--ink-soft); font-size:.92rem; border:0}
+  footer b{font-family:'Fredoka'; color:var(--ink)}
+
+  @media (max-width:640px){
+    .wrap{padding:0 16px}
+    .tb-links{display:none}
+    .searchbar{padding:8px 14px 10px}
+    .searchbar .si-ic{left:26px}
+    .si-clear{right:22px}
+    .gsearch-results{left:14px; right:14px}
+    .phero{padding:44px 16px 52px}
+    section{padding:38px 0}
+    .glo-grid{grid-template-columns:1fr}
+    .mg .row{grid-template-columns:1fr}
+    .mg .row dt{margin-top:6px}
+    .printbtn{padding:10px 15px; font-size:.84rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important; scroll-behavior:auto!important}}
+  @media print{
+    .topbar,.printbtn,.glo-search{display:none!important}
+    body{background:#fff}
+    .phero{background:var(--night1)!important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .faq[open] .a, .faq .a{display:block!important}
+    .faq{break-inside:avoid} .glo-item{break-inside:avoid} .mg{break-inside:avoid}
+    section{padding:22px 0}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-logo">🛡️ Guia da Família</div>
+    <nav class="tb-links">
+      <a href="#inicio">Filosofia</a>
+      <a href="#dicionario">Dicionário</a>
+      <a href="#missoes">Missões</a>
+      <a href="#disciplina">Disciplina</a>
+      <a href="#faq">Dúvidas</a>
+      <a href="#seguranca">Segurança</a>
+      <a href="#comecar">Começar</a>
+    </nav>
+  </div>
+  <div class="searchbar-row">
+    <div class="searchbar">
+      <span class="si-ic">🔎</span>
+      <input type="text" id="globalSearch" autocomplete="off" placeholder="Buscar em todo o manual… (ex.: birra, convívio, dinheiro, segredo, rotina)">
+      <button class="si-clear" id="siClear" aria-label="Limpar busca" style="display:none">✕</button>
+      <div class="gsearch-results" id="gsResults"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="phero">
+  <span class="tag">📘 Guia da Família · Companheiro do Manual do Noah</span>
+  <h1>Guia Completo para <b>Yasmin, Felipe &amp; Alexia</b></h1>
+  <p>Este é o manual de quem conduz e de quem ajuda a conduzir. Ele explica cada conceito do Manual do Noah, tira as dúvidas que aparecem na prática e mostra como aplicar tudo no dia a dia — com calma, consistência e leveza. Use a busca no topo para achar qualquer coisa em segundos.</p>
+</header>
+
+<!-- INTRO / FILOSOFIA -->
+<section id="inicio">
+  <div class="wrap">
+    <span class="eyebrow">Por onde começar</span>
+    <h2 class="sec-title">A filosofia em uma página</h2>
+    <p class="lead">Antes das técnicas, cinco verdades que sustentam o método inteiro. Se você só lembrar destas, já está fazendo 80% do trabalho.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><b>Você é o currículo.</b> Aos 6 anos a criança aprende por imitação, não por discurso. Como você reage ao estresse, como fala com a Alexia, como guarda suas próprias coisas — é isso que o Noah copia. Nenhuma regra funciona se ela contradiz o seu exemplo.</li>
+        <li><b>Habilidade treinada &gt; regra gritada.</b> Regra imposta por medo é frágil e some quando você não está olhando. Habilidade treinada com paciência vira caráter e fica para a vida.</li>
+        <li><b>Conserte no frio, nunca no calor.</b> Não se educa criança em descontrole — nem a dele, nem o seu. Primeiro acalma, depois conversa.</li>
+        <li><b>Elogie o específico, não o rótulo.</b> "Você guardou os carrinhos sozinho" ensina. "Que menino bom" não ensina nada e ainda cria dependência de aprovação.</li>
+        <li><b>Consistência de todos é tudo.</b> A Yasmin, você e a Alexia na mesma regra. A criança encontra a brecha entre cuidadores desalinhados em segundos — por isso o combinado é sempre entre os três, longe do Noah.</li>
+      </ul>
+      <div class="callout">
+        <div class="co-h">👑 A Yasmin lidera o time</div>
+        Como principal cuidadora do Noah no dia a dia, é a Yasmin quem mais dá o tom — e isso é uma força enorme, porque criança aprende muito mais pelo exemplo de quem está perto o tempo todo do que por qualquer discurso. Quando ela lê, se organiza, fala com respeito e se acalma sem explodir, o Noah copia. O combinado é simples: a Yasmin conduz o dia a dia, e você e a Alexia entram alinhados, sustentando as mesmas regras e nunca desautorizando ninguém na frente do Noah. Decisões e ajustes de rota são sempre entre os três e longe dele.
+      </div>
+      <div class="callout tip">
+        <div class="co-h">🧭 Como usar os dois manuais juntos</div>
+        O <b>Manual do Noah</b> é para ler <i>com</i> ele — é a aventura, os mantras, as missões e as medalhas. Este <b>Manual dos Pais</b> é o seu bastidor: consulte quando bater uma dúvida, quando precisar conduzir uma atividade ou quando algo não estiver funcionando.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DICIONÁRIO -->
+<section id="dicionario">
+  <div class="wrap">
+    <span class="eyebrow">Tira-dúvidas</span>
+    <h2 class="sec-title">Dicionário de Termos 📖</h2>
+    <p class="lead">Todo conceito e expressão que aparece no Manual do Noah, explicado em linguagem simples. Use a busca para achar rápido.</p>
+    <div class="glo-search"><input type="text" id="gloSearch" placeholder="Buscar um termo... (ex.: convívio, calma, consequência)"></div>
+    <div class="glo-grid" id="gloGrid">
+
+      <div class="glo-item" style="border-left-color:var(--c-resp)"><h4>🤝 Regra de convívio</h4><p>É uma regra de <b>como viver bem junto com os outros</b> — em casa, na escola, na rua. Não é sobre tarefa ou estudo; é sobre comportamento social: cumprimentar, dividir, esperar a vez, falar com educação, pedir licença, não interromper.</p><span class="ex"><b>Na prática:</b> na quinta, a "lição em casa" pede 1 regra de convívio. Escolha uma por vez e treine no dia: hoje é "esperar a vez de falar no jantar"; semana que vem, "cumprimentar quem chega". Uma de cada vez vira hábito.</span></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>⚓ Atividade-âncora</h4><p>É a atividade <b>principal e fixa</b> do dia (jiu-jitsu, música, brincadeira livre). Serve de "âncora" da rotina: a criança sabe que aquele dia tem aquilo, o que dá previsibilidade e reduz birra.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-leitura)"><h4>🏠 Lição em casa</h4><p>São os 10–15 minutos de treino que <b>você conduz em casa</b>, separados da escola. É curtinho de propósito: a atenção focada de uma criança de 6 anos dura mais ou menos isso.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--key)"><h4>🧭 Cofre dos Pais</h4><p>É a parte recolhível no fim de cada missão do Manual do Noah, escrita <b>para você</b> (a criança não precisa ler). Traz o passo a passo de como ensinar, conduzir, adaptar por idade, avaliar e corrigir aquela missão.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--gold-d)"><h4>📜 Mantra / Código do Herói</h4><p>São as 10 frases curtas que o Noah lê em voz alta (uma por dia ou todas de manhã). Repetir frase boa <b>fixa identidade</b>: a criança passa a se enxergar como "alguém que cumpre o que promete".</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-musica)"><h4>🏅 Selo / virtude</h4><p>É o <b>nome do valor</b> que cada mantra ensina (ex.: "cumprir o que promete → Honestidade"). Dar nome ao comportamento ajuda a criança a entender <i>o que</i> está praticando.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-coragem)"><h4>📈 Níveis (Iniciante→Mestre)</h4><p>Mostram o <b>progresso dentro de cada missão</b>: Iniciante, Aprendiz, Guerreiro, Mestre. Não é nota nem competição — é só um jeito visual de a criança ver que está evoluindo.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--gold)"><h4>🎖️ Medalha / desbloquear</h4><p>A medalha aparece quando <b>todos os desafios de uma missão</b> são marcados. É uma recompensa <i>simbólica</i> (não material) — o objetivo é o orgulho de conquistar, não o prêmio.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🧘 Cantinho da Calma</h4><p>Um lugar fixo e aconchegante (almofada, um canto) para onde a criança vai quando está descontrolada. <b>Não é castigo</b> — é uma ferramenta para se acalmar. Castigo afasta; o cantinho ensina a regular.</p><span class="ex"><b>Frase-modelo:</b> "Pode ficar bravo, mas não pode bater. Vamos ao cantinho respirar e depois a gente conversa."</span></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🫂 Co-regulação</h4><p>É você emprestar a sua calma para a criança se acalmar. O cérebro dela ainda não regula emoção sozinho; ele <b>espelha o seu</b>. Se você grita para ele parar de gritar, ensinou a gritar. Voz baixa, presença, respiração lenta — ele copia.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🎈 Respiração do balão</h4><p>Técnica de calma para criança: puxar o ar pelo nariz enchendo a barriga (como um balão) e soltar devagar pela boca, 5 vezes. Funciona porque a respiração lenta <b>desliga o alarme</b> do corpo.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🛑 STOP do herói</h4><p>A sequência para usar quando a raiva vem: <b>Parar → Respirar → Pensar → Conversar</b>. Ensine no momento calmo; só dá para usar no momento quente aquilo que já foi treinado antes.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🌈 Termômetro das emoções</h4><p>Um quadrinho com carinhas/cores para a criança <b>dar nome ao que sente</b>. Quem nomeia ("estou frustrado") controla melhor do que quem só explode. Pergunte todo dia: "que cor está seu dia?".</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-org)"><h4>⚖️ Consequência natural</h4><p>É deixar a <b>própria ação gerar o resultado</b>, em vez de aplicar um castigo solto. Conecta causa e efeito sem briga.</p><span class="ex"><b>Exemplo:</b> não guardou o brinquedo → o brinquedo "descansa" 1 dia numa caixa. Não é punição inventada; é a consequência lógica de não cuidar.</span></div>
+
+      <div class="glo-item" style="border-left-color:var(--key)"><h4>❄️ Reparar / educar no frio</h4><p>"No frio" = depois que a emoção baixou. Lição dada durante o auge da crise não entra (o cérebro está em alarme). Acalme primeiro, ensine depois.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-disc)"><h4>👏 Elogio específico</h4><p>Elogiar o <b>comportamento exato</b> ("você se acalmou sozinho, isso é força") em vez do rótulo ("que bom menino"). O específico mostra o que repetir; o rótulo só agrada e cria dependência de aprovação.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-disc)"><h4>🌱 Mentalidade de crescimento / "ainda"</h4><p>Ensinar que <b>errar é parte de aprender</b>, não fracasso. A palavra mágica é "ainda": "eu não consigo... <i>ainda</i>". Isso troca a frustração por esforço.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>⏳ Gratificação adiada</h4><p>A habilidade de <b>esperar por algo melhor</b> em vez de querer tudo agora. É um dos maiores previsores de sucesso na vida adulta — e treina-se cedo.</p><span class="ex"><b>Exercício:</b> 1 doce agora OU 2 se esperar 10 minutos. Vá aumentando o tempo conforme ele acerta.</span></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-emo)"><h4>🧠 Gestão emocional</h4><p>Controlar a emoção em vez de ser controlado por ela. <b>Não é proibir o sentimento</b> — é aprender a respirar, nomear e responder com calma. Sentir raiva pode; bater, gritar e quebrar, não.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>🐷 3 cofrinhos (Gastar/Guardar/Doar)</h4><p>Todo dinheiro que chega é dividido em três potes transparentes. Ensina, de forma concreta, a equilibrar prazer agora (gastar), futuro (guardar) e generosidade (doar).</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>💵 Mesada por tarefas extras</h4><p>Recompensa financeira só por <b>trabalho extra</b> (lavar o carro com você), nunca pelas obrigações (fazer a cama, escovar o dente). Senão a criança passa a cobrar para fazer o que já é dever dela.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>💡 Pergunta de ouro</h4><p>A pergunta que a criança aprende a fazer antes de comprar: <b>"eu preciso ou só quero? E se eu precisar do dinheiro depois?"</b>. Cria o hábito de pensar antes de gastar.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-empre)"><h4>📊 Lucro × custo</h4><p>Conceito ensinado com moedas na mesa: "comprei por 2, vendi por 5, ganhei 3". Custo é o que você gastou; lucro é o que sobrou depois de vender.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-resp)"><h4>🙏 Desculpa de verdade (3 partes)</h4><p>Pedir desculpa direito tem três partes: <b>(1)</b> o que eu fiz, <b>(2)</b> reconhecer que machucou, <b>(3)</b> o que vou fazer diferente. "Desculpa, te empurrei, isso te machucou; da próxima eu falo com palavras."</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-resp)"><h4>🛡️ Regra do Escudo (segurança)</h4><p>Regra de proteção: <b>o corpo é da criança</b> (ela pode recusar toque, inclusive de parentes) e <b>nenhum adulto guarda segredo com ela dos pais</b> — se pedirem, ela conta na hora e nunca leva bronca por isso. Veja a seção Segurança.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-forca)"><h4>🌳 Brincadeira livre / tédio</h4><p>Tempo <b>sem atividade dirigida</b>: brincar, inventar, até entediar. Não é tempo perdido — é onde nascem a criatividade e a autorregulação. Por isso a agenda nunca deve ficar lotada.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-disc)"><h4>🗓️ Rotina visual</h4><p>Um quadro com <b>ícones</b> mostrando a sequência do dia. Previsibilidade reduz birra porque a criança sabe o que vem a seguir. Funciona melhor que aviso falado nessa idade.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-disc)"><h4>✅ Quadro de hábitos</h4><p>Um painel onde a criança ganha um ✔ ou adesivo ao cumprir algo. <b>Ver o progresso</b> motiva muito mais que prêmio em dinheiro nessa idade.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--key)"><h4>⏱️ Janela de atenção</h4><p>O tempo que uma criança de 6 anos consegue focar: cerca de <b>10–15 minutos</b>. Por isso toda lição é curta. Passou disso, ela desliga — e insistir vira briga.</p></div>
+
+      <div class="glo-item" style="border-left-color:var(--c-coragem)"><h4>🪞 Modelagem</h4><p>A criança aprende fazendo o que <b>vê você fazer</b>, não o que ouve você mandar. "Modelar" é dar o exemplo de propósito: quer que ele leia? ele precisa te ver lendo.</p></div>
+
+    </div>
+    <div class="glo-empty" id="gloEmpty" style="display:none">Nenhum termo encontrado. Tente outra palavra.</div>
+  </div>
+</section>
+
+<!-- GUIA DAS MISSÕES -->
+<section id="missoes">
+  <div class="wrap">
+    <span class="eyebrow">Referência rápida</span>
+    <h2 class="sec-title">Como conduzir cada missão 🎯</h2>
+    <p class="lead">Um resumo de bolso. O detalhe completo está no "Cofre dos Pais" de cada missão, dentro do Manual do Noah.</p>
+
+    <div class="mg" style="--c:var(--c-coragem)"><h3><span class="n">01</span>🦁 Coragem (Jiu-jitsu)</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Calma sob pressão, respeito à hierarquia, tolerância à frustração.</dd>
+      <dt>Como conduzir</dt><dd>A academia ensina a técnica; você reforça o valor. Lema fixo: "forte é proteger, não assustar". Em casa, luta de almofada com a regra "para quando alguém fala para".</dd>
+      <dt>Dúvida comum</dt><dd>"E se ele usar a força para intimidar?" → pausa do treino + conversa no frio. Força que machuca = treino parado.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-socorro)"><h3><span class="n">02</span>🚑 Primeiros Socorros</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Reconhecer emergência e <b>chamar um adulto</b> — não executar manobras técnicas.</dd>
+      <dt>Como conduzir</dt><dd>Assistir vídeo infantil juntos → encenar (você finge engasgar/cair) → ele te ensina de volta. Faça leve, nunca assustador.</dd>
+      <dt>Dúvida comum</dt><dd>"Qual a idade da manobra de engasgo?" → só por volta dos 8–9, supervisionada. Aos 6, o foco é pedir socorro.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-empre)"><h3><span class="n">03</span>💰 Empreendedor</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Trabalho → dinheiro → escolha. Poupar, decidir, entender lucro e custo.</dd>
+      <dt>Como conduzir</dt><dd>Lojinha em casa com dinheiro físico, 3 cofrinhos, "pergunta de ouro" antes de comprar. Mesada só por tarefa extra.</dd>
+      <dt>Dúvida comum</dt><dd>"Ele gastou tudo, resgato?" → não. Deixe a consequência natural agir; a frustração é a aula. Converse depois.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-emo)"><h3><span class="n">04</span>🧘 Mestre das Emoções</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Regular a emoção, não escondê-la. O alvo é o descontrole, não o sentimento.</dd>
+      <dt>Como conduzir</dt><dd>Cantinho da Calma + respiração do balão, ensinados no momento calmo. Você co-regula: voz baixa, presença.</dd>
+      <dt>Dúvida comum</dt><dd>"Devo proibir o choro?" → não. Proibir ensina a esconder e vira adulto que explode. Permita sentir, treine a expressão.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-org)"><h3><span class="n">05</span>📦 Organização</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>"Usou, guardou"; "sujou, limpou"; ajudar mesmo quando não foi ele.</dd>
+      <dt>Como conduzir</dt><dd>Vire ritual/jogo, não bronca. Tarefas fixas de "membro da família". Espontaneidade se cultiva (deixe ajudar + agradeça o esforço).</dd>
+      <dt>Dúvida comum</dt><dd>"Ele diz 'não fui eu'." → frase-time: "a gente é família, todo mundo ajuda". E modele ajudando você também.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-forca)"><h3><span class="n">06</span>⚡ Força Física</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Criar amor pelo corpo ativo, com brincadeira — nunca como punição.</dd>
+      <dt>Como conduzir</dt><dd>Circuitos com almofadas, imitar animais, super-séries curtas. Sem peso. Entre no jogo com ele.</dd>
+      <dt>Dúvida comum</dt><dd>"Posso usar exercício de castigo?" → nunca. Isso mata o hábito. Sem vontade? Reduza o tempo, aumente o lúdico.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-leitura)"><h3><span class="n">07</span>📚 Leitura</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Vocabulário, foco, imaginação e vínculo. O investimento mais subestimado.</dd>
+      <dt>Como conduzir</dt><dd>Você lê → ele lê → comentem ("por que o personagem fez isso?"). Deixe-o escolher os livros. Tela longe do quarto.</dd>
+      <dt>Dúvida comum</dt><dd>"Ele resiste." → nunca vire punição. Use vozes de personagem, deixe escolher, encurte o tempo.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-musica)"><h3><span class="n">08</span>🎵 Música</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Ouvido, ritmo, paciência. Entender que som é vibração.</dd>
+      <dt>Como conduzir</dt><dd>Você não precisa saber tocar: ensine por experiência (sentir a vibração, ver a corda tremer). Teclado é ótimo aos 6. Prática diária de 5–10 min, terminando na música favorita.</dd>
+      <dt>Dúvida comum</dt><dd>"Ele odeia praticar." → não force tensão. Troque de instrumento antes de desistir da música.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-disc)"><h3><span class="n">09</span>🎖️ Disciplina</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Fazer o que precisa, mesmo sem vontade. "Dever antes da diversão." Terminar o que começa.</dd>
+      <dt>Como conduzir</dt><dd>Rotina visual fixa + quadro de hábitos. Elogie o esforço, não o resultado. 2–3 hábitos por vez.</dd>
+      <dt>Dúvida comum</dt><dd>"Ele falha na rotina." → sem sermão; aponte com calma e recomece amanhã. Construa devagar.</dd></dl></div>
+
+    <div class="mg" style="--c:var(--c-resp)"><h3><span class="n">10</span>🤝 Respeito</h3>
+      <dl class="row"><dt>Objetivo</dt><dd>Educação, escuta, verdade — e segurança pessoal.</dd>
+      <dt>Como conduzir</dt><dd>Respeito se ensina por modelo (como você trata a mãe dele). Escutar ≠ obedecer cegamente. Treine a Regra do Escudo.</dd>
+      <dt>Dúvida comum</dt><dd>"Respondeu com grosseria." → "pode discordar, mas com respeito", e modele o tom. Nunca exija respeito gritando.</dd></dl></div>
+  </div>
+</section>
+
+<!-- DISCIPLINA NA PRÁTICA -->
+<section id="disciplina">
+  <div class="wrap">
+    <span class="eyebrow">O motor de tudo</span>
+    <h2 class="sec-title">Disciplina na prática (sem gritar) 🧱</h2>
+    <p class="lead">Disciplina aqui não significa punir — significa ajudar a criança a construir autocontrole. Estes são os princípios que fazem o método funcionar.</p>
+    <div class="grid2">
+      <div class="card" style="margin-top:0"><h3 style="color:var(--c-org)">⚖️ Consequência natural &gt; castigo</h3><p>Sempre que der, deixe a ação gerar o resultado, em vez de inventar uma punição. Conecta causa e efeito, ensina sem briga e não vira disputa de poder.</p></div>
+      <div class="card" style="margin-top:0"><h3 style="color:var(--c-emo)">❄️ Conserte no frio</h3><p>No auge da crise, só acalme e contenha o que é perigoso ("não deixo você bater"). A conversa e a lição vêm depois que a emoção baixa.</p></div>
+      <div class="card" style="margin-top:0"><h3 style="color:var(--c-disc)">👏 Elogie o processo</h3><p>"Você tentou de novo mesmo sendo difícil" &gt; "que inteligente". Elogiar esforço cria persistência; elogiar talento cria medo de errar.</p></div>
+      <div class="card" style="margin-top:0"><h3 style="color:var(--c-coragem)">🤝 Os dois pais alinhados</h3><p>Combinem as regras entre vocês <b>longe da criança</b> e sustentem juntos. Discordância à frente dela vira brecha na hora.</p></div>
+    </div>
+    <div class="callout warn"><div class="co-h">⚠️ Os 5 erros que sabotam tudo</div>
+      <ul class="clean" style="margin-bottom:0">
+        <li>Sobrecarregar a agenda (criança exausta surta, não aprende).</li>
+        <li>Educar no calor da emoção — sua ou dele.</li>
+        <li>Proibir sentimentos ("para de chorar") em vez de ensinar a regular.</li>
+        <li>Incoerência entre os pais.</li>
+        <li>Exigir do filho o que você mesmo não faz.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <span class="eyebrow">Perguntas frequentes</span>
+    <h2 class="sec-title">Dúvidas do dia a dia ❓</h2>
+    <p class="lead">As situações reais que mais aparecem quando se começa a aplicar o método.</p>
+
+    <details class="faq"><summary><span class="q">P:</span> E se o Noah simplesmente não quiser fazer uma missão? <span class="chev">▾</span></summary>
+      <div class="a">Normal. Não force — força gera resistência. Comece pela missão que ele mais curte, deixe-o escolher, e torne lúdico. Se a recusa for total naquele dia, não vire queda de braço: deixe para amanhã. O método é uma maratona de meses, não uma corrida de um dia.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Quanto tempo por dia isso tudo leva? <span class="chev">▾</span></summary>
+      <div class="a">Pouco. A "lição em casa" é de 10–15 minutos, mais a leitura (15–20 min) e a atividade-âncora do dia. Você não faz todas as missões todo dia — roda um ciclo na semana. Se estiver tomando horas, está fazendo demais.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Posso pular missões ou mudar a ordem? <span class="chev">▾</span></summary>
+      <div class="a">Pode. Não há ordem obrigatória. Sugestão de início: <b>Cantinho da Calma (Emoções) + Leitura + uma atividade-âncora</b>. Quando virarem hábito, adicione mais. Construir devagar e firme bate fazer tudo de uma vez e desistir.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Recompensa material (brinquedo, doce) é ok? <span class="chev">▾</span></summary>
+      <div class="a">Use com parcimônia. As medalhas são simbólicas de propósito: o objetivo é o orgulho de conquistar, não o prêmio. Recompensa material constante faz a criança só agir por troca. Prefira reconhecimento específico ("você se organizou sozinho!") e o quadro de hábitos visual.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> E quando ele mente? <span class="chev">▾</span></summary>
+      <div class="a">Aos 6, mentir muitas vezes é medo da punição ou fantasia, não maldade. Reaja sem explosão: "eu não vou brigar, só quero a verdade". Elogie a verdade quando ela vier ("foi corajoso admitir"). Se você pune duro a verdade, ensina a mentir melhor.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Birra em público — o que faço? <span class="chev">▾</span></summary>
+      <div class="a">Ignore a plateia. Agache na altura dele, voz baixa, valide o sentimento ("você queria muito, eu sei") sem ceder ao pedido. Se preciso, retire-o do local para um canto calmo. A consistência é o que encurta as birras com o tempo — ceder em público as multiplica.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Os cuidadores discordam de uma regra. E agora? <span class="chev">▾</span></summary>
+      <div class="a">Resolvam <b>longe do Noah</b> e apresentem uma frente única — a Yasmin, você e a Alexia decidindo juntos. Tudo bem ter visões diferentes; o que a criança não pode ver é a brecha. Combinem entre os três e sustentem juntos, mesmo que um ainda não esteja 100% convencido. A regra que vale é a que todos vão conseguir manter na prática.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Ele regrediu — voltou a fazer birra que já tinha parado. <span class="chev">▾</span></summary>
+      <div class="a">Regressão é normal, ainda mais com mudanças grandes (mudança de país, chegada de irmão, fase de cansaço). Não é fracasso seu nem dele. Volte ao básico com calma, dê mais colo e previsibilidade, e o hábito retorna.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> Posso adaptar quando ele tiver 8, 10 anos? <span class="chev">▾</span></summary>
+      <div class="a">Sim — cada "Cofre dos Pais" tem a linha "Adaptar por idade". Em resumo: aos 6 é concreto, lúdico e curto; conforme cresce, aumenta a autonomia, a complexidade e o tempo. O manual cresce com ele.</div></details>
+
+    <details class="faq"><summary><span class="q">P:</span> A criança usa um aparelho e o progresso não sincroniza com o outro. <span class="chev">▾</span></summary>
+      <div class="a">Exato: o progresso do Manual do Noah fica salvo por aparelho/navegador, não na nuvem. Use sempre o mesmo aparelho para ele marcar as missões. Para sincronizar entre dispositivos seria preciso transformar em site com login — outro nível de trabalho.</div></details>
+  </div>
+</section>
+
+<!-- SEGURANÇA -->
+<section id="seguranca">
+  <div class="wrap">
+    <span class="eyebrow">O item mais importante</span>
+    <h2 class="sec-title">Segurança pessoal do Noah 🛡️</h2>
+    <p class="lead">Esta seção não é opcional. Crianças treinadas para "obedecer todo adulto sempre" são as mais vulneráveis a abuso. Respeito sim; obediência cega não.</p>
+
+    <div class="card">
+      <h3 style="color:var(--c-resp)">As 4 regras do escudo (ensine sem dramatizar)</h3>
+      <ul class="clean">
+        <li><b>O corpo é dele.</b> Ele pode recusar toque que não quer — inclusive de parentes. Não force beijinho nem abraço "por educação". Consentimento começa aqui.</li>
+        <li><b>Partes íntimas têm nome certo e ninguém toca.</b> Use os nomes corretos; isso protege (estudos mostram que crianças que sabem nomear se protegem e relatam melhor).</li>
+        <li><b>Não existe segredo de adulto com criança.</b> Surpresa boa (presente) tudo bem; "segredo" que ele não pode contar aos pais, nunca. Se um adulto pedir, ele conta na hora — e <b>jamais leva bronca por contar</b>.</li>
+        <li><b>"Não, sai, vou contar."</b> Ensine essa sequência simples para qualquer situação que o deixe desconfortável.</li>
+      </ul>
+      <div class="callout"><div class="co-h">💬 Como conversar</div>Naturalmente, sem medo, em pequenas doses (no banho, na brincadeira). O tom é de poder ("você manda no seu corpo"), não de ameaça. Repita ao longo do tempo, como quem ensina a atravessar a rua.</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMEÇAR -->
+<section id="comecar">
+  <div class="wrap">
+    <span class="eyebrow">Mão na massa</span>
+    <h2 class="sec-title">As primeiras 2 semanas 🚀</h2>
+    <p class="lead">Não comece com tudo. Comece com pouco e firme. Aqui vai um arranque realista.</p>
+    <div class="steps">
+      <div class="step"><b>Apresente a aventura.</b> Leiam juntos o início do Manual do Noah e o Juramento do Pequeno Herói. Deixe-o empolgado — isso é uma aventura, não uma lista de regras.</div>
+      <div class="step"><b>Escolha só 3 frentes.</b> Sugestão: Cantinho da Calma (Emoções) + Leitura diária + 1 atividade-âncora (ex.: jiu-jitsu). Ignore o resto por enquanto.</div>
+      <div class="step"><b>Monte a rotina visual.</b> Um quadro com ícones na parede com a sequência do dia. Previsibilidade é o que mais reduz briga nessa idade.</div>
+      <div class="step"><b>Alinhem os três.</b> Yasmin, você e a Alexia combinem as 3 frentes e como vão reagir à birra. Frente única desde o dia 1, com a Yasmin liderando o dia a dia.</div>
+      <div class="step"><b>Modele você mesmo.</b> Ele vê você lendo, respirando fundo quando irrita, guardando suas coisas. Seu exemplo é metade do resultado.</div>
+      <div class="step"><b>Revise no domingo.</b> 5 minutos: o que funcionou, o que pegou. Ajuste. Só quando as 3 frentes virarem hábito, adicione mais missões.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Guia da Família</b> · Companheiro do Manual do Noah Sain · Academia dos Heróis 🛡️</p>
+  <p>Feito para Yasmin, Felipe &amp; Alexia, com a convicção de que crianças se formam por exemplo, paciência e amor — muito mais que por regras.</p>
+</footer>
+
+<button class="printbtn" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+
+<script>
+(function(){
+  var input=document.getElementById('gloSearch');
+  var grid=document.getElementById('gloGrid');
+  var empty=document.getElementById('gloEmpty');
+  if(!input)return;
+  var items=Array.prototype.slice.call(grid.querySelectorAll('.glo-item'));
+  var originals=items.map(function(it){return {el:it, html:it.innerHTML, text:it.textContent.toLowerCase()};});
+
+  function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+
+  function run(){
+    var qRaw=input.value.trim();
+    var q=norm(qRaw);
+    var shown=0;
+    originals.forEach(function(o){
+      var hay=norm(o.text);
+      var match = q==='' || hay.indexOf(q)>-1;
+      o.el.style.display = match ? '' : 'none';
+      if(match)shown++;
+      // highlight
+      if(q!=='' && match){
+        o.el.innerHTML=highlight(o.html,qRaw);
+      } else {
+        o.el.innerHTML=o.html;
+      }
+    });
+    empty.style.display = shown===0 ? 'block' : 'none';
+  }
+
+  function highlight(html,term){
+    // só destaca em nós de texto, ignorando tags
+    try{
+      var re=new RegExp('('+term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+      return html.replace(/>([^<]+)</g,function(m,txt){
+        return '>'+txt.replace(re,'<mark>$1</mark>')+'<';
+      });
+    }catch(e){return html;}
+  }
+
+  var t;
+  input.addEventListener('input',function(){clearTimeout(t);t=setTimeout(run,120);});
+})();
+</script>
+
+<script>
+/* ===== BUSCA GLOBAL ===== */
+(function(){
+  var input=document.getElementById('globalSearch');
+  var panel=document.getElementById('gsResults');
+  var clearBtn=document.getElementById('siClear');
+  if(!input||!panel)return;
+
+  // mapa normalizado <-> original (preserva índices, ignora acentos)
+  function buildNorm(orig){
+    var norm='', map=[];
+    for(var i=0;i<orig.length;i++){
+      var n=orig[i].normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+      for(var k=0;k<n.length;k++) map.push(i);
+      norm+=n;
+    }
+    return {norm:norm, map:map};
+  }
+  function normq(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function clean(s){return s.replace(/\s+/g,' ').trim();}
+
+  // índice de unidades pesquisáveis
+  var sel='.glo-item, .faq, .mg, .step, .callout, .card';
+  var units=[];
+  var nid=0;
+  document.querySelectorAll(sel).forEach(function(el){
+    // evita aninhar (ex.: callout dentro de card) registrando o mais interno relevante;
+    // mas tudo bem indexar ambos — resultados distintos ajudam.
+    if(!el.id){el.id='gs'+(++nid);}
+    el.setAttribute('data-gs','');
+    var sec=el.closest('section');
+    var secTitle = sec && sec.querySelector('.sec-title') ? clean(sec.querySelector('.sec-title').textContent) : 'Manual';
+    var title=getTitle(el, secTitle);
+    var text=clean(el.textContent);
+    units.push({el:el, id:el.id, title:title, section:secTitle, text:text, nm:buildNorm(text)});
+  });
+
+  function getTitle(el, fallback){
+    if(el.classList.contains('faq')){
+      var s=el.querySelector('summary');
+      if(s){return clean(s.textContent).replace(/^P:\s*/,'').replace(/▾\s*$/,'').trim();}
+    }
+    var h=el.querySelector('h3,h4,h5');
+    if(h)return clean(h.textContent);
+    var co=el.querySelector('.co-h');
+    if(co)return clean(co.textContent);
+    var b=el.querySelector('b');
+    if(b)return clean(b.textContent);
+    return fallback;
+  }
+
+  function snippet(u, q){
+    var idx=u.nm.norm.indexOf(q);
+    if(idx<0){ // sem match no corpo (achou só no título): devolve começo
+      return u.text.slice(0,110)+(u.text.length>110?'…':'');
+    }
+    var oStart=u.nm.map[idx];
+    var oEnd = (idx+q.length<u.nm.map.length) ? u.nm.map[idx+q.length] : u.text.length;
+    var winS=Math.max(0,oStart-34), winE=Math.min(u.text.length,oEnd+76);
+    var pre=(winS>0?'…':'')+u.text.slice(winS,oStart);
+    var hit=u.text.slice(oStart,oEnd);
+    var pos=u.text.slice(oEnd,winE)+(winE<u.text.length?'…':'');
+    return esc(pre)+'<mark>'+esc(hit)+'</mark>'+esc(pos);
+  }
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  var results=[], active=-1;
+  function run(){
+    var raw=input.value.trim();
+    clearBtn.style.display = raw ? 'block':'none';
+    if(raw.length<2){close();return;}
+    var q=normq(raw);
+    results=[];
+    units.forEach(function(u){
+      var inText=u.nm.norm.indexOf(q);
+      var inTitle=normq(u.title).indexOf(q);
+      if(inText>-1||inTitle>-1){
+        var score=(inTitle>-1?0:1000)+(inText>-1?inText:9999);
+        results.push({u:u,score:score});
+      }
+    });
+    results.sort(function(a,b){return a.score-b.score;});
+    results=results.slice(0,14);
+    render(q,raw);
+  }
+
+  function render(q,raw){
+    if(!results.length){
+      panel.innerHTML='<div class="gres-empty">Nada encontrado para "'+esc(raw)+'". Tente outra palavra (ex.: calma, dinheiro, segredo).</div>';
+      panel.classList.add('open'); active=-1; return;
+    }
+    var html='<div class="gres-head">'+results.length+' resultado'+(results.length>1?'s':'')+'</div>';
+    results.forEach(function(r,i){
+      html+='<a class="gres" href="#'+r.u.id+'" data-i="'+i+'">'+
+        '<span class="gr-title">'+esc(r.u.title)+'</span>'+
+        '<span class="gr-sec">'+esc(r.u.section)+'</span>'+
+        '<div class="gr-snip">'+snippet(r.u,q)+'</div></a>';
+    });
+    panel.innerHTML=html;
+    panel.classList.add('open');
+    active=-1;
+    panel.querySelectorAll('.gres').forEach(function(a){
+      a.addEventListener('click',function(e){e.preventDefault();go(results[+a.dataset.i].u);});
+    });
+  }
+
+  function go(u){
+    close();
+    input.blur();
+    // garante visibilidade (limpa filtro do dicionário, abre FAQ)
+    document.querySelectorAll('.glo-item').forEach(function(g){g.style.display='';});
+    var gloFilter=document.getElementById('gloSearch'); if(gloFilter)gloFilter.value='';
+    var det=u.el.closest('details'); if(det)det.open=true;
+    if(u.el.tagName.toLowerCase()==='details')u.el.open=true;
+    setTimeout(function(){
+      u.el.scrollIntoView({behavior:'smooth', block:'center'});
+      u.el.classList.remove('flash-hit'); void u.el.offsetWidth; u.el.classList.add('flash-hit');
+      setTimeout(function(){u.el.classList.remove('flash-hit');},2100);
+    },60);
+  }
+
+  function close(){panel.classList.remove('open'); active=-1;}
+
+  input.addEventListener('input',function(){clearTimeout(input._t);input._t=setTimeout(run,110);});
+  input.addEventListener('focus',function(){if(input.value.trim().length>=2)run();});
+  input.addEventListener('keydown',function(e){
+    var items=panel.querySelectorAll('.gres');
+    if(e.key==='ArrowDown'&&items.length){e.preventDefault();active=Math.min(active+1,items.length-1);mark(items);}
+    else if(e.key==='ArrowUp'&&items.length){e.preventDefault();active=Math.max(active-1,0);mark(items);}
+    else if(e.key==='Enter'){
+      if(active>-1&&results[active])go(results[active].u);
+      else if(results[0])go(results[0].u);
+    } else if(e.key==='Escape'){close();input.blur();}
+  });
+  function mark(items){items.forEach(function(it,i){it.classList.toggle('active',i===active);
+    if(i===active)it.scrollIntoView({block:'nearest'});});}
+
+  clearBtn.addEventListener('click',function(){input.value='';clearBtn.style.display='none';close();input.focus();});
+  document.addEventListener('click',function(e){if(!e.target.closest('.searchbar'))close();});
+})();
+</script>
+</body>
+</html>
