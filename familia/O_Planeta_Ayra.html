@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>O Planeta Ayra 🪐 — Brincadeiras para os 2 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF4FF; --bg2:#F2E9FF; --ink:#3A2E55; --ink-soft:#7A6E9C;
+    --space1:#2A1E5C; --space2:#4A2E8F; --space3:#7B5BD6;
+    --gold:#FFC94D; --gold-d:#E59A12; --line:#EBDEF7; --white:#fff;
+    --shadow:0 12px 34px rgba(74,46,143,.16); --shadow-s:0 5px 16px rgba(74,46,143,.12);
+    --radius:24px;
+    --w-mov:#FF8A6B; --w-mao:#27C2B6; --w-fala:#4F9BF5; --w-faz:#A87BF0; --w-arte:#FF6FA8;
+    --w-mus:#FFAE33; --w-agua:#28C2E6; --w-fora:#46C982; --w-sentir:#9385F2; --w-ajuda:#F47C97;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; font-family:'Nunito',system-ui,Segoe UI,Roboto,sans-serif; color:var(--ink);
+    background:var(--bg); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+  h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; line-height:1.14; margin:0}
+  p{margin:0 0 .7em}
+  a{color:var(--w-fala)}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 20px}
+
+  /* HERO */
+  .hero{position:relative; overflow:hidden; color:#fff; text-align:center; padding:54px 20px 74px;
+    background:radial-gradient(125% 120% at 50% -10%,var(--space3),var(--space2) 46%,var(--space1) 100%)}
+  .stars{position:absolute; inset:0; pointer-events:none}
+  .stars i{position:absolute; background:#fff; border-radius:50%; opacity:.85; animation:tw 3s infinite ease-in-out}
+  @keyframes tw{0%,100%{opacity:.3; transform:scale(.7)}50%{opacity:1; transform:scale(1.2)}}
+  .planet{width:128px; height:128px; margin:0 auto 6px; display:block; filter:drop-shadow(0 10px 18px rgba(0,0,0,.3)); animation:float 6s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .hero .tagp{display:inline-block; font-family:'Fredoka'; font-weight:600; letter-spacing:.5px;
+    background:rgba(255,201,77,.18); color:var(--gold); border:1.5px solid rgba(255,201,77,.5);
+    padding:6px 16px; border-radius:99px; font-size:.82rem; margin-bottom:16px}
+  .hero h1{font-size:clamp(2.4rem,7vw,4rem); font-weight:700; text-shadow:0 4px 0 rgba(0,0,0,.16)}
+  .hero h1 b{color:var(--gold)}
+  .hero p{max-width:600px; margin:14px auto 0; color:#ece8ff; font-size:1.05rem}
+  .hero-wave{position:absolute; left:0; right:0; bottom:-1px; line-height:0}
+  .hero-wave svg{width:100%; height:64px; display:block}
+
+  /* STICKY BAR: TABS + CONTROLS */
+  .planetbar{position:sticky; top:0; z-index:40; background:rgba(251,244,255,.96); backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--line)}
+  .tabs{display:flex; gap:7px; overflow-x:auto; padding:11px 20px 9px; max-width:1120px; margin:0 auto;
+    scrollbar-width:thin; -webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{height:6px} .tabs::-webkit-scrollbar-thumb{background:var(--line); border-radius:9px}
+  .tab{flex:0 0 auto; border:2px solid var(--line); background:#fff; color:var(--ink-soft);
+    font-family:'Fredoka'; font-weight:600; font-size:.9rem; padding:7px 14px; border-radius:99px; cursor:pointer;
+    white-space:nowrap; transition:.18s; display:flex; align-items:center; gap:6px}
+  .tab:hover{border-color:var(--w-faz); color:var(--ink)}
+  .tab.active{background:var(--c,var(--space2)); color:#fff; border-color:var(--c,var(--space2))}
+  .tab .em{font-size:1.05rem}
+
+  .controls{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:0 20px 12px; max-width:1120px; margin:0 auto}
+  .sortbtn{border:0; background:linear-gradient(135deg,var(--gold),var(--gold-d)); color:#4a2e00;
+    font-family:'Fredoka'; font-weight:700; font-size:.95rem; padding:10px 18px; border-radius:99px; cursor:pointer;
+    box-shadow:var(--shadow-s); display:flex; align-items:center; gap:8px; transition:transform .12s}
+  .sortbtn:active{transform:scale(.95)}
+  .fgroup{display:flex; align-items:center; gap:5px; flex-wrap:wrap}
+  .fgroup .flabel{font-family:'Fredoka'; font-weight:600; font-size:.8rem; color:var(--ink-soft); margin-right:2px}
+  .fbtn{border:2px solid var(--line); background:#fff; color:var(--ink-soft); font-weight:700; font-size:.82rem;
+    padding:5px 11px; border-radius:99px; cursor:pointer; transition:.15s}
+  .fbtn:hover{border-color:var(--w-mao)}
+  .fbtn.on{background:var(--w-mao); border-color:var(--w-mao); color:#fff}
+
+  /* PANELS */
+  .panel{display:none; padding:36px 0 50px}
+  .panel.active{display:block; animation:fade .35s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+  .world-head{--c:var(--space2); text-align:center; max-width:680px; margin:0 auto 26px}
+  .world-head .wemoji{font-size:3.2rem; display:block; line-height:1}
+  .world-head h2{font-size:clamp(1.7rem,4.5vw,2.4rem); color:var(--c); margin:6px 0 8px}
+  .world-head p{color:var(--ink-soft); font-size:1.04rem}
+  .world-head .why{display:inline-block; margin-top:10px; background:#fff; border:1px solid var(--line);
+    border-radius:99px; padding:6px 16px; font-size:.86rem; font-weight:700; color:var(--ink-soft)}
+
+  .acts{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px}
+  .act{--c:var(--space2); background:#fff; border:1px solid var(--line); border-top:5px solid var(--c);
+    border-radius:20px; padding:18px 20px 20px; box-shadow:var(--shadow-s); position:relative; display:flex; flex-direction:column}
+  .act-top{display:flex; align-items:flex-start; gap:10px; margin-bottom:8px}
+  .act-emoji{font-size:2rem; line-height:1; flex:none}
+  .act-title{font-family:'Fredoka'; font-weight:600; font-size:1.18rem; color:var(--ink); flex:1; padding-top:3px}
+  .heart{flex:none; border:0; background:transparent; cursor:pointer; font-size:1.5rem; line-height:1; color:#d9c9ee;
+    width:34px; height:34px; border-radius:50%; transition:.15s}
+  .heart:hover{background:#fbeef5; transform:scale(1.12)}
+  .heart.on{color:#FF5B8A}
+  .act-tags{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px}
+  .chiptag{font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.4px; padding:2px 9px;
+    border-radius:99px; background:var(--bg2); color:var(--ink-soft)}
+  .act-h{font-family:'Fredoka'; font-weight:600; font-size:.92rem; color:var(--c); margin:10px 0 4px;
+    display:flex; align-items:center; gap:6px}
+  .act ol{margin:0 0 4px; padding-left:20px} .act ol li{margin-bottom:3px; font-size:.95rem}
+  .act .mini{font-size:.92rem; color:#4f4470}
+  .act .mini b{color:var(--ink)}
+  .act-bot{margin-top:auto; padding-top:12px}
+  .act-tip{background:var(--bg); border-radius:12px; padding:9px 12px; font-size:.88rem; color:#5a4f7e; margin-top:10px}
+  .act-tip b{color:var(--c)}
+  .vbtn{display:inline-flex; align-items:center; gap:7px; margin-top:12px; background:#fff; border:2px solid var(--c);
+    color:var(--c); font-family:'Fredoka'; font-weight:600; font-size:.85rem; padding:6px 13px; border-radius:99px; text-decoration:none}
+  .vbtn:hover{background:var(--c); color:#fff}
+
+  .act.flash{animation:flashRing 2.2s ease-out}
+  @keyframes flashRing{0%,60%{box-shadow:0 0 0 5px var(--gold), var(--shadow)}100%{box-shadow:var(--shadow-s)}}
+  .sorted-badge{position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--gold);
+    color:#4a2e00; font-family:'Fredoka'; font-weight:700; font-size:.74rem; padding:3px 12px; border-radius:99px;
+    box-shadow:var(--shadow-s); white-space:nowrap}
+
+  /* GUIA / cards */
+  .gcard{background:#fff; border:1px solid var(--line); border-radius:20px; padding:22px 24px; box-shadow:var(--shadow-s); margin-bottom:18px}
+  .gcard h3{font-size:1.25rem; display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px}
+  .callout{border-radius:14px; padding:14px 16px; border-left:5px solid var(--w-faz); background:#F6F0FF; margin:14px 0}
+  .callout.warn{border-color:var(--gold-d); background:#FFF6E4}
+  .callout.tip{border-color:var(--w-fora); background:#EAF9F0}
+  .callout b{font-family:'Fredoka'}
+  ul.clean{margin:.3em 0; padding-left:20px} ul.clean li{margin-bottom:6px}
+  .rules-mini{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:6px}
+  .rule-mini{background:#fff; border:1px solid var(--line); border-left:5px solid var(--gold); border-radius:14px; padding:13px 15px}
+  .rule-mini b{font-family:'Fredoka'; display:block}
+  .rule-mini small{color:var(--ink-soft)}
+
+  /* FAVORITAS */
+  .fav-empty{text-align:center; color:var(--ink-soft); padding:40px 20px; font-size:1.05rem}
+  .fav-empty .big{font-size:3rem; display:block; margin-bottom:8px}
+
+  /* PRINT BTN */
+  .printbtn{position:fixed; right:16px; bottom:16px; z-index:60; background:var(--space1); color:#fff;
+    border:2px solid var(--gold); border-radius:99px; padding:11px 17px; font-family:'Fredoka'; font-weight:600;
+    cursor:pointer; box-shadow:var(--shadow); font-size:.9rem}
+  .printbtn:hover{background:var(--space2)}
+
+  /* TOAST */
+  .toast{position:fixed; left:50%; top:18px; transform:translateX(-50%) translateY(-160%); z-index:80;
+    background:var(--space1); color:#fff; border:2px solid var(--gold); border-radius:16px; padding:11px 20px;
+    font-family:'Fredoka'; font-weight:600; box-shadow:var(--shadow); transition:transform .45s cubic-bezier(.2,1.3,.4,1); font-size:.95rem}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  footer{text-align:center; padding:30px 20px 46px; color:var(--ink-soft); font-size:.9rem}
+  footer b{font-family:'Fredoka'; color:var(--ink)}
+
+  /* RESPONSIVO — tablet primeiro */
+  @media (max-width:900px){
+    .acts{grid-template-columns:repeat(auto-fill,minmax(248px,1fr)); gap:16px}
+  }
+  @media (max-width:620px){
+    .wrap{padding:0 15px}
+    .hero{padding:42px 16px 62px}
+    .planet{width:104px; height:104px}
+    .acts{grid-template-columns:1fr}
+    .controls{gap:8px 10px}
+    .fgroup .flabel{width:100%; margin-bottom:-2px}
+    .panel{padding:28px 0 44px}
+    .printbtn{padding:10px 14px; font-size:.84rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important; scroll-behavior:auto!important}}
+  @media print{
+    .planetbar,.printbtn,.toast,.heart,.controls{display:none!important}
+    body{background:#fff}
+    .panel{display:block!important; padding:18px 0; page-break-before:always}
+    .panel:first-of-type{page-break-before:avoid}
+    .act,.gcard{break-inside:avoid; box-shadow:none}
+    .hero{background:var(--space1)!important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .act,.world-head h2,.tab{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="stars" id="stars"></div>
+  <svg class="planet" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <radialGradient id="pg" cx="38%" cy="32%" r="75%">
+        <stop offset="0%" stop-color="#FFE08A"/><stop offset="45%" stop-color="#FF9ECb"/><stop offset="100%" stop-color="#A87BF0"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="60" cy="64" rx="56" ry="16" fill="none" stroke="#FFC94D" stroke-width="5" opacity=".9" transform="rotate(-18 60 64)"/>
+    <circle cx="60" cy="58" r="34" fill="url(#pg)"/>
+    <circle cx="49" cy="52" r="5.5" fill="#fff" opacity=".5"/>
+    <circle cx="71" cy="64" r="3.5" fill="#fff" opacity=".4"/>
+    <circle cx="52" cy="56" r="2.6" fill="#3A2E55"/><circle cx="68" cy="56" r="2.6" fill="#3A2E55"/>
+    <path d="M52 66 Q60 73 68 66" stroke="#3A2E55" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <circle cx="46" cy="62" r="3.6" fill="#FF7FB0" opacity=".55"/><circle cx="74" cy="62" r="3.6" fill="#FF7FB0" opacity=".55"/>
+    <ellipse cx="60" cy="64" rx="56" ry="16" fill="none" stroke="#FFC94D" stroke-width="5" opacity=".5" transform="rotate(-18 60 64)" stroke-dasharray="4 90"/>
+  </svg>
+  <div class="tagp">🚀 Aventuras de brincar para a Ayra · 2 anos</div>
+  <h1>O Planeta <b>Ayra</b></h1>
+  <p>Um mundo cheio de brincadeiras simples, feitas com coisas de casa, pra Ayra rir e descobrir. Para a Yasmin, a Alexia e o Felipe usarem juntos com ela. Aqui o que importa é a diversão — o aprendizado vem de brinde. 💛</p>
+  <div class="hero-wave"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path fill="#FBF4FF" d="M0,36 C240,68 480,4 720,28 C960,52 1200,12 1440,34 L1440,64 L0,64 Z"></path></svg></div>
+</header>
+
+<!-- STICKY BAR -->
+<div class="planetbar">
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="inicio" style="--c:var(--space2)"><span class="em">🪐</span> Início</button>
+    <button class="tab" data-tab="mov" style="--c:var(--w-mov)"><span class="em">🏃</span> Movimento</button>
+    <button class="tab" data-tab="mao" style="--c:var(--w-mao)"><span class="em">🤏</span> Mãozinhas</button>
+    <button class="tab" data-tab="fala" style="--c:var(--w-fala)"><span class="em">🗣️</span> Falar &amp; Cantar</button>
+    <button class="tab" data-tab="faz" style="--c:var(--w-faz)"><span class="em">🧸</span> Faz de Conta</button>
+    <button class="tab" data-tab="arte" style="--c:var(--w-arte)"><span class="em">🎨</span> Cores &amp; Artinha</button>
+    <button class="tab" data-tab="mus" style="--c:var(--w-mus)"><span class="em">🎵</span> Música</button>
+    <button class="tab" data-tab="agua" style="--c:var(--w-agua)"><span class="em">🫧</span> Água &amp; Sentidos</button>
+    <button class="tab" data-tab="fora" style="--c:var(--w-fora)"><span class="em">🌳</span> Lá Fora</button>
+    <button class="tab" data-tab="sentir" style="--c:var(--w-sentir)"><span class="em">💛</span> Sentir &amp; Acalmar</button>
+    <button class="tab" data-tab="ajuda" style="--c:var(--w-ajuda)"><span class="em">🧺</span> Ajudante</button>
+    <button class="tab" data-tab="fav" style="--c:#FF5B8A"><span class="em">❤️</span> Favoritas</button>
+  </div>
+  <div class="controls">
+    <button class="sortbtn" id="sortBtn">🎲 Sortear brincadeira</button>
+    <div class="fgroup">
+      <span class="flabel">Energia:</span>
+      <button class="fbtn on" data-energy="todos">Todas</button>
+      <button class="fbtn" data-energy="calma">😌 Calma</button>
+      <button class="fbtn" data-energy="agitada">⚡ Agitada</button>
+    </div>
+    <div class="fgroup">
+      <span class="flabel">Lugar:</span>
+      <button class="fbtn on" data-place="todos">Qualquer</button>
+      <button class="fbtn" data-place="dentro">🏠 Dentro</button>
+      <button class="fbtn" data-place="fora">🌳 Fora</button>
+      <button class="fbtn" data-place="banho">🛁 Banho</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ===== INÍCIO ===== -->
+<section class="panel active" data-tab="inicio">
+  <div class="world-head" style="--c:var(--space2)">
+    <span class="wemoji">🪐</span>
+    <h2>Bem-vindos ao Planeta Ayra</h2>
+    <p>Um guia rápido pra quem vai brincar com a Ayra. Leia uma vez — depois é só escolher um mundo lá em cima, ou apertar <b>🎲 Sortear</b> quando bater aquela dúvida de "o que a gente faz agora?".</p>
+  </div>
+
+  <div class="gcard">
+    <h3>🌟 Como funciona</h3>
+    <ul class="clean">
+      <li><b>Abas (mundos):</b> cada aba lá no topo é um tipo de brincadeira. Toque para trocar.</li>
+      <li><b>🎲 Sortear:</b> sorteia uma brincadeira aleatória pra você fazer agora. Respeita os filtros escolhidos.</li>
+      <li><b>Filtros:</b> "Energia" (Ayra agitada ou pra acalmar?) e "Lugar" (dentro de casa, fora ou no banho).</li>
+      <li><b>❤️ Favoritas:</b> tocou no coração de uma brincadeira? Ela fica guardada na aba Favoritas, salva neste aparelho.</li>
+    </ul>
+    <div class="callout tip"><b>💛 A regra de ouro:</b> o único objetivo aqui é a Ayra se divertir. Se ela riu e quis repetir, deu certo — mesmo que não tenha feito "do jeito certo". Não existe errado, não existe nota.</div>
+  </div>
+
+  <div class="gcard">
+    <h3>🧠 Por que brincar é tão importante</h3>
+    <p>Não é "perder tempo": brincar é como o cérebro dela cresce. Brincando, a Ayra treina falar, se mexer, se concentrar, conviver e se acalmar — tudo de uma vez, e com prazer. E quando vocês brincam <b>junto</b> com ela, isso fortalece o vínculo e ainda ajuda a regular o estresse dela. Em resumo: rir e brincar É o aprendizado.</p>
+  </div>
+
+  <div class="gcard">
+    <h3>✨ 5 segredos pra brincar com um bebê de 2 anos</h3>
+    <div class="rules-mini">
+      <div class="rule-mini"><b>1. Curto é melhor</b><small>A atenção dela dura poucos minutos. Acabou o interesse? Acabou a brincadeira. Tudo bem.</small></div>
+      <div class="rule-mini"><b>2. Repetir é ótimo</b><small>Ela vai querer a mesma coisa 20 vezes. É assim que o cérebro fixa. Repita sem medo.</small></div>
+      <div class="rule-mini"><b>3. Deixe ela liderar</b><small>Se ela inventar outro jeito de brincar, siga ela. Bagunça e exploração são parte.</small></div>
+      <div class="rule-mini"><b>4. Narre tudo</b><small>Fale o que está acontecendo ("a bola subiu!"). É assim que ela aprende a falar.</small></div>
+      <div class="rule-mini"><b>5. Brincar sozinha também vale</b><small>10–20 min explorando sozinha (de olho nela) faz muito bem. Não precisa entreter o tempo todo.</small></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="gcard" style="margin-bottom:0">
+      <h3>🛟 Segurança primeiro</h3>
+      <ul class="clean" style="margin-bottom:0">
+        <li><b>Objetos pequenos = perigo de engasgo.</b> Nada menor que a tampa de um pote ao alcance dela sem supervisão.</li>
+        <li><b>Água, nunca sozinha.</b> No banho ou bacia, fique sempre junto, o tempo todo.</li>
+        <li><b>Tinta e materiais atóxicos</b> (ela leva tudo à boca). Cuidado com tesoura, sacos plásticos e cordões.</li>
+        <li><b>Subir e escalar:</b> ofereça desafio com você por perto pra amparar.</li>
+      </ul>
+    </div>
+    <div class="gcard" style="margin-bottom:0">
+      <h3>📱 Telas &amp; 😴 soninho</h3>
+      <ul class="clean" style="margin-bottom:0">
+        <li><b>Telas:</b> no máximo 1 hora por dia de programa infantil, com um adulto junto. Brincar de verdade vale muito mais que tela.</li>
+        <li><b>Sono:</b> de 11 a 14 horas por dia (com cochilos). Hora de dormir calma: pijama, dentes e 1–2 livrinhos.</li>
+        <li><b>Rotina:</b> bebês adoram previsibilidade. Mesma sequência todo dia acalma e reduz birra.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn"><b>👀 Lembrete carinhoso:</b> aos 2 anos, é normal a Ayra brincar <b>do lado</b> de outras crianças sem dividir ainda — dividir só amadurece lá pros 3–4 anos. Não force; mostre o exemplo com leveza.</div>
+</section>
+
+<!-- ===== MOVIMENTO ===== -->
+<section class="panel" data-tab="mov">
+  <div class="world-head" style="--c:var(--w-mov)">
+    <span class="wemoji">🏃</span><h2>Corpo &amp; Movimento</h2>
+    <p>Correr, chutar, pular e dançar! Aqui a Ayra gasta energia e treina o corpo todo.</p>
+    <span class="why">Treina: força, equilíbrio e coordenação</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="mov" data-energy="agitada" data-place="dentro fora" data-id="mov1" style="--c:var(--w-mov)">
+      <div class="act-top"><span class="act-emoji">⚽</span><span class="act-title">Gol do Bebê</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Faça uma "trave" com duas almofadas ou caixas.</li><li>Role a bola pra ela e diga "chuta!".</li><li>Comemore MUITO cada chute: "Gooool da Ayra!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> chutar, mirar e o prazer de acertar.</div>
+        <div class="mini"><b>Você vai precisar:</b> 1 bola macia + 2 almofadas.</div>
+        <div class="act-tip"><b>Dica:</b> bola grande e leve é mais fácil de acertar e dá mais "gol".</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mov" data-energy="agitada" data-place="fora dentro" data-id="mov2" style="--c:var(--w-mov)">
+      <div class="act-top"><span class="act-emoji">🚦</span><span class="act-title">Prontos? Já!</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Marque um ponto de partida e diga "Prontos... preparar...".</li><li>Faça suspense! Espere ela ficar ansiosa e grite "JÁ!".</li><li>Corram juntos até uma árvore ou parede. Repita (ela vai amar).</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> correr, esperar a vez e antecipar (paciência divertida).</div>
+        <div class="mini"><b>Você vai precisar:</b> só espaço pra correr.</div>
+        <div class="act-tip"><b>Dica:</b> o segredo é o suspense antes do "JÁ!". É o que faz ela rir.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mov" data-energy="agitada" data-place="dentro" data-id="mov3" style="--c:var(--w-mov)">
+      <div class="act-top"><span class="act-emoji">🎈</span><span class="act-title">O Balão Não Pode Cair</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Encha um balão.</li><li>Joguem pra cima tentando não deixar cair no chão.</li><li>Contem juntos: "um, dois, três toques!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> coordenação olho-mão e reflexo.</div>
+        <div class="mini"><b>Você vai precisar:</b> 1 balão.</div>
+        <div class="act-tip"><b>Segurança:</b> balão cheio é diversão, mas balão estourado/murcho é risco de engasgo — recolha os pedaços na hora.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mov" data-energy="agitada" data-place="dentro" data-id="mov4" style="--c:var(--w-mov)">
+      <div class="act-top"><span class="act-emoji">🛋️</span><span class="act-title">Circuito Maluco</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Monte um caminho: passar POR CIMA da almofada, POR BAIXO da cadeira, PULAR o travesseiro.</li><li>Faça você primeiro, bem exagerado.</li><li>Convide: "agora a Ayra!". Aplauda cada etapa.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> equilíbrio, noção de espaço e as palavrinhas em cima/embaixo.</div>
+        <div class="mini"><b>Você vai precisar:</b> almofadas, cadeiras, travesseiros.</div>
+        <div class="act-tip"><b>Dica:</b> vá narrando "em cima!", "embaixo!" — ela aprende as palavras brincando.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mov" data-energy="agitada" data-place="dentro" data-id="mov5" style="--c:var(--w-mov)">
+      <div class="act-top"><span class="act-emoji">🕺</span><span class="act-title">Dança Congela</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Coloque uma música animada e dancem juntos.</li><li>Pause a música de repente e grite "CONGELOU!" — fiquem estátua.</li><li>Volte a música e dancem de novo.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> ritmo, autocontrole (parar) e muita risada.</div>
+        <div class="mini"><b>Você vai precisar:</b> música.</div>
+        <a class="vbtn" href="https://www.youtube.com/results?search_query=m%C3%BAsica+infantil+dan%C3%A7a+congela+freeze+dance" target="_blank" rel="noopener">🎬 Músicas pra dançar</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== MÃOZINHAS ===== -->
+<section class="panel" data-tab="mao">
+  <div class="world-head" style="--c:var(--w-mao)">
+    <span class="wemoji">🤏</span><h2>Mãozinhas Espertas</h2>
+    <p>Encaixar, empilhar, abrir e fechar. Brincadeiras quietinhas que deixam os dedinhos e a cabeça espertos.</p>
+    <span class="why">Treina: coordenação fina e resolver probleminhas</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="mao" data-energy="ambas" data-place="dentro" data-id="mao1" style="--c:var(--w-mao)">
+      <div class="act-top"><span class="act-emoji">🧱</span><span class="act-title">Torre Tomba-Tomba</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Empilhem blocos (ou potes, caixinhas) o mais alto que der.</li><li>Contem juntos cada bloco.</li><li>Deixe ela DERRUBAR tudo — a melhor parte! Repita.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> precisão das mãos, contar e causa-e-efeito.</div>
+        <div class="mini"><b>Você vai precisar:</b> blocos, potes de plástico ou caixas.</div>
+        <div class="act-tip"><b>Dica:</b> derrubar é tão importante quanto montar — é assim que ela entende como o mundo funciona.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mao" data-energy="calma" data-place="dentro" data-id="mao2" style="--c:var(--w-mao)">
+      <div class="act-top"><span class="act-emoji">🫙</span><span class="act-title">Abre e Fecha</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Junte potes com tampa (de tamanhos diferentes).</li><li>Esconda um objeto seguro dentro e deixe ela abrir pra "descobrir".</li><li>Peça pra fechar de novo. Vire um joguinho de esconde-esconde.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> força dos dedos, girar/encaixar tampas e curiosidade.</div>
+        <div class="mini"><b>Você vai precisar:</b> potes de plástico com tampa.</div>
+        <div class="act-tip"><b>Segurança:</b> use objetos maiores que a boca dela; nada pequeno o bastante pra engasgar.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mao" data-energy="calma" data-place="dentro" data-id="mao3" style="--c:var(--w-mao)">
+      <div class="act-top"><span class="act-emoji">📦</span><span class="act-title">Caixa de Surpresas</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Faça um furo grande na tampa de uma caixa de sapato.</li><li>Dê tampinhas grandes ou bolinhas seguras pra ela enfiar pelo buraco.</li><li>Abra a caixa no fim: "cadê? Apareceu!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> mira, encaixe e a ideia de "guardar e achar".</div>
+        <div class="mini"><b>Você vai precisar:</b> caixa de sapato + objetos grandes seguros.</div>
+        <div class="act-tip"><b>Dica:</b> objetos coloridos deixam mais divertido ("agora o vermelho!").</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mao" data-energy="calma" data-place="dentro" data-id="mao4" style="--c:var(--w-mao)">
+      <div class="act-top"><span class="act-emoji">🥄</span><span class="act-title">Pesca da Colher</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ponha bolinhas/pompons grandes num pote.</li><li>Dê uma colher e um pote vazio: ela "pesca" e transfere.</li><li>Comemore cada transferência.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> usar a colher (ajuda a comer sozinha!), foco e paciência.</div>
+        <div class="mini"><b>Você vai precisar:</b> 2 potes, 1 colher, pompons ou objetos grandes.</div>
+        <div class="act-tip"><b>Segurança:</b> nada pequeno que caiba inteiro na boca. Supervisione sempre.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mao" data-energy="calma" data-place="dentro" data-id="mao5" style="--c:var(--w-mao)">
+      <div class="act-top"><span class="act-emoji">🔘</span><span class="act-title">Aperta e Acontece</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ofereça brinquedos ou objetos com botões, interruptores e tampas que fazem algo (luz, som).</li><li>Mostre uma vez e deixe ela repetir sozinha.</li><li>Reaja com surpresa: "você acendeu!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> causa-e-efeito e a alegria de "eu fiz acontecer".</div>
+        <div class="mini"><b>Você vai precisar:</b> brinquedo de botões, interruptor de luz, lanterna.</div>
+        <div class="act-tip"><b>Dica:</b> deixar ela apertar o interruptor de luz da sala já é uma grande diversão científica.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== FALAR & CANTAR ===== -->
+<section class="panel" data-tab="fala">
+  <div class="world-head" style="--c:var(--w-fala)">
+    <span class="wemoji">🗣️</span><h2>Falar &amp; Cantar</h2>
+    <p>Cantar, nomear e conversar. É brincando assim que a Ayra vai juntando mais palavras todo dia.</p>
+    <span class="why">Treina: linguagem, vocabulário e escutar</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="fala" data-energy="calma" data-place="dentro" data-id="fala1" style="--c:var(--w-fala)">
+      <div class="act-top"><span class="act-emoji">🪄</span><span class="act-title">O Tradutor Mágico</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Quando ela falar pela metade ("qué nana"), repita completo e certinho: "Você quer mais banana!".</li><li>Não corrija nem mande repetir — só devolva bonito.</li><li>Faça isso o dia todo, naturalmente.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> como as palavras soam e se juntam.</div>
+        <div class="mini"><b>Você vai precisar:</b> nada — só sua voz.</div>
+        <div class="act-tip"><b>Dica:</b> é a brincadeira mais poderosa de todas pra fala. Custa zero e funciona o tempo todo.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fala" data-energy="ambas" data-place="dentro" data-id="fala2" style="--c:var(--w-fala)">
+      <div class="act-top"><span class="act-emoji">👃</span><span class="act-title">Cadê o Narizinho?</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Cante "Cabeça, ombro, joelho e pé" tocando cada parte.</li><li>Depois pergunte: "cadê o nariz da Ayra?" e espere ela apontar.</li><li>Comemore cada acerto com festa.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> nomes das partes do corpo e entender perguntas.</div>
+        <div class="mini"><b>Você vai precisar:</b> nada.</div>
+        <a class="vbtn" href="https://www.youtube.com/results?search_query=cabe%C3%A7a+ombro+joelho+e+p%C3%A9+infantil" target="_blank" rel="noopener">🎬 Cabeça, ombro, joelho e pé</a>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fala" data-energy="calma" data-place="dentro" data-id="fala3" style="--c:var(--w-fala)">
+      <div class="act-top"><span class="act-emoji">📖</span><span class="act-title">Caça no Livrinho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Abram um livro de figuras juntos.</li><li>Pergunte "cadê o cachorro?" e deixe ela apontar.</li><li>Nomeie tudo o que ela apontar, mesmo sem você perguntar.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> vocabulário, atenção e amor por livros.</div>
+        <div class="mini"><b>Você vai precisar:</b> qualquer livro com figuras.</div>
+        <div class="act-tip"><b>Dica:</b> ler o MESMO livro toda noite é ótimo — a repetição é o que ensina.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fala" data-energy="ambas" data-place="dentro fora" data-id="fala4" style="--c:var(--w-fala)">
+      <div class="act-top"><span class="act-emoji">🐮</span><span class="act-title">Que Som Faz?</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Aponte um bichinho (de brinquedo, livro ou de verdade) e pergunte "que som a vaca faz?".</li><li>Faça o "muuu" e deixe ela imitar.</li><li>Revezem: ela faz um som, você adivinha.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> imitar sons, revezar a vez e linguagem.</div>
+        <div class="mini"><b>Você vai precisar:</b> bichinhos ou só imaginação.</div>
+        <div class="act-tip"><b>Dica:</b> exagere nos sons e nas caras — quanto mais bobo, mais ela ri e participa.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fala" data-energy="calma" data-place="dentro" data-id="fala5" style="--c:var(--w-fala)">
+      <div class="act-top"><span class="act-emoji">☎️</span><span class="act-title">Alô, Ayra?</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Use um telefone de brinquedo (ou um bloco fazendo de telefone).</li><li>"Alô? É a Ayra? Como você está?" e espere a resposta.</li><li>Finja ligar pra vovó, pro cachorro, pra banana...</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> conversa de ida e volta e faz de conta.</div>
+        <div class="mini"><b>Você vai precisar:</b> telefone de brinquedo ou qualquer objeto.</div>
+        <div class="act-tip"><b>Dica:</b> faça pausas de verdade esperando ela "responder" — ensina o ritmo da conversa.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== FAZ DE CONTA ===== -->
+<section class="panel" data-tab="faz">
+  <div class="world-head" style="--c:var(--w-faz)">
+    <span class="wemoji">🧸</span><h2>Faz de Conta</h2>
+    <p>Cozinhar de mentirinha, virar médico, cuidar do nenê. O mundo do imaginar — onde a Ayra entende a vida brincando.</p>
+    <span class="why">Treina: imaginação, empatia e linguagem</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="faz" data-energy="calma" data-place="dentro" data-id="faz1" style="--c:var(--w-faz)">
+      <div class="act-top"><span class="act-emoji">🍳</span><span class="act-title">Cozinha Maluca</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Dê potes, colheres e "comidinhas" (tampas, bolinhas, frutas de brinquedo).</li><li>"Vamos fazer uma sopa? Mexe, mexe!"</li><li>Peça pra ela "te servir" e finja comer: "hmmm, delícia!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> imitar a vida real, sequência (mexer→servir) e generosidade.</div>
+        <div class="mini"><b>Você vai precisar:</b> potes, colheres de pau, objetos seguros.</div>
+        <div class="act-tip"><b>Dica:</b> deixe ela cozinhar do ladinho enquanto VOCÊ cozinha de verdade. Sucesso garantido.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="faz" data-energy="ambas" data-place="dentro" data-id="faz2" style="--c:var(--w-faz)">
+      <div class="act-top"><span class="act-emoji">👒</span><span class="act-title">Caixa de Disfarces</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Junte numa caixa: chapéus, sapatos de adulto, lenços, camisas grandes.</li><li>Deixe ela se vestir de "grande" e se ver no espelho.</li><li>"Quem é essa moça de chapéu? É a Ayra!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> começar o faz de conta, vestir-se e se reconhecer.</div>
+        <div class="mini"><b>Você vai precisar:</b> roupas e acessórios velhos de adulto + espelho.</div>
+        <div class="act-tip"><b>Segurança:</b> evite cordões longos e colares — risco de enrosco.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="faz" data-energy="calma" data-place="dentro" data-id="faz3" style="--c:var(--w-faz)">
+      <div class="act-top"><span class="act-emoji">🍼</span><span class="act-title">Cuida do Nenê</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Pegue uma boneca ou ursinho: "o nenê está com fome/sono".</li><li>Ajude ela a dar comida, embalar, cobrir e dar tchau.</li><li>"Que carinhosa! O nenê dormiu."</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> empatia, cuidado e imitar o que vocês fazem com ela.</div>
+        <div class="mini"><b>Você vai precisar:</b> boneca ou bicho de pelúcia + paninho.</div>
+        <div class="act-tip"><b>Dica:</b> ótimo pra rotina de dormir — "vamos pôr o ursinho pra dormir também".</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="faz" data-energy="calma" data-place="dentro" data-id="faz4" style="--c:var(--w-faz)">
+      <div class="act-top"><span class="act-emoji">🛒</span><span class="act-title">Mercadinho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Espalhe alguns objetos/frutas numa "prateleira".</li><li>Dê uma sacola e peça: "compra uma maçã pra mim?".</li><li>Ela busca e entrega; você agradece e nomeia cada item.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> nomear coisas, seguir pedidos e nomes de alimentos.</div>
+        <div class="mini"><b>Você vai precisar:</b> sacola + objetos/frutas de casa.</div>
+        <div class="act-tip"><b>Dica:</b> peça um item de cada vez — duas instruções ainda é muito pra ela.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="faz" data-energy="calma" data-place="dentro fora" data-id="faz5" style="--c:var(--w-faz)">
+      <div class="act-top"><span class="act-emoji">🫖</span><span class="act-title">Festa do Chá</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Sente os ursinhos/bonecas em roda com xícaras de brinquedo.</li><li>Sirva "chá" e biscoitos de mentira pra cada um.</li><li>Pratiquem "por favor" e "obrigado" com os convidados.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> imaginação, boas maneiras e cuidar dos outros.</div>
+        <div class="mini"><b>Você vai precisar:</b> xícaras de brinquedo + bichinhos.</div>
+        <div class="act-tip"><b>Dica:</b> ótima pra fazer na varanda ou no jardim num dia gostoso.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== CORES & ARTINHA ===== -->
+<section class="panel" data-tab="arte">
+  <div class="world-head" style="--c:var(--w-arte)">
+    <span class="wemoji">🎨</span><h2>Cores &amp; Artinha</h2>
+    <p>Rabiscar, pintar, carimbar e se sujar! Arte aos 2 anos é sobre o processo e a alegria — não sobre o resultado bonito.</p>
+    <span class="why">Treina: criatividade, cores e mãos fortes</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="arte" data-energy="calma" data-place="dentro" data-id="arte1" style="--c:var(--w-arte)">
+      <div class="act-top"><span class="act-emoji">🖍️</span><span class="act-title">Rabisco Livre</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Prenda uma folha grande na mesa ou no chão.</li><li>Dê giz de cera grosso e deixe ela rabiscar à vontade.</li><li>Pendure a obra na geladeira: "que linda, foi a Ayra!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> segurar o giz (preparação pra escrever) e se expressar.</div>
+        <div class="mini"><b>Você vai precisar:</b> papel grande + giz de cera grosso.</div>
+        <div class="act-tip"><b>Dica:</b> giz grosso é mais fácil pra mãozinha. Não espere desenhos — rabisco é o certo nessa idade.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="arte" data-energy="calma" data-place="dentro fora" data-id="arte2" style="--c:var(--w-arte)">
+      <div class="act-top"><span class="act-emoji">🖐️</span><span class="act-title">Pintura de Dedo</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ponha um pouco de tinta atóxica numa folha.</li><li>Deixe ela espalhar com os dedos, fazer pontinhos, misturar cores.</li><li>Mostre como duas cores viram outra: "azul + amarelo = verde!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> sentidos, cores e exploração sem regras.</div>
+        <div class="mini"><b>Você vai precisar:</b> tinta atóxica + papel (+ avental velho).</div>
+        <div class="act-tip"><b>Dica:</b> faça no chão da cozinha ou no quintal — bem mais fácil de limpar a bagunça (que faz parte!).</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="arte" data-energy="ambas" data-place="dentro" data-id="arte3" style="--c:var(--w-arte)">
+      <div class="act-top"><span class="act-emoji">🌈</span><span class="act-title">Caça às Cores</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Escolha uma cor: "vamos achar tudo VERMELHO!".</li><li>Andem pela casa apontando coisas vermelhas.</li><li>Juntem num montinho e contem no fim.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> reconhecer cores e observar o ambiente.</div>
+        <div class="mini"><b>Você vai precisar:</b> só a casa.</div>
+        <div class="act-tip"><b>Dica:</b> uma cor por vez. Repita a mesma cor vários dias antes de trocar.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="arte" data-energy="calma" data-place="dentro" data-id="arte4" style="--c:var(--w-arte)">
+      <div class="act-top"><span class="act-emoji">🥔</span><span class="act-title">Carimbo Mágico</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Use uma esponja, batata cortada ou fundo de copo como carimbo.</li><li>Molhe na tinta e carimbe no papel: "pluft!".</li><li>Encha a folha de formas e cores.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> coordenação, formas e causa-e-efeito (aperta → aparece).</div>
+        <div class="mini"><b>Você vai precisar:</b> esponja/batata/copo + tinta + papel.</div>
+        <div class="act-tip"><b>Dica:</b> formas diferentes (círculo, estrela) deixam mais divertido de nomear.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="arte" data-energy="calma" data-place="dentro" data-id="arte5" style="--c:var(--w-arte)">
+      <div class="act-top"><span class="act-emoji">✨</span><span class="act-title">Colagem Pegajosa</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Cole fita adesiva larga na parede com o lado grudento pra fora (ou papel contact).</li><li>Dê papéis coloridos, algodão, folhas pra ela grudar.</li><li>Vejam a "obra" tomar forma juntos.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> pinça dos dedos e textura.</div>
+        <div class="mini"><b>Você vai precisar:</b> fita adesiva larga + papéis/algodão.</div>
+        <div class="act-tip"><b>Segurança:</b> pedaços grandes só, e de olho pra não levar à boca.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== MÚSICA ===== -->
+<section class="panel" data-tab="mus">
+  <div class="world-head" style="--c:var(--w-mus)">
+    <span class="wemoji">🎵</span><h2>Música &amp; Ritmo</h2>
+    <p>Bater, chacoalhar e cantar! Dá pra montar uma banda inteira com coisas da cozinha.</p>
+    <span class="why">Treina: ritmo, ouvido e expressão</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="mus" data-energy="agitada" data-place="dentro" data-id="mus1" style="--c:var(--w-mus)">
+      <div class="act-top"><span class="act-emoji">🥁</span><span class="act-title">Banda de Panela</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Vire panelas e potes de cabeça pra baixo.</li><li>Dê colheres de pau e batam juntos.</li><li>Façam rápido, devagar, forte e fraquinho.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> ritmo, força do braço e que ela controla o som.</div>
+        <div class="mini"><b>Você vai precisar:</b> panelas, potes, colher de pau.</div>
+        <div class="act-tip"><b>Dica:</b> barulhenta? Sim! Mas é uma das brincadeiras favoritas dessa idade.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mus" data-energy="ambas" data-place="dentro" data-id="mus2" style="--c:var(--w-mus)">
+      <div class="act-top"><span class="act-emoji">🫨</span><span class="act-title">Chocalho de Arroz</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ponha um punhado de arroz ou feijão numa garrafa pet.</li><li>Feche MUITO bem (cole a tampa com fita).</li><li>Chacoalhem no ritmo de uma música.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> ritmo, coordenação e ouvir sons diferentes.</div>
+        <div class="mini"><b>Você vai precisar:</b> garrafa pet + arroz/feijão + fita.</div>
+        <div class="act-tip"><b>Segurança:</b> a tampa PRECISA estar bem colada — o conteúdo solto é risco de engasgo.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mus" data-energy="agitada" data-place="dentro" data-id="mus3" style="--c:var(--w-mus)">
+      <div class="act-top"><span class="act-emoji">🐢</span><span class="act-title">Rápido e Devagar</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Bata palmas bem devagar e andem como tartaruga.</li><li>Acelere as palmas e corram como coelho.</li><li>Alterne e veja ela acompanhar.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> ritmo, escutar e controlar o corpo.</div>
+        <div class="mini"><b>Você vai precisar:</b> só as mãos.</div>
+        <div class="act-tip"><b>Dica:</b> ótima pra gastar energia e depois desacelerar antes do soninho.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mus" data-energy="calma" data-place="dentro fora" data-id="mus4" style="--c:var(--w-mus)">
+      <div class="act-top"><span class="act-emoji">🕷️</span><span class="act-title">Cantigas com Gestos</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Cante cantigas com gestos: "A Dona Aranha", "Borboletinha", "Parabéns".</li><li>Faça os gestos e deixe ela imitar.</li><li>Repita as favoritas dela várias vezes.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> memória, gestos, fala e vínculo.</div>
+        <div class="mini"><b>Você vai precisar:</b> só a voz.</div>
+        <a class="vbtn" href="https://www.youtube.com/results?search_query=cantigas+de+roda+infantil+com+gestos" target="_blank" rel="noopener">🎬 Cantigas com gestos</a>
+      </div>
+    </article>
+
+    <article class="act" data-tab="mus" data-energy="ambas" data-place="dentro" data-id="mus5" style="--c:var(--w-mus)">
+      <div class="act-top"><span class="act-emoji">🔊</span><span class="act-title">Alto e Baixinho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Cantem uma música bem ALTO (com força).</li><li>Depois bem baixinho (sussurrando).</li><li>Ela vai rir da diferença e imitar.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> controle da voz e os conceitos alto/baixo.</div>
+        <div class="mini"><b>Você vai precisar:</b> nada.</div>
+        <div class="act-tip"><b>Dica:</b> terminar no "baixinho" ajuda a acalmar — bom truque antes de dormir.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== ÁGUA & SENTIDOS ===== -->
+<section class="panel" data-tab="agua">
+  <div class="world-head" style="--c:var(--w-agua)">
+    <span class="wemoji">🫧</span><h2>Água &amp; Sentidos</h2>
+    <p>Despejar, espremer, sentir texturas. Brincadeiras sensoriais que acalmam e encantam — várias dá pra fazer na hora do banho.</p>
+    <span class="why">Treina: sentidos, coordenação e calma</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="agua" data-energy="calma" data-place="banho" data-id="agua1" style="--c:var(--w-agua)">
+      <div class="act-top"><span class="act-emoji">🥤</span><span class="act-title">Enche e Despeja</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🛁 Banho</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>No banho, dê copos, potes e um funil.</li><li>Mostre encher um e despejar no outro.</li><li>Deixe ela repetir à vontade.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> coordenação, cheio/vazio e concentração.</div>
+        <div class="mini"><b>Você vai precisar:</b> copos e potes de plástico (+ funil).</div>
+        <div class="act-tip"><b>Segurança:</b> nunca, jamais, deixe sozinha perto da água — nem por um segundo.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="agua" data-energy="calma" data-place="banho" data-id="agua2" style="--c:var(--w-agua)">
+      <div class="act-top"><span class="act-emoji">🎣</span><span class="act-title">Pesca no Banho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🛁 Banho</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ponha brinquedos que boiam na água.</li><li>Dê uma peneira ou pote pra ela "pescar".</li><li>Conte os peixinhos pescados.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> mira, coordenação e contar.</div>
+        <div class="mini"><b>Você vai precisar:</b> brinquedos flutuantes + peneira/pote.</div>
+        <div class="act-tip"><b>Dica:</b> transforma o banho numa brincadeira — adeus choro na hora do banho.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="agua" data-energy="calma" data-place="dentro fora" data-id="agua3" style="--c:var(--w-agua)">
+      <div class="act-top"><span class="act-emoji">🍚</span><span class="act-title">Caixa Sensorial</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Encha uma bacia com arroz, macarrão cru ou areia.</li><li>Esconda potinhos e colheres dentro pra ela cavar e despejar.</li><li>Deixe explorar a textura com as mãos.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> tato, coordenação e exploração.</div>
+        <div class="mini"><b>Você vai precisar:</b> bacia + arroz/macarrão/areia + potes.</div>
+        <div class="act-tip"><b>Segurança:</b> supervisão total — nessa idade ainda leva à boca. Faça sobre uma toalha pra recolher.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="agua" data-energy="agitada" data-place="fora dentro" data-id="agua4" style="--c:var(--w-agua)">
+      <div class="act-top"><span class="act-emoji">🫧</span><span class="act-title">Caça às Bolhas</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Faça bolhas de sabão e deixe ela correr atrás.</li><li>"Estoura, estoura!" — apontem e contem.</li><li>Tente ela soprar também.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> correr, mirar, soprar (bom pra fala!) e pura alegria.</div>
+        <div class="mini"><b>Você vai precisar:</b> bolhas de sabão.</div>
+        <div class="act-tip"><b>Dica:</b> faça você bolhas com água + detergente + um pouco de açúcar pra durarem mais.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="agua" data-energy="calma" data-place="dentro" data-id="agua5" style="--c:var(--w-agua)">
+      <div class="act-top"><span class="act-emoji">💧</span><span class="act-title">Saquinho Mágico</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ponha gel/tinta colorida dentro de um saco zip e feche MUITO bem (reforce com fita).</li><li>Cole na mesa ou no chão.</li><li>Deixe ela apertar, espremer e fazer "desenhos" empurrando o líquido — sem sujeira.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> tato, dedos e cores — limpinho!</div>
+        <div class="mini"><b>Você vai precisar:</b> saco zip resistente + gel/tinta + fita.</div>
+        <div class="act-tip"><b>Segurança:</b> o saco precisa estar bem lacrado e sempre com você por perto.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== LÁ FORA ===== -->
+<section class="panel" data-tab="fora">
+  <div class="world-head" style="--c:var(--w-fora)">
+    <span class="wemoji">🌳</span><h2>Lá Fora</h2>
+    <p>Sol, grama, bichinhos e ar livre. A natureza é o maior parquinho sensorial que existe.</p>
+    <span class="why">Treina: corpo, sentidos e curiosidade pelo mundo</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="fora" data-energy="calma" data-place="fora" data-id="fora1" style="--c:var(--w-fora)">
+      <div class="act-top"><span class="act-emoji">🍃</span><span class="act-title">Caça ao Tesouro Natural</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Dê um baldinho e saiam coletando folhas, pedrinhas, gravetos.</li><li>Nomeie e descreva cada achado: "folha verde, áspera!".</li><li>Em casa, espalhem os tesouros e revejam.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> observação, vocabulário e texturas.</div>
+        <div class="mini"><b>Você vai precisar:</b> um baldinho ou sacola.</div>
+        <div class="act-tip"><b>Segurança:</b> de olho pra não levar pedrinhas à boca.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fora" data-energy="calma" data-place="fora" data-id="fora2" style="--c:var(--w-fora)">
+      <div class="act-top"><span class="act-emoji">🦶</span><span class="act-title">Pés Descalços</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Num lugar seguro, tire os sapatos dela.</li><li>Deixe pisar na grama, na areia, na terra.</li><li>Pergunte: "é macio? é gelado? faz cócegas?".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> equilíbrio, tato e conexão com a natureza.</div>
+        <div class="mini"><b>Você vai precisar:</b> um chão natural seguro.</div>
+        <div class="act-tip"><b>Dica:</b> nomear as sensações ("macio", "gelado") ensina palavras novas.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fora" data-energy="agitada" data-place="fora" data-id="fora3" style="--c:var(--w-fora)">
+      <div class="act-top"><span class="act-emoji">💨</span><span class="act-title">Sopra e Corre</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Soprem sementes de dente-de-leão ou folhinhas secas.</li><li>Corram atrás do que voa com o vento.</li><li>"Cadê? Foi pra lá!" apontando.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> soprar (fortalece a fala), correr e observar.</div>
+        <div class="mini"><b>Você vai precisar:</b> natureza + vento.</div>
+        <div class="act-tip"><b>Dica:</b> dias de brisa leve são perfeitos pra essa.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fora" data-energy="agitada" data-place="fora" data-id="fora4" style="--c:var(--w-fora)">
+      <div class="act-top"><span class="act-emoji">🥾</span><span class="act-title">Pulo na Poça</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">⚡ Agitada</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Depois da chuva, vista bota e roupa que pode molhar.</li><li>Pulem nas poças juntos: "splash!".</li><li>Riam muito da água espirrando.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> pular, equilíbrio e alegria sem freio.</div>
+        <div class="mini"><b>Você vai precisar:</b> bota de chuva + uma poça.</div>
+        <div class="act-tip"><b>Dica:</b> deixar se molhar de propósito (com segurança) é memória de infância que fica.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="fora" data-energy="calma" data-place="fora" data-id="fora5" style="--c:var(--w-fora)">
+      <div class="act-top"><span class="act-emoji">🐜</span><span class="act-title">Espião de Bichinhos</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🌳 Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Sentem no chão e observem formigas, passarinhos, borboletas.</li><li>Apontem e nomeiem: "olha a formiguinha andando!".</li><li>Imitem o bichinho (voar, rastejar).</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> atenção, paciência e amor pela natureza.</div>
+        <div class="mini"><b>Você vai precisar:</b> só olhos curiosos.</div>
+        <div class="act-tip"><b>Dica:</b> ótima brincadeira calma — ajuda a desacelerar num dia agitado.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== SENTIR & ACALMAR ===== -->
+<section class="panel" data-tab="sentir">
+  <div class="world-head" style="--c:var(--w-sentir)">
+    <span class="wemoji">💛</span><h2>Sentir &amp; Acalmar</h2>
+    <p>Brincadeiras tranquilas pra nomear sentimentos, relaxar e fechar o dia com aconchego.</p>
+    <span class="why">Treina: emoções, calma e vínculo</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="sentir" data-energy="calma" data-place="dentro" data-id="sentir1" style="--c:var(--w-sentir)">
+      <div class="act-top"><span class="act-emoji">🧸</span><span class="act-title">Respira como o Ursinho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Ela deita e coloca um ursinho na barriga.</li><li>"Vamos fazer o ursinho subir e descer devagar." Respirem fundo juntos.</li><li>Façam 3–5 respirações lentas vendo o bicho balançar.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> se acalmar — uma ferramenta pra vida toda.</div>
+        <div class="mini"><b>Você vai precisar:</b> um bichinho de pelúcia leve.</div>
+        <div class="act-tip"><b>Dica:</b> ensine na calmaria, repetindo sempre. Aí funciona quando ela estiver agitada.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="sentir" data-energy="calma" data-place="dentro" data-id="sentir2" style="--c:var(--w-sentir)">
+      <div class="act-top"><span class="act-emoji">😊</span><span class="act-title">Caras e Caretas</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Na frente do espelho, façam cara de feliz, triste, bravo, assustado.</li><li>Nomeie cada uma: "essa é a cara de feliz!".</li><li>Deixe ela imitar e inventar caretas.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> reconhecer e nomear emoções (base da inteligência emocional).</div>
+        <div class="mini"><b>Você vai precisar:</b> um espelho.</div>
+        <div class="act-tip"><b>Dica:</b> quando ela ficar brava de verdade, lembre: "tá com a cara de bravo? Vem cá."</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="sentir" data-energy="calma" data-place="dentro" data-id="sentir3" style="--c:var(--w-sentir)">
+      <div class="act-top"><span class="act-emoji">🫂</span><span class="act-title">Abraço de Urso</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Quando ela estiver agitada ou chorosa, ofereça um "abraço de urso" bem apertadinho.</li><li>Balancem devagar contando até 10.</li><li>Respire calmo — ela copia o seu corpo.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> regular o corpo e sentir segurança.</div>
+        <div class="mini"><b>Você vai precisar:</b> seus braços.</div>
+        <div class="act-tip"><b>Dica:</b> o aperto firme (sem machucar) acalma de verdade o sistema nervoso.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="sentir" data-energy="calma" data-place="dentro" data-id="sentir4" style="--c:var(--w-sentir)">
+      <div class="act-top"><span class="act-emoji">🛏️</span><span class="act-title">Cantinho do Aconchego</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Monte um cantinho fofo com almofadas, mantinha e os bichinhos.</li><li>Use pra ler, ouvir música baixinho ou só relaxar.</li><li>Não é castigo — é o "ninho" feliz dela.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> autorregulação e ter um lugar seguro.</div>
+        <div class="mini"><b>Você vai precisar:</b> almofadas, manta, bichinhos.</div>
+        <div class="act-tip"><b>Dica:</b> leve ela ao cantinho quando estiver sobrecarregada, junto com você.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="sentir" data-energy="calma" data-place="dentro" data-id="sentir5" style="--c:var(--w-sentir)">
+      <div class="act-top"><span class="act-emoji">🌙</span><span class="act-title">Ritual do Soninho</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Sempre na mesma ordem: pijama → dentes → 1–2 livrinhos → luz baixa.</li><li>Faça uma massagem suave nos bracinhos e pés.</li><li>Cante a mesma música de ninar toda noite.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> relaxar, dormir melhor e a segurança da rotina.</div>
+        <div class="mini"><b>Você vai precisar:</b> a mesma sequência todo dia.</div>
+        <div class="act-tip"><b>Dica:</b> a previsibilidade é o segredo de uma hora de dormir tranquila.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== PEQUENA AJUDANTE ===== -->
+<section class="panel" data-tab="ajuda">
+  <div class="world-head" style="--c:var(--w-ajuda)">
+    <span class="wemoji">🧺</span><h2>Pequena Ajudante</h2>
+    <p>Aos 2 anos, ajudar é BRINCADEIRA — e das favoritas. Deixe a Ayra "fazer junto" e agradeça sempre.</p>
+    <span class="why">Treina: autonomia, pertencer e autoestima</span>
+  </div>
+  <div class="acts">
+    <article class="act" data-tab="ajuda" data-energy="ambas" data-place="dentro" data-id="ajuda1" style="--c:var(--w-ajuda)">
+      <div class="act-top"><span class="act-emoji">🧺</span><span class="act-title">Guarda-Guarda</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌⚡ Qualquer</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Vire um jogo: "vamos colocar os brinquedos no cesto?".</li><li>Façam uma corrida ou cantem a "música de guardar".</li><li>Agradeça: "você ajudou tanto!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> organizar, sentir-se útil e seguir rotina.</div>
+        <div class="mini"><b>Você vai precisar:</b> um cesto/caixa.</div>
+        <div class="act-tip"><b>Dica:</b> uma musiquinha fixa de "hora de guardar" faz virar hábito sem briga.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="ajuda" data-energy="calma" data-place="dentro" data-id="ajuda2" style="--c:var(--w-ajuda)">
+      <div class="act-top"><span class="act-emoji">🍽️</span><span class="act-title">Mesa Posta</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Antes da refeição, peça pra ela levar os guardanapos ou copos de plástico à mesa.</li><li>Um item por vez, devagar.</li><li>Agradeça cada entrega.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> responsabilidade, equilíbrio ao carregar e fazer parte do time.</div>
+        <div class="mini"><b>Você vai precisar:</b> itens leves e inquebráveis.</div>
+        <div class="act-tip"><b>Dica:</b> só coisas que não quebram nem pesam. O elogio é o combustível.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="ajuda" data-energy="calma" data-place="dentro" data-id="ajuda3" style="--c:var(--w-ajuda)">
+      <div class="act-top"><span class="act-emoji">🚪</span><span class="act-title">Abre pra Mim?</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Durante o dia, dê "missõezinhas": "abre a gaveta pra mim?", "fecha a porta?".</li><li>Espere ela fazer e comemore.</li><li>Vá dando tarefas simples de um passo.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> entender instruções e cooperar.</div>
+        <div class="mini"><b>Você vai precisar:</b> o dia a dia da casa.</div>
+        <div class="act-tip"><b>Dica:</b> instruções de UM passo só. Duas coisas ainda confundem nessa idade.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="ajuda" data-energy="calma" data-place="dentro fora" data-id="ajuda4" style="--c:var(--w-ajuda)">
+      <div class="act-top"><span class="act-emoji">🪴</span><span class="act-title">Regador Feliz</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠🌳 Dentro/Fora</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Dê um regador pequeno com pouca água.</li><li>Reguem as plantinhas juntos: "a plantinha tá com sede!".</li><li>Visitem as plantas em outros dias pra ver crescer.</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> cuidar de algo vivo, rotina e coordenação.</div>
+        <div class="mini"><b>Você vai precisar:</b> regador pequeno + plantas.</div>
+        <div class="act-tip"><b>Dica:</b> pouca água no regador — vai derramar um pouco, e tudo bem.</div>
+      </div>
+    </article>
+
+    <article class="act" data-tab="ajuda" data-energy="calma" data-place="dentro" data-id="ajuda5" style="--c:var(--w-ajuda)">
+      <div class="act-top"><span class="act-emoji">🧽</span><span class="act-title">Pano Mágico</span><button class="heart" aria-label="favoritar">♡</button></div>
+      <div class="act-tags"><span class="chiptag">😌 Calma</span><span class="chiptag">🏠 Dentro</span></div>
+      <div class="act-h">▶️ Como brincar</div>
+      <ol><li>Dê um paninho úmido pra ela "limpar" a mesa ou os brinquedos.</li><li>Mostre o movimento de esfregar.</li><li>"Olha como ficou brilhando!".</li></ol>
+      <div class="act-bot">
+        <div class="mini"><b>O que ela treina:</b> coordenação, capricho e orgulho de ajudar.</div>
+        <div class="mini"><b>Você vai precisar:</b> um paninho úmido.</div>
+        <div class="act-tip"><b>Dica:</b> crianças AMAM limpar com pano. Aproveite essa fase!</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== FAVORITAS ===== -->
+<section class="panel" data-tab="fav">
+  <div class="world-head" style="--c:#FF5B8A">
+    <span class="wemoji">❤️</span><h2>Favoritas da Ayra</h2>
+    <p>As brincadeiras que vocês marcaram com o coração ficam guardadas aqui — salvas neste aparelho.</p>
+  </div>
+  <div class="acts" id="favGrid"></div>
+  <div class="fav-empty" id="favEmpty"><span class="big">💛</span>Ainda não tem favoritas! Toque no ♡ de qualquer brincadeira pra guardar aqui.</div>
+</section>
+
+</main>
+
+<footer>
+  <p><b>O Planeta Ayra</b> 🪐 · Brincadeiras para os 2 anos · Academia dos Heróis</p>
+  <p>Feito com amor para a Ayra brincar com a Yasmin, a Alexia e o Felipe. O que importa é a diversão. 💛</p>
+</footer>
+
+<button class="printbtn" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  /* estrelas */
+  var stars=document.getElementById('stars');
+  if(stars){for(var i=0;i<46;i++){var s=document.createElement('i');var z=Math.random()*2.4+1;
+    s.style.width=z+'px';s.style.height=z+'px';s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*82+'%';s.style.animationDelay=(Math.random()*3)+'s';stars.appendChild(s);}}
+
+  var KEY='ayra_favs_v1';
+  var favs;
+  try{favs=new Set(JSON.parse(localStorage.getItem(KEY))||[]);}catch(e){favs=new Set();}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(Array.from(favs)));}catch(e){}}
+
+  var tabs=document.querySelectorAll('.tab');
+  var panels=document.querySelectorAll('.panel');
+  var bar=document.querySelector('.planetbar');
+
+  /* energia/lugar filtros */
+  var fEnergy='todos', fPlace='todos';
+  function matches(act){
+    var e=act.getAttribute('data-energy')||'ambas';
+    var p=act.getAttribute('data-place')||'';
+    var okE = fEnergy==='todos' || e===fEnergy || e==='ambas';
+    var okP = fPlace==='todos' || p.indexOf(fPlace)>-1;
+    return okE && okP;
+  }
+  function applyFilters(){
+    document.querySelectorAll('.panel:not([data-tab="fav"]) .act').forEach(function(a){
+      a.style.display = matches(a) ? '' : 'none';
+    });
+  }
+
+  /* abas */
+  function showTab(name, scrollBar){
+    tabs.forEach(function(t){t.classList.toggle('active', t.getAttribute('data-tab')===name);});
+    panels.forEach(function(p){p.classList.toggle('active', p.getAttribute('data-tab')===name);});
+    if(name==='fav') renderFavs();
+    if(scrollBar){ window.scrollTo({top:bar.offsetTop, behavior:'smooth'}); }
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      showTab(t.getAttribute('data-tab'), true);
+      // mantém a aba clicada visível na barra
+      t.scrollIntoView({inline:'center', block:'nearest'});
+    });
+  });
+
+  /* filtros clique */
+  document.querySelectorAll('.fbtn[data-energy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.fbtn[data-energy]').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); fEnergy=b.getAttribute('data-energy'); applyFilters();
+    });
+  });
+  document.querySelectorAll('.fbtn[data-place]').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.fbtn[data-place]').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); fPlace=b.getAttribute('data-place'); applyFilters();
+    });
+  });
+
+  /* corações (delegação) */
+  document.addEventListener('click',function(e){
+    var h=e.target.closest('.heart'); if(!h)return;
+    var act=h.closest('.act'); if(!act)return;
+    var id=act.getAttribute('data-id');
+    if(favs.has(id)){favs.delete(id);} else {favs.add(id); toast('❤️ Adicionada às favoritas!');}
+    save(); refreshHearts();
+    if(document.querySelector('.panel[data-tab="fav"]').classList.contains('active')) renderFavs();
+  });
+  function refreshHearts(){
+    document.querySelectorAll('.act').forEach(function(a){
+      var on=favs.has(a.getAttribute('data-id'));
+      var h=a.querySelector('.heart');
+      if(h){h.classList.toggle('on',on); h.textContent= on?'♥':'♡';}
+    });
+  }
+
+  /* favoritas */
+  var favGrid=document.getElementById('favGrid');
+  var favEmpty=document.getElementById('favEmpty');
+  function renderFavs(){
+    favGrid.innerHTML='';
+    var any=false;
+    document.querySelectorAll('.panel:not([data-tab="fav"]) .act').forEach(function(a){
+      if(favs.has(a.getAttribute('data-id'))){
+        any=true;
+        var c=a.cloneNode(true);
+        c.style.display='';
+        favGrid.appendChild(c);
+      }
+    });
+    favEmpty.style.display = any ? 'none':'block';
+    refreshHearts();
+  }
+
+  /* sortear */
+  var toastT;
+  function toast(msg){
+    var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2600);
+  }
+  document.getElementById('sortBtn').addEventListener('click',function(){
+    var cands=Array.prototype.slice.call(document.querySelectorAll('.panel:not([data-tab="fav"]) .act')).filter(matches);
+    if(!cands.length){toast('🔍 Nenhuma com esses filtros. Tente outro!');return;}
+    var pick=cands[Math.floor(Math.random()*cands.length)];
+    var tab=pick.getAttribute('data-tab');
+    showTab(tab,false);
+    setTimeout(function(){
+      pick.scrollIntoView({behavior:'smooth', block:'center'});
+      document.querySelectorAll('.sorted-badge').forEach(function(b){b.remove();});
+      var badge=document.createElement('div'); badge.className='sorted-badge'; badge.textContent='✨ Sorteada pra você!';
+      pick.appendChild(badge);
+      pick.classList.remove('flash'); void pick.offsetWidth; pick.classList.add('flash');
+      setTimeout(function(){pick.classList.remove('flash'); badge.remove();},2400);
+    },70);
+  });
+
+  refreshHearts();
+  applyFilters();
+})();
+</script>
+</body>
+</html>
