@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sono Família Sain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abyss:#070B1E; --twilight:#121A40; --indigo:#22306E; --dusk:#3B2F63;
+  --candle:#F6BE69; --ember:#E0865A; --rose:#E68A86;
+  --first:#5570D6; --second:#8B78DC; --childband:#4684D6;
+  --moon:#EFF2FC; --mist:#A3ABD2; --faint:#727AA4;
+  --line:rgba(180,190,230,.13);
+  --line-strong:rgba(180,190,230,.22);
+  --card:rgba(150,165,225,.045);
+  --card2:rgba(150,165,225,.07);
+  --glow:0 0 22px rgba(246,190,105,.4);
+  --r-sm:12px; --r-md:18px; --r-lg:24px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif; color:var(--moon);
+  background:
+    radial-gradient(1200px 720px at 12% -8%, rgba(59,47,99,.5), transparent 58%),
+    radial-gradient(1000px 640px at 96% 4%, rgba(35,48,110,.46), transparent 54%),
+    radial-gradient(800px 800px at 50% 120%, rgba(224,134,90,.10), transparent 60%),
+    linear-gradient(168deg, var(--abyss) 0%, var(--twilight) 52%, #0B132F 100%);
+  background-attachment:fixed; min-height:100vh; line-height:1.62;
+  -webkit-font-smoothing:antialiased; padding-bottom:80px; letter-spacing:.005em;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.55; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.45), transparent),
+    radial-gradient(1.5px 1.5px at 85% 60%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,.45), transparent),
+    radial-gradient(1px 1px at 32% 16%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.2px 1.2px at 90% 33%, rgba(255,255,255,.42), transparent);
+}
+.wrap{max-width:1000px; margin:0 auto; padding:0 24px; position:relative; z-index:1}
+
+/* ---------- HERO ---------- */
+.hero{padding:72px 0 26px; position:relative}
+.moon{
+  width:58px; height:58px; border-radius:50%;
+  background:radial-gradient(circle at 34% 34%, #FBF3DD, #ECDCAC 58%, #C9B57E);
+  box-shadow:0 0 50px rgba(246,190,105,.42), inset -15px -11px 0 0 rgba(7,11,30,.93);
+  margin-bottom:26px;
+}
+.eyebrow{font-size:11.5px; letter-spacing:.34em; text-transform:uppercase; color:var(--candle); font-weight:600}
+h1{
+  font-family:'Fraunces',serif; font-weight:900; font-optical-sizing:auto;
+  font-size:clamp(44px,7.4vw,80px); line-height:.96; letter-spacing:-.015em; margin:14px 0 8px;
+  background:linear-gradient(178deg, #FCF8EF, #E6CC9C); -webkit-background-clip:text;
+  background-clip:text; -webkit-text-fill-color:transparent;
+}
+.hero .lede{font-family:'Newsreader',serif; font-size:clamp(17px,2.3vw,21px); color:var(--mist); max-width:58ch; margin-top:10px}
+.epigraph{font-family:'Newsreader',serif; font-style:italic; color:var(--faint); margin-top:20px; font-size:16px; max-width:54ch; padding-left:16px; border-left:2px solid rgba(246,190,105,.3)}
+.duskrule{height:2px; border-radius:3px; margin:30px 0 0;
+  background:linear-gradient(90deg, transparent, var(--indigo) 22%, var(--candle) 50%, var(--indigo) 78%, transparent);
+  opacity:.7}
+
+/* ---------- SECTION ---------- */
+section{margin-top:52px}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:14px}
+.sec-num{font-family:'Fraunces',serif; font-size:14px; color:var(--candle); font-weight:600; opacity:.85; font-variant-numeric:tabular-nums}
+h2{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(25px,3.4vw,33px); letter-spacing:-.012em; color:var(--moon)}
+h3{font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin-bottom:6px; color:#F3ECDD}
+.sub{color:var(--mist); font-size:15px; max-width:66ch}
+
+/* ---------- CARD BASE ---------- */
+.panel{background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); padding:24px; backdrop-filter:blur(10px)}
+
+/* ---------- TODAY (parte simples) ---------- */
+.today{
+  background:linear-gradient(165deg, rgba(35,48,110,.30), rgba(20,27,64,.18));
+  border:1px solid var(--line-strong); border-radius:var(--r-lg);
+  padding:0; overflow:hidden; backdrop-filter:blur(12px);
+  box-shadow:0 24px 60px -28px rgba(0,0,0,.7);
+}
+.today-top{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;
+  padding:22px 26px; border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(246,190,105,.05), transparent);
+}
+.today-top .label{font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); font-weight:600}
+.duty-name{font-family:'Fraunces',serif; font-size:26px; font-weight:600; color:#fff; line-height:1.1}
+.duty-name .vela{font-size:15px; color:var(--candle); font-family:'Inter',sans-serif; font-weight:500; letter-spacing:.02em}
+.duty-pick{display:flex; flex-direction:column; gap:7px; align-items:flex-end}
+.duty-pick label{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+.today-body{padding:22px 26px}
+.today-list{display:flex; flex-direction:column; gap:2px; margin-top:4px}
+.trow{display:grid; grid-template-columns:128px 1fr auto; align-items:center; gap:16px; padding:13px 4px; border-top:1px solid var(--line)}
+.trow:first-child{border-top:none}
+.trow .nm{display:flex; flex-direction:column}
+.trow .nm b{font-family:'Fraunces',serif; font-size:18px; font-weight:600; color:#F3ECDD; line-height:1.1}
+.trow .nm span{font-size:11.5px; color:var(--faint); letter-spacing:.02em}
+.trow .ln{font-size:14px; color:var(--mist); font-variant-numeric:tabular-nums}
+.trow .ln b{color:var(--moon); font-weight:600}
+.trow .ln .vg{color:var(--candle)}
+.t-pill{font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 11px; border-radius:30px; white-space:nowrap}
+.t-on{background:rgba(246,190,105,.16); color:var(--candle); border:1px solid rgba(246,190,105,.4)}
+.t-off{background:rgba(139,120,220,.13); color:#C9BEF0; border:1px solid rgba(139,120,220,.32)}
+.t-kid{background:rgba(70,132,214,.14); color:#A9C8F2; border:1px solid rgba(70,132,214,.32)}
+
+/* presets simples */
+.quick{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px}
+.scn{font-family:inherit; font-size:13.5px; font-weight:500; color:var(--moon); background:rgba(8,12,30,.45);
+  border:1px solid var(--line); border-radius:14px; padding:11px 15px; cursor:pointer; transition:.18s; text-align:left; flex:1 1 170px}
+.scn:hover{border-color:rgba(246,190,105,.55); background:rgba(246,190,105,.07); transform:translateY(-1px)}
+.scn b{display:block; font-size:13.5px; color:#F3ECDD; margin-bottom:2px} .scn span{font-size:11.5px; color:var(--faint); line-height:1.35; display:block}
+
+/* ---------- NIGHT BAND ---------- */
+.band-wrap{margin-top:6px}
+.band-rows{display:flex; flex-direction:column; gap:9px}
+.brow{display:grid; grid-template-columns:104px 1fr; align-items:center; gap:14px}
+.brow .who{font-size:13px; color:var(--mist); text-align:right; line-height:1.18}
+.brow .who b{display:block; color:var(--moon); font-size:14px; font-weight:600}
+.track{position:relative; height:38px; border-radius:11px; overflow:hidden;
+  background:linear-gradient(90deg, #221A3E 0%, #161E47 18%, #090F24 50%, #131B42 80%, #38284F 100%);
+  border:1px solid var(--line);
+}
+.seg-sleep{position:absolute; top:0; bottom:0; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:10.5px; font-weight:500; color:rgba(255,255,255,.94); white-space:nowrap; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.seg-first{background:linear-gradient(180deg, rgba(85,112,214,.96), rgba(64,84,180,.93))}
+.seg-second{background:linear-gradient(180deg, rgba(139,120,220,.96), rgba(108,88,192,.93))}
+.seg-child{background:linear-gradient(180deg, rgba(70,132,214,.92), rgba(48,98,180,.92))}
+.seg-watch{background:linear-gradient(180deg,var(--candle),var(--ember)); color:#2a1a02; box-shadow:var(--glow); font-weight:600}
+.seg-alone{background:repeating-linear-gradient(45deg, rgba(230,138,134,.30), rgba(230,138,134,.30) 6px, rgba(230,138,134,.15) 6px, rgba(230,138,134,.15) 12px); color:#F6D9D6}
+.ticks{display:grid; grid-template-columns:104px 1fr; gap:14px; margin-top:9px}
+.ticks .axis{position:relative; height:18px}
+.ticks .tk{position:absolute; transform:translateX(-50%); font-size:10.5px; color:var(--faint); font-variant-numeric:tabular-nums}
+.legend{display:flex; flex-wrap:wrap; gap:14px 18px; margin-top:18px; font-size:12px; color:var(--mist)}
+.legend span{display:inline-flex; align-items:center; gap:7px}
+.dot{width:12px; height:12px; border-radius:5px; display:inline-block}
+
+/* ---------- ADVANCED TOGGLE ---------- */
+.adv-toggle{
+  display:inline-flex; align-items:center; gap:9px; margin-top:22px;
+  font-family:inherit; font-size:13.5px; font-weight:600; letter-spacing:.02em; color:var(--candle);
+  background:rgba(246,190,105,.07); border:1px solid rgba(246,190,105,.28); border-radius:30px;
+  padding:11px 20px; cursor:pointer; transition:.18s;
+}
+.adv-toggle:hover{background:rgba(246,190,105,.13); border-color:rgba(246,190,105,.5)}
+.adv-toggle .chev{transition:transform .25s; font-size:11px}
+.adv-toggle.open .chev{transform:rotate(180deg)}
+.adv-panel{margin-top:20px}
+.adv-panel[hidden]{display:none}
+
+/* ---------- CONTROLS ---------- */
+.controls{display:flex; flex-wrap:wrap; gap:22px 30px; align-items:flex-end}
+.ctl{display:flex; flex-direction:column; gap:9px}
+.ctl > label{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); font-weight:600}
+.seg{display:inline-flex; background:rgba(8,12,30,.6); border:1px solid var(--line); border-radius:13px; padding:4px}
+.seg button{
+  font-family:inherit; font-size:14px; font-weight:500; color:var(--mist); background:none; border:none;
+  padding:9px 17px; border-radius:10px; cursor:pointer; transition:.18s;
+}
+.seg button.on{background:linear-gradient(180deg,var(--indigo),#1A2456); color:#fff; box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.seg.warm button.on{background:linear-gradient(180deg,var(--candle),var(--ember)); color:#241803; box-shadow:var(--glow)}
+
+.switch{position:relative; width:52px; height:28px; flex:none}
+.switch input{opacity:0; width:0; height:0}
+.slider{position:absolute; inset:0; background:rgba(8,12,30,.7); border:1px solid var(--line); border-radius:30px; cursor:pointer; transition:.2s}
+.slider::before{content:""; position:absolute; height:20px; width:20px; left:3px; top:3px; border-radius:50%; background:var(--mist); transition:.22s}
+.switch input:checked + .slider{background:linear-gradient(90deg,var(--ember),var(--candle))}
+.switch input:checked + .slider::before{transform:translateX(24px); background:#fff}
+.switchrow{display:flex; align-items:center; gap:12px}
+.switchrow .txt{font-size:14px; color:var(--moon)}
+
+select, input[type="time"], input[type="number"]{
+  font-family:inherit; font-size:15px; color:var(--moon); background:rgba(8,12,30,.55);
+  border:1px solid var(--line-strong); border-radius:11px; padding:10px 13px; transition:.18s;
+}
+input[type="time"]{font-variant-numeric:tabular-nums; letter-spacing:.02em}
+select:focus, input:focus{outline:none; border-color:var(--candle); box-shadow:0 0 0 3px rgba(246,190,105,.18)}
+input[type="range"]{accent-color:var(--candle); width:150px}
+
+/* ---------- PERSON CARDS ---------- */
+.grid{display:grid; gap:16px}
+.cards-kids{grid-template-columns:repeat(2,1fr); margin-top:18px}
+.cards-adults{grid-template-columns:repeat(3,1fr); margin-top:16px}
+.pcard{background:var(--card2); border:1px solid var(--line); border-radius:var(--r-md); padding:18px; position:relative; overflow:hidden}
+.pcard .tag{position:absolute; top:0; left:0; width:4px; height:100%}
+.pcard.kid .tag{background:linear-gradient(180deg,var(--childband),#2C5CAA)}
+.pcard.adult .tag{background:linear-gradient(180deg,var(--candle),var(--second))}
+.pcard .pname{font-family:'Fraunces',serif; font-size:21px; font-weight:600}
+.pcard .age{font-size:12px; color:var(--faint); letter-spacing:.04em}
+.pcard .field{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px}
+.pcard .field label{font-size:13px; color:var(--mist)}
+.pcard .timeline-mini{margin-top:14px; display:flex; flex-direction:column; gap:6px}
+.step{display:flex; align-items:center; gap:10px; font-size:13.5px}
+.step .t{font-variant-numeric:tabular-nums; font-weight:600; color:#F3ECDD; min-width:62px}
+.step .ic{width:9px; height:9px; border-radius:50%; flex:none}
+.step .lab{color:var(--mist)}
+.ic.sleep{background:var(--first)} .ic.wake{background:var(--candle)} .ic.watch{background:var(--candle); box-shadow:var(--glow)}
+.ic.second{background:var(--second)} .ic.nap{background:var(--childband)}
+.pcard .total{margin-top:12px; font-size:12px; color:var(--faint)}
+.pcard .total b{color:var(--candle)}
+.role-pill{display:inline-block; margin-top:12px; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:20px}
+.role-on{background:rgba(246,190,105,.16); color:var(--candle); border:1px solid rgba(246,190,105,.4)}
+.role-off{background:rgba(139,120,220,.14); color:#C9BEF0; border:1px solid rgba(139,120,220,.34)}
+
+/* ---------- ROTATION TABLE ---------- */
+.rot-table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px}
+.rot-table th,.rot-table td{padding:11px 12px; text-align:left; border-bottom:1px solid var(--line)}
+.rot-table th{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:600}
+.rot-table td{color:var(--moon)}
+.rot-table tr.tonight{background:rgba(246,190,105,.07)}
+.badge{font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px}
+.badge.on{background:rgba(246,190,105,.16); color:var(--candle)}
+.badge.off{background:rgba(139,120,220,.14); color:#C9BEF0}
+
+/* ---------- INFO / READING ---------- */
+.read{font-family:'Newsreader',serif; font-size:17px; color:#DCE0F2; line-height:1.74}
+.read p{margin-bottom:14px}
+.info-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+.info-card{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:26px}
+.info-card .kicker{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--candle); font-weight:600; margin-bottom:10px}
+.factline{display:flex; gap:12px; padding:12px 0; border-top:1px solid var(--line)}
+.factline:first-of-type{border-top:none}
+.factline .n{font-family:'Fraunces',serif; font-size:26px; font-weight:900; color:var(--candle); line-height:1; min-width:auto; white-space:nowrap}
+.factline .d{font-size:14px; color:var(--mist)}
+.callout{border-left:3px solid var(--candle); background:rgba(246,190,105,.06); padding:14px 18px; border-radius:0 12px 12px 0; margin:16px 0; font-size:15px; color:#EAE2D2}
+.ref{font-size:13px; color:var(--mist); padding:9px 0; border-top:1px solid var(--line); display:flex; gap:8px}
+.ref:first-child{border-top:none}
+.ref .mk{color:var(--candle); font-weight:700}
+.ref a{color:#A9C2F2; text-decoration:none; border-bottom:1px solid rgba(169,194,242,.3)}
+.ref a:hover{color:#fff}
+.caveat{background:linear-gradient(180deg, rgba(230,138,134,.08), rgba(150,165,225,.04)); border:1px solid rgba(230,138,134,.22); border-radius:var(--r-md); padding:24px}
+.caveat h3{color:var(--rose)}
+footer{margin-top:54px; padding-top:24px; border-top:1px solid var(--line); color:var(--faint); font-size:13px; font-family:'Newsreader',serif; font-style:italic}
+
+@media (max-width:760px){
+  .info-grid{grid-template-columns:1fr}
+  .cards-kids,.cards-adults{grid-template-columns:1fr}
+  .brow{grid-template-columns:64px 1fr; gap:9px}
+  .brow .who b{font-size:13px} .brow .who{font-size:11px}
+  .ticks{grid-template-columns:64px 1fr; gap:9px}
+  .controls{gap:18px}
+  .today-top,.today-body{padding:18px}
+  .trow{grid-template-columns:1fr auto; gap:8px 12px}
+  .trow .ln{grid-column:1 / -1; order:3}
+  .duty-pick{align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:focus-visible{outline:2px solid var(--candle); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="moon"></div>
+    <div class="eyebrow">Ritmo de sono da casa</div>
+    <h1>Sono Família Sain</h1>
+    <p class="lede">Um painel vivo do descanso da casa — as crianças dormindo direto, os adultos no antigo ritmo dos dois sonos, e a noite coberta por quem estiver de vigília.</p>
+    <p class="epigraph">"O primeiro sono… e, depois da meia-noite, uma hora ou mais de vigília tranquila, antes do segundo sono até o amanhecer." — sobre o costume registrado por A. Roger Ekirch</p>
+    <div class="duskrule"></div>
+  </header>
+
+  <!-- ============ PARTE SIMPLES: HOJE ============ -->
+  <section id="planner">
+    <div class="sec-head"><span class="sec-num">01</span><h2>A noite de hoje</h2></div>
+    <p class="sub">O essencial num olhar: quem está de vigília, a que horas cada um dorme e acorda, e a noite inteira na faixa. Para mudar tudo de uma vez, escolha um cenário. Quer afinar campo por campo? Abra o ajuste fino.</p>
+
+    <div class="today" style="margin-top:18px">
+      <!-- cabeçalho: plantão de hoje -->
+      <div class="today-top">
+        <div>
+          <div class="label">Plantão de hoje · a vela acesa</div>
+          <div class="duty-name"><span id="todayDuty">—</span> <span class="vela" id="todayDutyNote"></span></div>
+        </div>
+        <div class="duty-pick">
+          <label for="tonightSel">Quem fica de vigília</label>
+          <select id="tonightSel">
+            <option value="0">Yasmin</option>
+            <option value="1">Alexia</option>
+            <option value="2">Felipe</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="today-body">
+        <!-- lista do dia -->
+        <div class="today-list" id="todayList"></div>
+
+        <!-- faixa da noite -->
+        <div class="band-wrap" style="margin-top:22px">
+          <div class="band-rows" id="bandRows"></div>
+          <div class="ticks"><div></div><div class="axis" id="axis"></div></div>
+          <div class="legend">
+            <span><i class="dot" style="background:var(--childband)"></i> Sono das crianças</span>
+            <span><i class="dot" style="background:var(--first)"></i> 1º sono</span>
+            <span><i class="dot seg-watch" style="box-shadow:none"></i> Vigília (a vela acesa)</span>
+            <span><i class="dot" style="background:var(--second)"></i> 2º sono</span>
+            <span><i class="dot" style="background:rgba(230,138,134,.5)"></i> Tempo a sós</span>
+          </div>
+        </div>
+
+        <!-- cenários (ajustes simples que mudam tudo) -->
+        <div class="quick" id="scnBox"></div>
+
+        <!-- abrir ajuste fino -->
+        <button class="adv-toggle" id="advToggle" aria-expanded="false" aria-controls="advPanel">
+          Ajuste fino — todos os controles <span class="chev">▾</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ PARTE AVANÇADA ============ -->
+    <div class="adv-panel" id="advPanel" hidden>
+      <div class="panel">
+        <div class="controls">
+          <div class="ctl">
+            <label>Modo dos adultos</label>
+            <div class="seg warm" id="modeSeg">
+              <button data-mode="biphasic" class="on">Bifásico ancestral</button>
+              <button data-mode="consolidated">Consolidado</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <label>Rodízio sentinela</label>
+            <div class="switchrow">
+              <span class="switch"><input type="checkbox" id="rotToggle" checked><span class="slider"></span></span>
+              <span class="txt" id="rotTxt">Ativado</span>
+            </div>
+          </div>
+          <div class="ctl" id="biphasicParams">
+            <label>Ajuste dos dois sonos</label>
+            <div class="switchrow" style="gap:18px; flex-wrap:wrap">
+              <span style="font-size:13px;color:var(--mist)">1º sono <b id="f1lab" style="color:var(--candle)">4,0h</b><br><input type="range" id="f1" min="3" max="5" step="0.5" value="4"></span>
+              <span style="font-size:13px;color:var(--mist)">Vigília <b id="wlab" style="color:var(--candle)">60min</b><br><input type="range" id="watch" min="30" max="120" step="15" value="60"></span>
+              <span style="font-size:13px;color:var(--mist)">2º sono <b id="f2lab" style="color:var(--candle)">4,0h</b><br><input type="range" id="f2" min="3" max="5" step="0.5" value="4"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KID CARDS -->
+      <div class="grid cards-kids" id="kidCards"></div>
+      <!-- ADULT CARDS -->
+      <div class="grid cards-adults" id="adultCards"></div>
+
+      <!-- ROTAÇÃO -->
+      <div class="panel" style="margin-top:18px">
+        <h3 style="margin-bottom:4px">Escala de três noites</h3>
+        <p class="sub" style="margin-bottom:12px">O plantão acorda às 07h com as crianças e cobre os despertares da madrugada. Os outros dois esticam o segundo sono — duas manhãs de folga a cada três noites.</p>
+        <table class="rot-table" id="rotTable"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- INFO: CRIANÇAS -->
+  <section id="criancas">
+    <div class="sec-head"><span class="sec-num">02</span><h2>O sono ancestral das crianças</h2></div>
+    <p class="sub">Quase tudo que tratamos como óbvio — o bebê no quarto dele, na cama dele, "dormindo a noite toda sozinho" — é uma invenção recente, ocidental e pós-industrial. Por milênios foi praticamente o oposto.</p>
+    <div class="info-grid" style="margin-top:18px">
+      <div class="info-card">
+        <div class="kicker">A criança nunca dormia sozinha</div>
+        <div class="read">
+          <p>O arranjo ancestral e quase universal era o sono compartilhado: bebês e crianças dormiam junto da mãe, dos irmãos e da casa. A proximidade no sono, somada à amamentação, é entendida pela antropologia como a <em>norma evolutiva humana</em> — e o bebê solitário em quarto próprio, o caso mais distante do que a espécie fez por milênios.</p>
+          <p>Dormir junto muda a fisiologia: o bebê tem sono mais leve, com despertares mais sincronizados com a mãe e mamadas mais frequentes — o que é protetor, não um defeito. Entre os Hadza, a amamentação sob demanda vai até por volta dos dois anos.</p>
+        </div>
+        <div class="callout">A ideia do bebê dormindo sozinho como o "normal e saudável" nasceu medindo justamente o bebê solitário e de mamadeira — a configuração mais incomum da história.</div>
+      </div>
+      <div class="info-card">
+        <div class="kicker">Sem horário rígido, e o despertar não era "problema"</div>
+        <div class="read">
+          <p>Sem relógio nem luz elétrica, o sono seguia o sol e o frio, não a agenda. A criança adormecia na vida da casa e era levada para a cama — não trancada no escuro às 20h em ponto.</p>
+          <p>No mundo dos dois sonos, a noite não era zona proibida: durante a vigília, as mães atendiam e amamentavam quem precisasse, e a criança que acordava se reintegrava ao murmúrio calmo e voltava a dormir. Acordar de madrugada era esperado — não uma falha a ser corrigida.</p>
+        </div>
+        <div class="factline"><div class="n">18 min</div><div class="d">foi todo o tempo em que <b>todos</b> os Hadza estiveram dormindo ao mesmo tempo, ao longo de 20 dias — uma casa de várias idades é uma sentinela natural.</div></div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:18px"><b>Para a nossa casa:</b> a Ayra acordar à noite aos 2 anos não é defeito — é o padrão da espécie. A proximidade no sono é o normal ancestral, e três adultos com ritmos diferentes recriam sozinhos a "sentinela" que cobre as crianças. As crianças continuam dormindo <b>consolidado</b> e por mais tempo; muda o arranjo e a expectativa, não a necessidade de muito sono.</div>
+  </section>
+
+  <!-- INFO: ADULTOS -->
+  <section id="adultos">
+    <div class="sec-head"><span class="sec-num">03</span><h2>O sono bifásico dos adultos</h2></div>
+    <p class="sub">Até por volta do século XIX, o padrão predominante no Ocidente eram dois sonos ligados por uma vigília no meio da noite — algo tão corriqueiro que os textos diziam "primeiro sono" e "segundo sono" sem precisar explicar.</p>
+    <div class="info-grid" style="margin-top:18px">
+      <div class="info-card">
+        <div class="kicker">Como funcionava</div>
+        <div class="read">
+          <p><b>Primeiro sono</b> logo após o anoitecer, por cerca de 3 a 4 horas. Por volta da meia-noite, um despertar natural e uma <b>vigília</b> tranquila de uma hora ou mais. Depois, o <b>segundo sono</b> até o amanhecer.</p>
+          <p>A vigília era aproveitada: rezar, refletir sobre os sonhos ainda vívidos, conversar, ter intimidade, cuidar de tarefas leves e das crianças. Um médico francês do século XVI já dizia que o melhor momento para conceber era "depois do primeiro sono", com o casal descansado.</p>
+        </div>
+        <div class="callout">O que dissolveu o costume foi a luz artificial barata, do gás à eletricidade. A noite virou tempo produtivo, o sono se comprimiu num bloco só, e em poucas gerações os dois sonos sumiram da memória.</div>
+      </div>
+      <div class="info-card">
+        <div class="kicker">A ciência por trás</div>
+        <div class="read">
+          <p>Em 1992, o psiquiatra Thomas Wehr expôs voluntários a 14 horas de escuro por noite. Em poucas semanas, o sono deles se reorganizou sozinho em <em>dois blocos</em> de ~4h com 1 a 3h de vigília calma no meio — o desenho exato do primeiro e do segundo sono, ancorado num pico de melatonina.</p>
+        </div>
+        <div class="factline"><div class="n">~8h</div><div class="d">de sono total no experimento, mas em dois turnos — não num bloco único.</div></div>
+        <div class="factline"><div class="n">Os dois lados</div><div class="d">nem todo estudo concorda: perto do equador (Hadza, San, Tsimané) o sono medido foi consolidado, e há crítica historiográfica às fontes. A chave provável é <b>plasticidade</b>: noites longas e escuras favorecem os dois sonos.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A VIGÍLIA -->
+  <section id="vigilia">
+    <div class="sec-head"><span class="sec-num">04</span><h2>A vigília — como usar (e o que não fazer)</h2></div>
+    <div class="info-grid" style="margin-top:6px">
+      <div class="info-card">
+        <div class="kicker">Faça</div>
+        <div class="read"><p>Energia calma: ler, conversar baixo, rezar, escrever, alongar, intimidade. Atender as crianças se acordarem. É o silêncio raro da casa — aproveite-o como descanso ativo, não como produtividade.</p></div>
+      </div>
+      <div class="info-card">
+        <div class="kicker">Evite</div>
+        <div class="read"><p>Luz forte e telas. A luz azul corta a melatonina e atrapalha o segundo sono — foi por isso que o costume funcionava só com luz de fogo. Use vela ou um abajur bem fraco, e mantenha o silêncio para não acordar as crianças.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFERÊNCIAS -->
+  <section id="referencias">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Referências</h2></div>
+    <div class="panel">
+      <div class="ref"><span class="mk">↟</span><div>Ekirch, A. R. "Sleep We Have Lost: Pre-industrial Slumber in the British Isles." <i>American Historical Review</i>, 2001 — o artigo seminal. <a href="https://academic.oup.com/ahr/article-abstract/106/2/343/64370" target="_blank" rel="noopener">oup.com</a></div></div>
+      <div class="ref"><span class="mk">↟</span><div>Ekirch, A. R. <i>At Day's Close: Night in Times Past.</i> W. W. Norton, 2005.</div></div>
+      <div class="ref"><span class="mk">↟</span><div>Ekirch, A. R. "Segmented Sleep in Preindustrial Societies." <i>Sleep</i>, 2016.</div></div>
+      <div class="ref"><span class="mk">↟</span><div>Wehr, T. A. "In short photoperiods, human sleep is biphasic." <i>Journal of Sleep Research</i>, 1992. <a href="https://onlinelibrary.wiley.com/doi/10.1111/j.1365-2869.1992.tb00019.x" target="_blank" rel="noopener">wiley.com</a></div></div>
+      <div class="ref"><span class="mk">↟</span><div>Yetish, Siegel et al. "Natural Sleep and Its Seasonal Variations in Three Pre-industrial Societies." <i>Current Biology</i>, 2015. <a href="https://www.cell.com/current-biology/fulltext/S0960-9822(15)01157-4" target="_blank" rel="noopener">cell.com</a></div></div>
+      <div class="ref"><span class="mk">↟</span><div>Samson, Crittenden, Mabulla, Mabulla, Nunn. "Chronotype variation drives night-time sentinel-like behaviour in hunter-gatherers." <i>Proc. R. Soc. B</i>, 2017. <a href="https://royalsocietypublishing.org/rspb/article/284/1858/20170967" target="_blank" rel="noopener">royalsocietypublishing.org</a></div></div>
+      <div class="ref"><span class="mk">↟</span><div>Ball, Tomori, McKenna. "Toward an Integrated Anthropology of Infant Sleep." <i>American Anthropologist</i>. <a href="https://cosleeping.nd.edu/assets/394286/amer_anthrop.just_published._2_.pdf" target="_blank" rel="noopener">cosleeping.nd.edu (PDF)</a></div></div>
+      <div class="ref"><span class="mk">↟</span><div>Boyce, N. "Have we lost sleep? A reconsideration of segmented sleep in early modern England." <i>Medical History</i>, 2023 — a crítica, para equilíbrio. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10404514/" target="_blank" rel="noopener">pmc.ncbi (PDF)</a></div></div>
+    </div>
+  </section>
+
+  <!-- RESSALVAS -->
+  <section id="ressalvas">
+    <div class="caveat">
+      <h3>O combinado honesto</h3>
+      <div class="read" style="font-size:16px">
+        <p>Não force com despertador no começo. A parte comprovada e saudável são as <b>condições</b>: jantar cedo, luz baixa à noite, quarto escuro e fresco, horário fixo. Os dois sonos tendem a surgir sozinhos em algumas semanas, como no experimento do Wehr. Mantenham cerca de <b>7 a 9 horas</b> de sono no total.</p>
+        <p>As crianças dormem <b>consolidado</b> — nada de acordá-las de propósito. E "ancestral" não é automaticamente "recomendado": para <b>bebês com menos de 1 ano</b>, sigam as diretrizes modernas de sono seguro em vez de tratar o costume antigo como receita. Se alguém tiver insônia real, exaustão de dia ou sono que não descansa, vale procurar um profissional de saúde.</p>
+      </div>
+    </div>
+    <footer>Sono Família Sain — um painel de uso doméstico, informativo e histórico. Não substitui avaliação médica. Os horários se ajustam aos campos acima; as referências apontam para as fontes originais.</footer>
+  </section>
+</div>
+<script>
+(function(){
+  "use strict";
+  var ADULTS=["yasmin","alexia","felipe"];
+  var OFFDUTY_EXT=45; // min a mais de 2º sono para quem está de folga
+
+  var state={
+    mode:"biphasic", rotation:true, tonight:0,
+    f1:4, watch:60, f2:4, cons:8,
+    people:{
+      ayra:{name:"Ayra",age:"2 anos",kind:"kid",bed:"19:45",night:11,nap:"13:00–15:00"},
+      noah:{name:"Noah",age:"6 anos",kind:"kid",bed:"20:15",night:10.75,nap:null},
+      yasmin:{name:"Yasmin",kind:"adult",bed:"22:00"},
+      alexia:{name:"Alexia",kind:"adult",bed:"22:00"},
+      felipe:{name:"Felipe",kind:"adult",bed:"22:00"}
+    }
+  };
+
+  // ---- persistence (guarded; degrada sem erro onde storage é bloqueado) ----
+  function save(){ try{ localStorage.setItem("sain_v2",JSON.stringify(state)); }catch(e){} }
+  function load(){ try{ var s=localStorage.getItem("sain_v2"); if(s){ var o=JSON.parse(s); Object.assign(state,o); } }catch(e){} }
+
+  // ---- tempo ----
+  var DUSK=1080, SPAN=900; // 18:00 ancora, janela até 09:00
+  function toMin(t){ var p=t.split(":"); return (+p[0])*60+(+p[1]); }
+  function fromDusk(t){ return ((toMin(t)-DUSK)+1440)%1440; }
+  function clockFromDuskMin(d){ var tot=((DUSK+d)%1440+1440)%1440; var h=Math.floor(tot/60), m=tot%60; return (h<10?"0":"")+h+":"+(m<10?"0":"")+m; }
+  function xpct(d){ var v=d/SPAN*100; return v<0?0:(v>100?100:v); }
+  function hLabel(h){ return (Math.round(h*10)/10).toString().replace(".",",")+"h"; }
+
+  // ---- cálculo dos horários ----
+  function kidSchedule(p){
+    var bedD=fromDusk(p.bed);
+    var wakeD=bedD+p.night*60;
+    return {bedD:bedD, wakeD:wakeD, wake:clockFromDuskMin(wakeD)};
+  }
+  function adultSchedule(p, onDuty){
+    var bedD=fromDusk(p.bed);
+    if(state.mode==="consolidated"){
+      var w=bedD+state.cons*60+(onDuty?0:OFFDUTY_EXT);
+      return {mode:"cons", bedD:bedD, wakeD:w, wake:clockFromDuskMin(w), totalSleep:state.cons+(onDuty?0:OFFDUTY_EXT/60)};
+    }
+    var firstEnd=bedD+state.f1*60;
+    var watchEnd=firstEnd+state.watch;
+    var secondEnd=watchEnd+state.f2*60+(onDuty?0:OFFDUTY_EXT);
+    return {mode:"bi", bedD:bedD, firstEnd:firstEnd, watchEnd:watchEnd, wakeD:secondEnd,
+      wakeFirst:clockFromDuskMin(firstEnd), back:clockFromDuskMin(watchEnd), wake:clockFromDuskMin(secondEnd),
+      totalSleep:state.f1+state.f2+(onDuty?0:OFFDUTY_EXT/60)};
+  }
+  function roleOf(idx){ // idx do adulto -> "on" se é o plantão de hoje
+    if(!state.rotation) return "on";
+    return idx===state.tonight ? "on" : "off";
+  }
+  function latestKidBedD(){ return Math.max(fromDusk(state.people.ayra.bed), fromDusk(state.people.noah.bed)); }
+  function kidsWakeD(){ return Math.min(kidSchedule(state.people.ayra).wakeD, kidSchedule(state.people.noah).wakeD); }
+
+  // ---- render: resumo do dia (parte simples) ----
+  function renderToday(){
+    // cabeçalho do plantão
+    var duty=document.getElementById("todayDuty");
+    var note=document.getElementById("todayDutyNote");
+    if(state.rotation){
+      duty.textContent=state.people[ADULTS[state.tonight]].name;
+      note.textContent="acorda 07h com as crianças";
+    } else {
+      duty.textContent="Sem rodízio";
+      note.textContent="os três no mesmo horário";
+    }
+    // lista
+    var box=document.getElementById("todayList"); var html="";
+    // crianças
+    ["ayra","noah"].forEach(function(k){
+      var p=state.people[k], s=kidSchedule(p);
+      var ln='Dorme <b>'+p.bed+'</b> → acorda <b>'+s.wake+'</b>';
+      html+=todayRow(p.name, p.age, ln, '<span class="t-pill t-kid">noite toda</span>');
+    });
+    // adultos
+    ADULTS.forEach(function(k,i){
+      var p=state.people[k], on=roleOf(i)==="on", s=adultSchedule(p,on);
+      var ln;
+      if(s.mode==="bi"){
+        ln='Dorme <b>'+p.bed+'</b> · <span class="vg">vigília '+s.wakeFirst+'–'+s.back+'</span> · acorda <b>'+s.wake+'</b>';
+      } else {
+        ln='Dorme <b>'+p.bed+'</b> → acorda <b>'+s.wake+'</b>';
+      }
+      var sub=(s.mode==="bi"?"adulto · bifásico":"adulto · consolidado");
+      var pill = state.rotation
+        ? (on?'<span class="t-pill t-on">plantão</span>':'<span class="t-pill t-off">folga</span>')
+        : '';
+      html+=todayRow(p.name, sub, ln, pill);
+    });
+    box.innerHTML=html;
+  }
+  function todayRow(name, sub, line, pill){
+    return '<div class="trow"><div class="nm"><b>'+name+'</b><span>'+sub+'</span></div>'
+      +'<div class="ln">'+line+'</div>'+(pill||'<div></div>')+'</div>';
+  }
+
+  // ---- render: faixa da noite ----
+  function seg(cls,a,b,label){
+    var L=xpct(a), W=xpct(b)-xpct(a); if(W<=0) return "";
+    var showLab = W>9 ? label : "";
+    return '<div class="seg-sleep '+cls+'" style="left:'+L+'%;width:'+W+'%">'+showLab+'</div>';
+  }
+  function bandRow(who,sub,inner){
+    return '<div class="brow"><div class="who"><b>'+who+'</b>'+(sub?sub:"")+'</div><div class="track">'+inner+'</div></div>';
+  }
+  function renderBand(){
+    var rows="";
+    ["ayra","noah"].forEach(function(k){
+      var p=state.people[k], s=kidSchedule(p);
+      rows+=bandRow(p.name, p.age, seg("seg-child",s.bedD,s.wakeD,"dorme"));
+    });
+    var lk=latestKidBedD(), kw=kidsWakeD();
+    if(state.rotation){
+      ADULTS.forEach(function(k,i){
+        var p=state.people[k], on=roleOf(i)==="on", s=adultSchedule(p,on);
+        rows+=bandRow(p.name, (on?"plantão":"folga"), adultInner(s,lk,kw));
+      });
+    } else {
+      var p=state.people.yasmin, s=adultSchedule(p,true);
+      rows+=bandRow("Adultos","os três", adultInner(s,lk,kw));
+    }
+    document.getElementById("bandRows").innerHTML=rows;
+    renderAxis();
+  }
+  function adultInner(s,lk,kw){
+    var html="";
+    if(s.bedD>lk) html+=seg("seg-alone",lk,s.bedD,"a sós");
+    if(s.mode==="bi"){
+      html+=seg("seg-first",s.bedD,s.firstEnd,"1º sono");
+      html+=seg("seg-watch",s.firstEnd,s.watchEnd,"vigília");
+      html+=seg("seg-second",s.watchEnd,s.wakeD,"2º sono");
+    } else {
+      html+=seg("seg-first",s.bedD,s.wakeD,"sono");
+    }
+    if(s.wakeD<kw) html+=seg("seg-alone",s.wakeD,kw,"a sós");
+    return html;
+  }
+  function renderAxis(){
+    var ax=document.getElementById("axis"); var html=""; var hrs=[18,20,22,0,2,4,6,8];
+    hrs.forEach(function(h){
+      var d=((h*60)-DUSK+1440)%1440; var L=xpct(d);
+      var lab=(h<10?"0":"")+h+"h";
+      html+='<span class="tk" style="left:'+L+'%">'+lab+'</span>';
+    });
+    ax.innerHTML=html;
+  }
+
+  // ---- render: cartões ----
+  function step(t,ic,lab){ return '<div class="step"><span class="t">'+t+'</span><span class="ic '+ic+'"></span><span class="lab">'+lab+'</span></div>'; }
+  function renderKidCards(){
+    var box=document.getElementById("kidCards"); var html="";
+    ["ayra","noah"].forEach(function(k){
+      var p=state.people[k], s=kidSchedule(p);
+      var steps=step(p.bed,"sleep","Dorme");
+      if(p.nap) steps=step(p.nap.split("–")[0],"nap","Soneca ("+p.nap+")")+steps;
+      steps+=step(s.wake,"wake","Acorda");
+      var totalNap = p.nap?2:0;
+      html+='<div class="pcard kid"><div class="tag"></div>'
+        +'<div class="pname">'+p.name+'</div><div class="age">'+p.age+' · sono consolidado</div>'
+        +'<div class="field"><label>Hora de deitar</label><input type="time" data-bed="'+k+'" value="'+p.bed+'"></div>'
+        +'<div class="field"><label>Horas de sono à noite</label><input type="number" min="8" max="13" step="0.25" data-night="'+k+'" value="'+p.night+'" style="width:84px"></div>'
+        +'<div class="timeline-mini">'+steps+'</div>'
+        +'<div class="total">Sono total no dia: <b>'+hLabel(p.night+totalNap)+'</b>'+(p.nap?' (noite + soneca)':'')+' · dorme a noite toda</div>'
+        +'</div>';
+    });
+    box.innerHTML=html;
+  }
+  function renderAdultCards(){
+    var box=document.getElementById("adultCards"); var html="";
+    ADULTS.forEach(function(k,i){
+      var p=state.people[k], on=roleOf(i)==="on", s=adultSchedule(p,on);
+      var steps;
+      if(s.mode==="bi"){
+        steps=step(p.bed,"sleep","Dorme — 1º sono")
+          +step(s.wakeFirst,"watch","Acorda — vigília")
+          +step(s.back,"second","Volta a dormir — 2º sono")
+          +step(s.wake,"wake","Acorda — começa o dia");
+      } else {
+        steps=step(p.bed,"sleep","Dorme")+step(s.wake,"wake","Acorda");
+      }
+      var pill = state.rotation ? '<span class="role-pill '+(on?"role-on":"role-off")+'">'+(on?"Plantão · acorda 07h":"Folga · estica o 2º sono")+'</span>' : '';
+      html+='<div class="pcard adult"><div class="tag"></div>'
+        +'<div class="pname">'+p.name+'</div><div class="age">adulto · '+(s.mode==="bi"?"bifásico":"consolidado")+'</div>'
+        +'<div class="field"><label>Hora de deitar</label><input type="time" data-bed="'+k+'" value="'+p.bed+'"></div>'
+        +'<div class="timeline-mini">'+steps+'</div>'
+        +'<div class="total">Sono total: <b>'+hLabel(s.totalSleep)+'</b></div>'
+        +pill
+        +'</div>';
+    });
+    box.innerHTML=html;
+  }
+
+  // ---- render: rodízio ----
+  function renderRotation(){
+    var t=document.getElementById("rotTable");
+    if(!state.rotation){ t.innerHTML='<tr><td style="color:var(--faint)">Rodízio desativado — os três adultos seguem o mesmo horário e acordam juntos às 07h.</td></tr>'; return; }
+    var html='<tr><th>Noite</th><th>Plantão (acorda 07h)</th><th>Folga (estica o 2º sono)</th><th>Folga</th></tr>';
+    var labels=["Hoje","Amanhã","Depois de amanhã"];
+    for(var n=0;n<3;n++){
+      var onIdx=(state.tonight+n)%3;
+      var offs=ADULTS.filter(function(_,i){return i!==onIdx;});
+      var onName=state.people[ADULTS[onIdx]].name;
+      var cls = n===0 ? ' class="tonight"' : '';
+      html+='<tr'+cls+'><td>'+labels[n]+'</td>'
+        +'<td><span class="badge on">'+onName+'</span></td>'
+        +'<td>'+state.people[offs[0]].name+'</td>'
+        +'<td>'+state.people[offs[1]].name+'</td></tr>';
+    }
+    t.innerHTML=html;
+  }
+
+  // ---- cenários ----
+  var scenarios=[
+    {key:"ancestral",t:"Noite ancestral",d:"Dois sonos · deitar 22h · rodízio ligado",apply:function(){
+      state.mode="biphasic"; state.f1=4; state.watch=60; state.f2=4; state.rotation=true;
+      ADULTS.forEach(function(k){state.people[k].bed="22:00";});
+      state.people.ayra.bed="19:45"; state.people.ayra.night=11;
+      state.people.noah.bed="20:15"; state.people.noah.night=10.75;
+    }},
+    {key:"tranquila",t:"Noite tranquila",d:"Adultos em bloco único de 8h · deitar 22h30",apply:function(){
+      state.mode="consolidated"; state.cons=8; state.rotation=true;
+      ADULTS.forEach(function(k){state.people[k].bed="22:30";});
+    }},
+    {key:"v21",t:"Deitar às 21h",d:"Bifásico mais cedo · vigília à 1h · dia às 6h",apply:function(){
+      state.mode="biphasic"; state.f1=4; state.watch=60; state.f2=4; state.rotation=true;
+      ADULTS.forEach(function(k){state.people[k].bed="21:00";});
+    }},
+    {key:"dividido",t:"Plantão dividido",d:"Vigílias escalonadas · cobertura contínua da noite",apply:function(){
+      state.mode="biphasic"; state.f1=4; state.watch=60; state.f2=4; state.rotation=false;
+      state.people.yasmin.bed="21:30"; state.people.alexia.bed="22:00"; state.people.felipe.bed="22:30";
+    }}
+  ];
+  function renderScenarios(){
+    var box=document.getElementById("scnBox");
+    box.innerHTML=scenarios.map(function(s){ return '<button class="scn" data-scn="'+s.key+'"><b>'+s.t+'</b><span>'+s.d+'</span></button>'; }).join("");
+  }
+
+  // ---- sync de controles ----
+  function syncControls(){
+    document.querySelectorAll("#modeSeg button").forEach(function(b){ b.classList.toggle("on", b.dataset.mode===state.mode); });
+    document.getElementById("rotToggle").checked=state.rotation;
+    document.getElementById("rotTxt").textContent=state.rotation?"Ativado":"Desativado";
+    document.getElementById("tonightSel").value=String(state.tonight);
+    document.getElementById("biphasicParams").style.display = state.mode==="biphasic" ? "" : "none";
+    document.getElementById("f1").value=state.f1; document.getElementById("f1lab").textContent=hLabel(state.f1);
+    document.getElementById("f2").value=state.f2; document.getElementById("f2lab").textContent=hLabel(state.f2);
+    document.getElementById("watch").value=state.watch; document.getElementById("wlab").textContent=state.watch+"min";
+  }
+  function renderAll(){ syncControls(); renderToday(); renderBand(); renderKidCards(); renderAdultCards(); renderRotation(); save(); }
+
+  // ---- eventos ----
+  document.getElementById("modeSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-mode]"); if(!b)return; state.mode=b.dataset.mode; renderAll();
+  });
+  document.getElementById("rotToggle").addEventListener("change",function(e){ state.rotation=e.target.checked; renderAll(); });
+  document.getElementById("tonightSel").addEventListener("change",function(e){ state.tonight=+e.target.value; renderAll(); });
+  document.getElementById("f1").addEventListener("input",function(e){ state.f1=+e.target.value; renderAll(); });
+  document.getElementById("f2").addEventListener("input",function(e){ state.f2=+e.target.value; renderAll(); });
+  document.getElementById("watch").addEventListener("input",function(e){ state.watch=+e.target.value; renderAll(); });
+
+  // delegação para campos editáveis nos cartões
+  document.body.addEventListener("input",function(e){
+    var t=e.target;
+    if(t.dataset && t.dataset.bed){ state.people[t.dataset.bed].bed=t.value || "00:00"; liveUpdate(); }
+    else if(t.dataset && t.dataset.night){ var v=parseFloat(t.value); if(!isNaN(v)){ state.people[t.dataset.night].night=v; liveUpdate(); } }
+  });
+  document.body.addEventListener("change",function(e){
+    var t=e.target;
+    if(t.dataset && (t.dataset.bed||t.dataset.night)){ renderKidCards(); renderAdultCards(); renderToday(); save(); }
+  });
+  // recalcula faixa, resumo e rodízio ao vivo, sem recriar os inputs (preserva o foco)
+  function liveUpdate(){ renderToday(); renderBand(); renderRotation(); save(); }
+
+  document.getElementById("scnBox").addEventListener("click",function(e){
+    var b=e.target.closest("button[data-scn]"); if(!b)return;
+    var s=scenarios.find(function(x){return x.key===b.dataset.scn;}); if(s){ s.apply(); renderAll();
+      document.getElementById("planner").scrollIntoView({behavior:"smooth",block:"start"}); }
+  });
+
+  // ---- modo avançado (abre/fecha) ----
+  document.getElementById("advToggle").addEventListener("click",function(){
+    var p=document.getElementById("advPanel");
+    var opening=p.hasAttribute("hidden");
+    if(opening){ p.removeAttribute("hidden"); this.classList.add("open"); this.setAttribute("aria-expanded","true");
+      this.innerHTML='Recolher ajuste fino <span class="chev">▾</span>'; }
+    else { p.setAttribute("hidden",""); this.classList.remove("open"); this.setAttribute("aria-expanded","false");
+      this.innerHTML='Ajuste fino — todos os controles <span class="chev">▾</span>'; }
+  });
+
+  // ---- init ----
+  load(); renderScenarios(); renderAll();
+})();
+</script>
+</body>
+</html>
