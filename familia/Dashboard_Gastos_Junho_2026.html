@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Gastos - Junho/2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+ --bg:#0f1720; --card:#18222e; --card2:#1e2b3a; --line:#2b3a4d;
+ --txt:#e8eef5; --mut:#9db0c5; --accent:#38bdf8; --green:#34d399;
+ --amber:#fbbf24; --red:#f87171; --violet:#a78bfa; --pink:#f472b6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.5;padding:0 0 60px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 18px}
+header{background:linear-gradient(135deg,#0c4a6e,#075985 55%,#0e7490);padding:34px 0 26px;border-bottom:1px solid var(--line)}
+header h1{font-size:26px;font-weight:700;letter-spacing:.2px}
+header p{color:#bfe6f7;margin-top:6px;font-size:14px}
+.badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:12px;margin-top:12px;color:#eaf6fd}
+h2{font-size:19px;margin:34px 0 14px;padding-left:11px;border-left:4px solid var(--accent)}
+h2 small{font-weight:400;color:var(--mut);font-size:13px;margin-left:8px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .lab{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .gs{font-size:23px;font-weight:700;margin-top:8px}
+.kpi .brl{color:var(--green);font-size:14px;margin-top:3px;font-weight:600}
+.kpi.big .gs{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{font-size:15px;margin-bottom:12px;color:#dbe7f3}
+canvas{max-width:100%}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:rgba(56,189,248,.05)}
+.tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+.tag.m{background:rgba(56,189,248,.15);color:var(--accent)}
+.tag.o{background:rgba(167,139,250,.15);color:var(--violet)}
+.insight{background:var(--card2);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.insight b{color:var(--amber)}
+.insight .eco{color:var(--green);font-weight:700}
+.listbox{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.listhead{padding:16px 18px;background:linear-gradient(135deg,#065f46,#047857);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.listhead.b2{background:linear-gradient(135deg,#5b21b6,#6d28d9)}
+.listhead h3{font-size:17px;margin:0}
+.listhead .tot{text-align:right}
+.listhead .tot .g{font-size:20px;font-weight:800}
+.listhead .tot .r{color:#c6f6e0;font-size:13px;font-weight:600}
+.catblock{padding:6px 18px 4px}
+.catblock h4{font-size:13px;color:var(--accent);margin:14px 0 4px;display:flex;justify-content:space-between}
+.catblock h4 span{color:var(--mut);font-weight:500}
+.mut{color:var(--mut);font-size:13px}
+ul.note{margin:8px 0 0 18px;font-size:13px;color:var(--mut)}
+ul.note li{margin-bottom:5px}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:12px}
+@media(max-width:820px){.kpis{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <h1>&#128202; Dashboard de Gastos &mdash; Junho / 2026</h1>
+ <p>Analise das notas fiscais (Paraguai &middot; Guaranies) com conversao para Reais pela cotacao da data</p>
+ <span class="badge" id="badgeRate"></span>
+</div></header>
+
+<div class="wrap">
+
+ <div class="kpis" id="kpis"></div>
+
+ <h2>Visao geral <small>onde o dinheiro foi</small></h2>
+ <div class="grid3">
+   <div class="card"><h3>Gasto por dia (Gs)</h3><canvas id="cDia" height="150"></canvas></div>
+   <div class="card"><h3>Mercado x Outros</h3><canvas id="cDonut" height="150"></canvas></div>
+ </div>
+ <div class="card" style="margin-top:16px"><h3>Gasto por estabelecimento</h3><canvas id="cLoja" height="120"></canvas></div>
+
+ <h2>&#128722; Mercado em detalhe <small>a maior fatia &mdash; atencao especial</small></h2>
+ <div class="grid2">
+   <div class="card"><h3>Composicao estimada do mercado</h3><canvas id="cMercCat" height="170"></canvas></div>
+   <div class="card">
+     <h3>Notas de mercado (junho)</h3>
+     <div style="max-height:360px;overflow:auto"><table id="tMerc"></table></div>
+   </div>
+ </div>
+
+ <h2>&#128161; Insights &amp; economia <small>onde daria para gastar menos</small></h2>
+ <div id="insights"></div>
+
+ <h2>&#128200; Simulacao de julho <small>projecao com base em junho</small></h2>
+ <div class="grid2">
+   <div class="card"><h3>Projecao julho vs junho</h3><canvas id="cSim" height="160"></canvas></div>
+   <div class="card"><h3>Como a projecao foi montada</h3><div id="simBox"></div></div>
+ </div>
+
+ <h2>&#128717;&#65039; Mercado para HOJE &mdash; 01/07 <small>durar 15 dias (ate ~15/07)</small></h2>
+ <div class="listbox" id="lista1"></div>
+
+ <h2>&#128717;&#65039; Mercado do dia 15/07 <small>durar ate 01/08</small></h2>
+ <div class="listbox" id="lista2"></div>
+
+ <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const D = {"dj": {"cotacao_media": 0.00085, "total_gs": 8856077, "total_brl": 7527.47, "mercado_gs": 5888932, "mercado_brl": 4988.53, "outros_gs": 2967145, "outros_brl": 2538.94, "registros": [{"id": "15(4)", "loja": "Cadena Real", "dia": 11, "categoria": "mercado", "sub": "Supermercado", "gs": 115901, "brl": 98.16, "cotacao": 0.000847}, {"id": "15(6)", "loja": "Hipermercado Luisito (Diaz e Hijos)", "dia": 8, "categoria": "mercado", "sub": "Hipermercado", "gs": 446550, "brl": 377.26, "cotacao": 0.000845}, {"id": "15(7)", "loja": "Cadena Real", "dia": 27, "categoria": "mercado", "sub": "Supermercado", "gs": 58176, "brl": 49.91, "cotacao": 0.000858}, {"id": "16(5)", "loja": "Cadena Real", "dia": 13, "categoria": "mercado", "sub": "Supermercado", "gs": 11142, "brl": 9.45, "cotacao": 0.000848}, {"id": "16(7)", "loja": "Cadena Real", "dia": 16, "categoria": "mercado", "sub": "Supermercado", "gs": 66352, "brl": 56.42, "cotacao": 0.00085}, {"id": "16(9)", "loja": "Hipermercado Luisito (Diaz e Hijos)", "dia": 16, "categoria": "mercado", "sub": "Hipermercado", "gs": 317091, "brl": 269.64, "cotacao": 0.00085}, {"id": "17(5)", "loja": "Cadena Real", "dia": 5, "categoria": "mercado", "sub": "Supermercado", "gs": 83843, "brl": 70.66, "cotacao": 0.000843}, {"id": "18(6)", "loja": "Cadena Real", "dia": 19, "categoria": "mercado", "sub": "Supermercado", "gs": 166882, "brl": 142.25, "cotacao": 0.000852}, {"id": "18(9)", "loja": "Hipermercado Luisito (Diaz e Hijos)", "dia": 21, "categoria": "mercado", "sub": "Hipermercado", "gs": 899038, "brl": 767.59, "cotacao": 0.000854}, {"id": "18(7)", "loja": "Cadena Real", "dia": 23, "categoria": "mercado", "sub": "Higiene/Super", "gs": 75150, "brl": 64.27, "cotacao": 0.000855}, {"id": "18(11)", "loja": "Hipermercado Luisito (Diaz e Hijos)", "dia": 5, "categoria": "mercado", "sub": "Hipermercado (grande)", "gs": 2297319, "brl": 1936.09, "cotacao": 0.000843}, {"id": "19(5)a", "loja": "Cadena Real", "dia": 25, "categoria": "mercado", "sub": "Supermercado", "gs": 133231, "brl": 114.12, "cotacao": 0.000857}, {"id": "19(7)", "loja": "Cadena Real", "dia": 18, "categoria": "mercado", "sub": "Supermercado", "gs": 73287, "brl": 62.42, "cotacao": 0.000852}, {"id": "19(8)a", "loja": "Cadena Real", "dia": 8, "categoria": "mercado", "sub": "Supermercado (grande)", "gs": 632044, "brl": 533.97, "cotacao": 0.000845}, {"id": "20(5)a", "loja": "Cadena Real", "dia": 8, "categoria": "mercado", "sub": "Supermercado", "gs": 270364, "brl": 228.41, "cotacao": 0.000845}, {"id": "20(7)", "loja": "Cadena Real", "dia": 25, "categoria": "mercado", "sub": "Supermercado", "gs": 43985, "brl": 37.68, "cotacao": 0.000857}, {"id": "20(8)", "loja": "Gran Via (Elid)", "dia": 26, "categoria": "mercado", "sub": "Supermercado", "gs": 198577, "brl": 170.23, "cotacao": 0.000857}, {"id": "14(2)", "loja": "God's Pan", "dia": 12, "categoria": "outros", "sub": "Padaria/Confeitaria", "gs": 32050, "brl": 27.17, "cotacao": 0.000848}, {"id": "14(3)", "loja": "Surcos Textil", "dia": 11, "categoria": "outros", "sub": "Loja/Brinquedo", "gs": 83000, "brl": 70.29, "cotacao": 0.000847}, {"id": "15(5)", "loja": "Sicilia", "dia": 12, "categoria": "outros", "sub": "Restaurante", "gs": 140000, "brl": 118.66, "cotacao": 0.000848}, {"id": "16(6)", "loja": "Utilpar Livraria", "dia": 12, "categoria": "outros", "sub": "Papelaria/Arte", "gs": 354500, "brl": 300.47, "cotacao": 0.000848}, {"id": "16(8)a", "loja": "Tigo (Paquetigo)", "dia": 18, "categoria": "outros", "sub": "Recarga celular", "gs": 12000, "brl": 10.22, "cotacao": 0.000852}, {"id": "16(8)b", "loja": "Punto Farma", "dia": 18, "categoria": "outros", "sub": "Farmacia (formula infantil)", "gs": 191555, "brl": 163.15, "cotacao": 0.000852}, {"id": "17(6)", "loja": "Tigo Factura Home", "dia": 23, "categoria": "outros", "sub": "Conta TV/Internet", "gs": 140000, "brl": 119.72, "cotacao": 0.000855}, {"id": "17(8)", "loja": "Punto Farma", "dia": 25, "categoria": "outros", "sub": "Farmacia", "gs": 47040, "brl": 40.29, "cotacao": 0.000857}, {"id": "17(9)", "loja": "Surcos Textil", "dia": 18, "categoria": "outros", "sub": "Loja/Bebe", "gs": 38900, "brl": 33.13, "cotacao": 0.000852}, {"id": "18(8)", "loja": "Tia Laura", "dia": 26, "categoria": "outros", "sub": "Sobremesas", "gs": 105000, "brl": 90.01, "cotacao": 0.000857}, {"id": "18(10)", "loja": "Fixo Cargo (Sagas)", "dia": 29, "categoria": "outros", "sub": "Courier/Importacao", "gs": 1692450, "brl": 1454.34, "cotacao": 0.000859}, {"id": "19(5)b", "loja": "Punto Farma", "dia": 18, "categoria": "outros", "sub": "Farmacia", "gs": 75650, "brl": 64.43, "cotacao": 0.000852}, {"id": "19(6)", "loja": "Amandau", "dia": 20, "categoria": "outros", "sub": "Sorveteria", "gs": 20000, "brl": 17.06, "cotacao": 0.000853}, {"id": "20(6)", "loja": "Fraxiquim", "dia": 26, "categoria": "outros", "sub": "Produto de limpeza", "gs": 35000, "brl": 30.0, "cotacao": 0.000857}], "por_loja": {"Hipermercado Luisito (Diaz e Hijos)": {"gs": 3959998, "brl": 3350.58, "n": 4, "cat": "mercado"}, "Cadena Real": {"gs": 1730357, "brl": 1467.72, "n": 12, "cat": "mercado"}, "Fixo Cargo (Sagas)": {"gs": 1692450, "brl": 1454.34, "n": 1, "cat": "outros"}, "Utilpar Livraria": {"gs": 354500, "brl": 300.47, "n": 1, "cat": "outros"}, "Punto Farma": {"gs": 314245, "brl": 267.87, "n": 3, "cat": "outros"}, "Gran Via (Elid)": {"gs": 198577, "brl": 170.23, "n": 1, "cat": "mercado"}, "Sicilia": {"gs": 140000, "brl": 118.66, "n": 1, "cat": "outros"}, "Tigo Factura Home": {"gs": 140000, "brl": 119.72, "n": 1, "cat": "outros"}, "Surcos Textil": {"gs": 121900, "brl": 103.42, "n": 2, "cat": "outros"}, "Tia Laura": {"gs": 105000, "brl": 90.01, "n": 1, "cat": "outros"}, "Fraxiquim": {"gs": 35000, "brl": 30.0, "n": 1, "cat": "outros"}, "God's Pan": {"gs": 32050, "brl": 27.17, "n": 1, "cat": "outros"}, "Amandau": {"gs": 20000, "brl": 17.06, "n": 1, "cat": "outros"}, "Tigo (Paquetigo)": {"gs": 12000, "brl": 10.22, "n": 1, "cat": "outros"}}, "total_maio_gs": 3222398, "notas_maio": 11}, "dl": {"rate": 0.000862, "lista1": {"cats": {"Carnes e frios": {"itens": [{"item": "Carne moida (2da)", "qtd": 3, "un": "kg", "pu": 40000, "gs": 120000, "brl": 103.44}, {"item": "Corte p/ churrasco / carnaza", "qtd": 3, "un": "kg", "pu": 48000, "gs": 144000, "brl": 124.13}, {"item": "File de peito de frango", "qtd": 3, "un": "kg", "pu": 36500, "gs": 109500, "brl": 94.39}, {"item": "Coxa/sobrecoxa de frango", "qtd": 3, "un": "kg", "pu": 26000, "gs": 78000, "brl": 67.24}, {"item": "Osso buco / carne com osso", "qtd": 2, "un": "kg", "pu": 34000, "gs": 68000, "brl": 58.62}, {"item": "Salsicha / panchos", "qtd": 1.5, "un": "kg", "pu": 33000, "gs": 49500.0, "brl": 42.67}, {"item": "Presunto (jamon cocido)", "qtd": 0.5, "un": "kg", "pu": 27400, "gs": 13700.0, "brl": 11.81}, {"item": "Panceta / bacon", "qtd": 0.5, "un": "kg", "pu": 57400, "gs": 28700.0, "brl": 24.74}, {"item": "Chorizo / linguica", "qtd": 2, "un": "un", "pu": 17500, "gs": 35000, "brl": 30.17}, {"item": "Nuggets de frango", "qtd": 1, "un": "pct 2,5kg", "pu": 130000, "gs": 130000, "brl": 112.06}], "sub_gs": 776400.0, "sub_brl": 669.26}, "Laticinios e ovos": {"itens": [{"item": "Ovos (bandeja 30un)", "qtd": 3, "un": "bandeja", "pu": 24000, "gs": 72000, "brl": 62.06}, {"item": "Leite liquido (UAT)", "qtd": 10, "un": "L", "pu": 7000, "gs": 70000, "brl": 60.34}, {"item": "Leite em po", "qtd": 2, "un": "lata", "pu": 28200, "gs": 56400, "brl": 48.62}, {"item": "Queijo mussarela", "qtd": 1, "un": "kg", "pu": 53000, "gs": 53000, "brl": 45.69}, {"item": "Queijo cremoso / ralado", "qtd": 2, "un": "un", "pu": 22000, "gs": 44000, "brl": 37.93}, {"item": "Manteiga", "qtd": 0.5, "un": "kg", "pu": 43000, "gs": 21500.0, "brl": 18.53}, {"item": "Iogurte", "qtd": 4, "un": "un", "pu": 11100, "gs": 44400, "brl": 38.27}, {"item": "Margarina", "qtd": 2, "un": "un", "pu": 9900, "gs": 19800, "brl": 17.07}], "sub_gs": 381100.0, "sub_brl": 328.51}, "Padaria, graos e massas": {"itens": [{"item": "Pao (viena/sanduiche/leite)", "qtd": 6, "un": "un", "pu": 8000, "gs": 48000, "brl": 41.38}, {"item": "Arroz", "qtd": 3, "un": "kg", "pu": 6000, "gs": 18000, "brl": 15.52}, {"item": "Macarrao (fideo)", "qtd": 5, "un": "un", "pu": 4000, "gs": 20000, "brl": 17.24}, {"item": "Farinha de trigo", "qtd": 2, "un": "un", "pu": 4700, "gs": 9400, "brl": 8.1}, {"item": "Maicena", "qtd": 1, "un": "un", "pu": 6300, "gs": 6300, "brl": 5.43}, {"item": "Aveia", "qtd": 1, "un": "un", "pu": 19800, "gs": 19800, "brl": 17.07}, {"item": "Acucar", "qtd": 2, "un": "kg", "pu": 8500, "gs": 17000, "brl": 14.65}, {"item": "Oleo (aceite)", "qtd": 2, "un": "un", "pu": 9250, "gs": 18500, "brl": 15.95}, {"item": "Sopa paraguaya / chipa / farofa", "qtd": 2, "un": "un", "pu": 16000, "gs": 32000, "brl": 27.58}], "sub_gs": 189000, "sub_brl": 162.92}, "Hortifruti": {"itens": [{"item": "Tomate", "qtd": 3, "un": "kg", "pu": 16000, "gs": 48000, "brl": 41.38}, {"item": "Cebola", "qtd": 3, "un": "kg", "pu": 6950, "gs": 20850, "brl": 17.97}, {"item": "Batata", "qtd": 4, "un": "kg", "pu": 6600, "gs": 26400, "brl": 22.76}, {"item": "Cenoura", "qtd": 2, "un": "kg", "pu": 6000, "gs": 12000, "brl": 10.34}, {"item": "Alho", "qtd": 6, "un": "un", "pu": 2900, "gs": 17400, "brl": 15.0}, {"item": "Alface / folhosas", "qtd": 3, "un": "un", "pu": 5000, "gs": 15000, "brl": 12.93}, {"item": "Abobora / legumes", "qtd": 2, "un": "un", "pu": 6550, "gs": 13100, "brl": 11.29}, {"item": "Banana", "qtd": 4, "un": "kg", "pu": 4450, "gs": 17800, "brl": 15.34}, {"item": "Laranja", "qtd": 3, "un": "kg", "pu": 6600, "gs": 19800, "brl": 17.07}, {"item": "Limao", "qtd": 1, "un": "kg", "pu": 5000, "gs": 5000, "brl": 4.31}, {"item": "Maca / kiwi / frutas", "qtd": 4, "un": "un", "pu": 9000, "gs": 36000, "brl": 31.03}, {"item": "Mandioca", "qtd": 2, "un": "kg", "pu": 8000, "gs": 16000, "brl": 13.79}], "sub_gs": 247350, "sub_brl": 213.22}, "Mercearia e bebidas": {"itens": [{"item": "Refrigerante", "qtd": 4, "un": "un", "pu": 14900, "gs": 59600, "brl": 51.38}, {"item": "Suco (jugo)", "qtd": 3, "un": "un", "pu": 12000, "gs": 36000, "brl": 31.03}, {"item": "Isotonico", "qtd": 2, "un": "un", "pu": 12000, "gs": 24000, "brl": 20.69}, {"item": "Cacau / achocolatado", "qtd": 1, "un": "un", "pu": 24750, "gs": 24750, "brl": 21.33}, {"item": "Erva mate / cafe", "qtd": 2, "un": "un", "pu": 19000, "gs": 38000, "brl": 32.76}, {"item": "Molho de tomate", "qtd": 3, "un": "un", "pu": 11300, "gs": 33900, "brl": 29.22}, {"item": "Ketchup / maionese", "qtd": 2, "un": "un", "pu": 13500, "gs": 27000, "brl": 23.27}, {"item": "Bolachas / galletitas", "qtd": 5, "un": "un", "pu": 7000, "gs": 35000, "brl": 30.17}, {"item": "Atum / sardinha", "qtd": 3, "un": "un", "pu": 8000, "gs": 24000, "brl": 20.69}, {"item": "Sal / condimentos / temperos", "qtd": 2, "un": "un", "pu": 13400, "gs": 26800, "brl": 23.1}, {"item": "Chocolate / doces", "qtd": 2, "un": "un", "pu": 15000, "gs": 30000, "brl": 25.86}, {"item": "Cerveja", "qtd": 2, "un": "un", "pu": 20000, "gs": 40000, "brl": 34.48}], "sub_gs": 399050, "sub_brl": 343.98}, "Bebe": {"itens": [{"item": "Fraldas descartaveis", "qtd": 2, "un": "pct", "pu": 78000, "gs": 156000, "brl": 134.47}, {"item": "Lencos umedecidos", "qtd": 2, "un": "un", "pu": 24200, "gs": 48400, "brl": 41.72}, {"item": "Formula infantil (Primalac/Nido)", "qtd": 2, "un": "lata", "pu": 100000, "gs": 200000, "brl": 172.4}], "sub_gs": 404400, "sub_brl": 348.59}, "Limpeza e higiene": {"itens": [{"item": "Detergente", "qtd": 3, "un": "un", "pu": 2650, "gs": 7950, "brl": 6.85}, {"item": "Sabao em po", "qtd": 1, "un": "un", "pu": 30400, "gs": 30400, "brl": 26.2}, {"item": "Amaciante / lavavajilla", "qtd": 2, "un": "un", "pu": 12000, "gs": 24000, "brl": 20.69}, {"item": "Lavandina / desinfetante", "qtd": 2, "un": "un", "pu": 3700, "gs": 7400, "brl": 6.38}, {"item": "Papel higienico (pacote)", "qtd": 1, "un": "pct", "pu": 30000, "gs": 30000, "brl": 25.86}, {"item": "Papel toalha / guardanapo", "qtd": 1, "un": "un", "pu": 8000, "gs": 8000, "brl": 6.9}, {"item": "Sacos de lixo", "qtd": 2, "un": "un", "pu": 5300, "gs": 10600, "brl": 9.14}, {"item": "Sabonete", "qtd": 3, "un": "un", "pu": 6600, "gs": 19800, "brl": 17.07}, {"item": "Creme dental", "qtd": 1, "un": "un", "pu": 14300, "gs": 14300, "brl": 12.33}, {"item": "Shampoo + condicionador", "qtd": 2, "un": "un", "pu": 22000, "gs": 44000, "brl": 37.93}, {"item": "Desodorante", "qtd": 1, "un": "un", "pu": 13100, "gs": 13100, "brl": 11.29}, {"item": "Esponja / multiuso", "qtd": 2, "un": "un", "pu": 5000, "gs": 10000, "brl": 8.62}, {"item": "Sacolas (bolsa camisilla)", "qtd": 2, "un": "un", "pu": 2000, "gs": 4000, "brl": 3.45}], "sub_gs": 223550, "sub_brl": 192.7}}, "total_gs": 2620850.0, "total_brl": 2259.17}, "lista2": {"cats": {"Carnes e frios": {"itens": [{"item": "Carne moida (2da)", "qtd": 3.5, "un": "kg", "pu": 40000, "gs": 140000.0, "brl": 120.68}, {"item": "Corte p/ churrasco / carnaza", "qtd": 3, "un": "kg", "pu": 48000, "gs": 144000, "brl": 124.13}, {"item": "File de peito de frango", "qtd": 3, "un": "kg", "pu": 36500, "gs": 109500, "brl": 94.39}, {"item": "Coxa/sobrecoxa de frango", "qtd": 3, "un": "kg", "pu": 26000, "gs": 78000, "brl": 67.24}, {"item": "Entranha / corte premium", "qtd": 1.5, "un": "kg", "pu": 45000, "gs": 67500.0, "brl": 58.19}, {"item": "Osso buco / carne com osso", "qtd": 2, "un": "kg", "pu": 34000, "gs": 68000, "brl": 58.62}, {"item": "Salsicha / panchos", "qtd": 1.5, "un": "kg", "pu": 33000, "gs": 49500.0, "brl": 42.67}, {"item": "Presunto + panceta", "qtd": 1, "un": "kg", "pu": 45000, "gs": 45000, "brl": 38.79}, {"item": "Chorizo / linguica", "qtd": 2, "un": "un", "pu": 17500, "gs": 35000, "brl": 30.17}], "sub_gs": 736500.0, "sub_brl": 634.86}, "Laticinios e ovos": {"itens": [{"item": "Ovos (bandeja 30un)", "qtd": 3, "un": "bandeja", "pu": 24000, "gs": 72000, "brl": 62.06}, {"item": "Leite liquido (UAT)", "qtd": 12, "un": "L", "pu": 7000, "gs": 84000, "brl": 72.41}, {"item": "Leite em po", "qtd": 2, "un": "lata", "pu": 28200, "gs": 56400, "brl": 48.62}, {"item": "Queijo mussarela", "qtd": 1, "un": "kg", "pu": 53000, "gs": 53000, "brl": 45.69}, {"item": "Queijo cremoso / ralado", "qtd": 2, "un": "un", "pu": 22000, "gs": 44000, "brl": 37.93}, {"item": "Manteiga", "qtd": 0.5, "un": "kg", "pu": 43000, "gs": 21500.0, "brl": 18.53}, {"item": "Iogurte", "qtd": 5, "un": "un", "pu": 11100, "gs": 55500, "brl": 47.84}, {"item": "Margarina", "qtd": 2, "un": "un", "pu": 9900, "gs": 19800, "brl": 17.07}], "sub_gs": 406200.0, "sub_brl": 350.14}, "Padaria, graos e massas": {"itens": [{"item": "Pao (viena/sanduiche/leite)", "qtd": 7, "un": "un", "pu": 8000, "gs": 56000, "brl": 48.27}, {"item": "Arroz", "qtd": 3, "un": "kg", "pu": 6000, "gs": 18000, "brl": 15.52}, {"item": "Macarrao (fideo)", "qtd": 5, "un": "un", "pu": 4000, "gs": 20000, "brl": 17.24}, {"item": "Farinha de trigo", "qtd": 2, "un": "un", "pu": 4700, "gs": 9400, "brl": 8.1}, {"item": "Aveia", "qtd": 1, "un": "un", "pu": 19800, "gs": 19800, "brl": 17.07}, {"item": "Acucar", "qtd": 2, "un": "kg", "pu": 8500, "gs": 17000, "brl": 14.65}, {"item": "Oleo (aceite)", "qtd": 2, "un": "un", "pu": 9250, "gs": 18500, "brl": 15.95}, {"item": "Sopa paraguaya / chipa / farofa", "qtd": 2, "un": "un", "pu": 16000, "gs": 32000, "brl": 27.58}], "sub_gs": 190700, "sub_brl": 164.38}, "Hortifruti": {"itens": [{"item": "Tomate", "qtd": 3, "un": "kg", "pu": 16000, "gs": 48000, "brl": 41.38}, {"item": "Cebola", "qtd": 3, "un": "kg", "pu": 6950, "gs": 20850, "brl": 17.97}, {"item": "Batata", "qtd": 4, "un": "kg", "pu": 6600, "gs": 26400, "brl": 22.76}, {"item": "Cenoura", "qtd": 2, "un": "kg", "pu": 6000, "gs": 12000, "brl": 10.34}, {"item": "Alho", "qtd": 6, "un": "un", "pu": 2900, "gs": 17400, "brl": 15.0}, {"item": "Alface / folhosas", "qtd": 3, "un": "un", "pu": 5000, "gs": 15000, "brl": 12.93}, {"item": "Abobora / legumes", "qtd": 2, "un": "un", "pu": 6550, "gs": 13100, "brl": 11.29}, {"item": "Banana", "qtd": 4, "un": "kg", "pu": 4450, "gs": 17800, "brl": 15.34}, {"item": "Laranja", "qtd": 3, "un": "kg", "pu": 6600, "gs": 19800, "brl": 17.07}, {"item": "Limao", "qtd": 1, "un": "kg", "pu": 5000, "gs": 5000, "brl": 4.31}, {"item": "Frutas variadas (maca/kiwi/abacate)", "qtd": 5, "un": "un", "pu": 9000, "gs": 45000, "brl": 38.79}, {"item": "Mandioca", "qtd": 2, "un": "kg", "pu": 8000, "gs": 16000, "brl": 13.79}], "sub_gs": 256350, "sub_brl": 220.97}, "Mercearia e bebidas": {"itens": [{"item": "Refrigerante", "qtd": 4, "un": "un", "pu": 14900, "gs": 59600, "brl": 51.38}, {"item": "Suco (jugo)", "qtd": 3, "un": "un", "pu": 12000, "gs": 36000, "brl": 31.03}, {"item": "Isotonico", "qtd": 2, "un": "un", "pu": 12000, "gs": 24000, "brl": 20.69}, {"item": "Cacau / achocolatado", "qtd": 1, "un": "un", "pu": 24750, "gs": 24750, "brl": 21.33}, {"item": "Erva mate / cafe", "qtd": 2, "un": "un", "pu": 19000, "gs": 38000, "brl": 32.76}, {"item": "Molho de tomate", "qtd": 3, "un": "un", "pu": 11300, "gs": 33900, "brl": 29.22}, {"item": "Ketchup / maionese", "qtd": 2, "un": "un", "pu": 13500, "gs": 27000, "brl": 23.27}, {"item": "Bolachas / galletitas", "qtd": 5, "un": "un", "pu": 7000, "gs": 35000, "brl": 30.17}, {"item": "Atum / sardinha", "qtd": 3, "un": "un", "pu": 8000, "gs": 24000, "brl": 20.69}, {"item": "Sal / condimentos / temperos", "qtd": 2, "un": "un", "pu": 13400, "gs": 26800, "brl": 23.1}, {"item": "Chocolate / doces", "qtd": 3, "un": "un", "pu": 15000, "gs": 45000, "brl": 38.79}, {"item": "Cerveja", "qtd": 2, "un": "un", "pu": 20000, "gs": 40000, "brl": 34.48}], "sub_gs": 414050, "sub_brl": 356.91}, "Bebe": {"itens": [{"item": "Fraldas descartaveis", "qtd": 2, "un": "pct", "pu": 78000, "gs": 156000, "brl": 134.47}, {"item": "Lencos umedecidos", "qtd": 2, "un": "un", "pu": 24200, "gs": 48400, "brl": 41.72}, {"item": "Formula infantil (Primalac/Nido)", "qtd": 2, "un": "lata", "pu": 100000, "gs": 200000, "brl": 172.4}], "sub_gs": 404400, "sub_brl": 348.59}, "Limpeza e higiene": {"itens": [{"item": "Detergente", "qtd": 3, "un": "un", "pu": 2650, "gs": 7950, "brl": 6.85}, {"item": "Sabao em po", "qtd": 1, "un": "un", "pu": 30400, "gs": 30400, "brl": 26.2}, {"item": "Amaciante / lavavajilla", "qtd": 2, "un": "un", "pu": 12000, "gs": 24000, "brl": 20.69}, {"item": "Lavandina / desinfetante", "qtd": 2, "un": "un", "pu": 3700, "gs": 7400, "brl": 6.38}, {"item": "Papel higienico (pacote)", "qtd": 1, "un": "pct", "pu": 30000, "gs": 30000, "brl": 25.86}, {"item": "Sacos de lixo", "qtd": 2, "un": "un", "pu": 5300, "gs": 10600, "brl": 9.14}, {"item": "Sabonete", "qtd": 3, "un": "un", "pu": 6600, "gs": 19800, "brl": 17.07}, {"item": "Creme dental", "qtd": 2, "un": "un", "pu": 14300, "gs": 28600, "brl": 24.65}, {"item": "Escova de dente", "qtd": 2, "un": "un", "pu": 12000, "gs": 24000, "brl": 20.69}, {"item": "Shampoo + condicionador", "qtd": 1, "un": "un", "pu": 22000, "gs": 22000, "brl": 18.96}, {"item": "Desodorante", "qtd": 1, "un": "un", "pu": 13100, "gs": 13100, "brl": 11.29}, {"item": "Esponja / multiuso", "qtd": 2, "un": "un", "pu": 5000, "gs": 10000, "brl": 8.62}, {"item": "Sacolas (bolsa camisilla)", "qtd": 2, "un": "un", "pu": 2000, "gs": 4000, "brl": 3.45}], "sub_gs": 231850, "sub_brl": 199.85}}, "total_gs": 2640050.0, "total_brl": 2275.72}, "sim": {"mercado_recorrente_gs": 5300000, "outros_recorrente_gs": {"Formula infantil (farmacia)": 200000, "Internet/TV (Tigo)": 140000, "Farmacia/higiene extra": 120000, "Padaria/sobremesas/lanches fora": 250000}, "pontuais_junho_excluidos_gs": {"Courier/importacao (Fixo Cargo)": 1692450, "Inflaveis (piscina+colchao) / durar. mercado": 1150000, "Papelaria/arte (Utilpar)": 354500, "Brinquedos/roupa bebe (Surcos)": 121900}, "outros_total_gs": 710000, "total_gs": 6010000, "total_brl": 5180.62, "rate": 0.000862}}, "dias": [5, 8, 11, 12, 13, 16, 18, 19, 20, 21, 23, 25, 26, 27, 29], "serie_merc": [2381162, 1348958, 115901, 0, 11142, 383443, 73287, 166882, 0, 899038, 75150, 177216, 198577, 58176, 0], "serie_out": [0, 0, 83000, 526550, 0, 0, 318105, 0, 20000, 0, 140000, 47040, 140000, 0, 1692450], "merc_cat": {"Carnes e frios": 1600000, "Mercearia, graos e bebidas": 1180000, "Laticinios e ovos": 680000, "Hortifruti": 660000, "Limpeza e higiene": 720000, "Bebe (fraldas/formula/lencos)": 461000, "Itens pontuais (inflaveis, brinquedos, organiz., utilidades)": 587932}};
+const fmtG = n => 'Gs ' + Math.round(n).toLocaleString('es-PY');
+const fmtR = n => 'R$ ' + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dj = D.dj, dl = D.dl;
+document.getElementById('badgeRate').textContent =
+  'Cotacao media jun/2026: 1 Gs = ' + dj.cotacao_media.toFixed(6) + ' BRL  (1 BRL ≈ ' + Math.round(1/dj.cotacao_media).toLocaleString('pt-BR') + ' Gs)';
+
+// KPIs
+const kpis = [
+ {lab:'Total geral (junho)', gs:dj.total_gs, brl:dj.total_brl, big:true},
+ {lab:'Mercado', gs:dj.mercado_gs, brl:dj.mercado_brl},
+ {lab:'Outros gastos', gs:dj.outros_gs, brl:dj.outros_brl},
+ {lab:dj.notas_maio+' notas de maio (fora)', gs:dj.total_maio_gs, brl:null},
+];
+document.getElementById('kpis').innerHTML = kpis.map(k=>`
+ <div class="kpi ${k.big?'big':''}">
+  <div class="lab">${k.lab}</div>
+  <div class="gs">${fmtG(k.gs)}</div>
+  ${k.brl!==null?`<div class="brl">${fmtR(k.brl)}</div>`:'<div class="brl" style="color:var(--mut)">excluidas da analise</div>'}
+ </div>`).join('');
+
+const gridC='#2b3a4d', tickC='#9db0c5';
+Chart.defaults.color=tickC; Chart.defaults.borderColor=gridC; Chart.defaults.font.family="'Segoe UI',sans-serif";
+
+// por dia
+new Chart(cDia,{type:'bar',data:{labels:D.dias.map(d=>d+'/06'),
+ datasets:[{label:'Mercado',data:D.serie_merc,backgroundColor:'#38bdf8'},
+           {label:'Outros',data:D.serie_out,backgroundColor:'#a78bfa'}]},
+ options:{plugins:{legend:{labels:{boxWidth:12}}},scales:{x:{stacked:true,grid:{display:false}},
+  y:{stacked:true,ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}}}}});
+
+// donut
+new Chart(cDonut,{type:'doughnut',data:{labels:['Mercado','Outros'],
+ datasets:[{data:[dj.mercado_gs,dj.outros_gs],backgroundColor:['#38bdf8','#a78bfa'],borderColor:'#18222e',borderWidth:3}]},
+ options:{cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:12}},
+  tooltip:{callbacks:{label:c=>c.label+': '+fmtG(c.raw)+' ('+(c.raw/dj.total_gs*100).toFixed(0)+'%)'}}}}});
+
+// por loja
+const lojas=Object.entries(dj.por_loja);
+new Chart(cLoja,{type:'bar',data:{labels:lojas.map(l=>l[0]),
+ datasets:[{data:lojas.map(l=>l[1].gs),backgroundColor:lojas.map(l=>l[1].cat==='mercado'?'#38bdf8':'#a78bfa')}]},
+ options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtG(c.raw)+'  ('+fmtR(dj.por_loja[c.label].brl)+')'}}},
+  scales:{x:{ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+
+// mercado categorias
+const mc=Object.entries(D.merc_cat);
+new Chart(cMercCat,{type:'bar',data:{labels:mc.map(m=>m[0]),
+ datasets:[{data:mc.map(m=>m[1]),backgroundColor:['#f87171','#fbbf24','#34d399','#4ade80','#38bdf8','#f472b6','#94a3b8']}]},
+ options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtG(c.raw)+' ('+fmtR(c.raw*dl.rate)+')'}}},
+  scales:{x:{ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+
+// tabela mercado
+const merc=dj.registros.filter(r=>r.categoria==='mercado').sort((a,b)=>b.gs-a.gs);
+document.getElementById('tMerc').innerHTML =
+ '<thead><tr><th>Dia</th><th>Loja</th><th class="n">Gs</th><th class="n">R$</th></tr></thead><tbody>'+
+ merc.map(r=>`<tr><td>${r.dia}/06</td><td>${r.loja.replace(' (Diaz e Hijos)','')}</td><td class="n">${r.gs.toLocaleString('es-PY')}</td><td class="n" style="color:var(--green)">${r.brl.toFixed(2)}</td></tr>`).join('')+
+ '</tbody>';
+
+// insights
+const ins=[
+ ['Concentre as compras nos hipermercados','O Hipermercado Luisito concentrou '+fmtG(dj.por_loja['Hipermercado Luisito (Diaz e Hijos)'].gs)+' e a Cadena Real teve 12 idas no mes. Foram <b>17 idas ao mercado em junho</b> &mdash; muitas compras pequenas e repetidas de conveniencia (banana, ovos, bolsa) que saem mais caras. Concentrando em 2 grandes compras/mes + 2 reposicoes, da para cortar','~8-12%',720000],
+ ['Sacolas "bolsa camisilla" em quase toda nota','Voce pagou bolsa em praticamente todas as idas (Gs 300 a 2.000 cada). Levando sacolas reutilizaveis o corte e pequeno mas recorrente','~Gs 15-20 mil/mes',18000],
+ ['Itens pontuais e por impulso','Piscina e colchao inflaveis (Gs ~295 mil), brinquedos, oculos de moto, rueda abdominal e organizadores entraram junto do mercado. Sao ~Gs 738 mil que nao sao alimentacao. Planejar esses itens a parte evita "engordar" a compra do mes','~Gs 400-700 mil',550000],
+ ['Padaria/sobremesas/delivery fora','God\'s Pan, Tia Laura, Amandau, Sicilia somam ~Gs 297 mil em doces e refeicoes fora. Reduzir pela metade ja economiza','~Gs 150 mil',150000],
+ ['Courier / importacao (Fixo Cargo)','Foi o 3o maior gasto do mes (Gs 1,69 mi). E pontual, mas vale consolidar envios para diluir o frete por kg','pontual',0],
+ ['Formula infantil na farmacia','Primalac/Nido saem mais barato em lata grande e em promocao no proprio hipermercado do que na farmacia avulsa. Comparar preco por 100g','~Gs 40-60 mil/mes',50000],
+];
+let ecoTot=0; ins.forEach(i=>ecoTot+=i[3]);
+document.getElementById('insights').innerHTML =
+ ins.map(i=>`<div class="insight"><b>${i[0]}</b> &mdash; ${i[1]}. <span class="eco">Economia potencial: ${i[2]}</span></div>`).join('')+
+ `<div class="insight" style="border-left-color:var(--green)"><b style="color:var(--green)">Potencial total estimado de economia:</b> <span class="eco">${fmtG(ecoTot)} / mes (≈ ${fmtR(ecoTot*dl.rate)})</span> &mdash; cerca de ${(ecoTot/dj.total_gs*100).toFixed(0)}% do gasto de junho, sem cortar o essencial.</div>`;
+
+// simulacao julho
+const sim=dl.sim;
+new Chart(cSim,{type:'bar',data:{labels:['Mercado','Outros','Total'],
+ datasets:[
+  {label:'Junho (real)',data:[dj.mercado_gs,dj.outros_gs,dj.total_gs],backgroundColor:'#475569'},
+  {label:'Julho (projecao)',data:[sim.mercado_recorrente_gs,sim.outros_total_gs,sim.total_gs],backgroundColor:'#34d399'}]},
+ options:{plugins:{legend:{labels:{boxWidth:12}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtG(c.raw)}}},
+  scales:{y:{ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}},x:{grid:{display:false}}}}});
+
+const so=Object.entries(sim.outros_recorrente_gs).map(([k,v])=>`<tr><td>${k}</td><td class="n">${fmtG(v)}</td></tr>`).join('');
+const sp=Object.entries(sim.pontuais_junho_excluidos_gs).map(([k,v])=>`<tr><td>${k}</td><td class="n" style="color:var(--red)">-${fmtG(v)}</td></tr>`).join('');
+document.getElementById('simBox').innerHTML=`
+ <p class="mut">Projecao = consumiveis recorrentes de mercado + gastos fixos, <b>excluindo gastos claramente pontuais</b> de junho.</p>
+ <table style="margin-top:10px"><tr><td><b>Mercado recorrente</b></td><td class="n">${fmtG(sim.mercado_recorrente_gs)}</td></tr>${so}
+ <tr><td><b>Total projetado julho</b></td><td class="n" style="color:var(--green);font-weight:700">${fmtG(sim.total_gs)}</td></tr>
+ <tr><td class="mut">&nbsp;&nbsp;&asymp; em Reais</td><td class="n" style="color:var(--green)">${fmtR(sim.total_brl)}</td></tr></table>
+ <p class="mut" style="margin-top:12px">Pontuais de junho que <b>nao</b> devem repetir:</p>
+ <table>${sp}</table>`;
+
+// listas
+function renderLista(el,L,cls){
+ let html=`<div class="listhead ${cls}"><h3>${el==='lista1'?'Lista 01/07 &middot; 15 dias':'Lista 15/07 &middot; ate 01/08'}</h3>
+  <div class="tot"><div class="g">${fmtG(L.total_gs)}</div><div class="r">${fmtR(L.total_brl)}</div></div></div>`;
+ for(const[cat,v] of Object.entries(L.cats)){
+  html+=`<div class="catblock"><h4>${cat}<span>${fmtG(v.sub_gs)} &middot; ${fmtR(v.sub_brl)}</span></h4>
+   <table><tbody>`+
+   v.itens.map(it=>`<tr><td>${it.item}</td><td class="mut" style="white-space:nowrap">${it.qtd} ${it.un}</td><td class="n">${fmtG(it.gs)}</td><td class="n" style="color:var(--green)">${fmtR(it.brl)}</td></tr>`).join('')+
+   `</tbody></table></div>`;
+ }
+ document.getElementById(el).innerHTML=html;
+}
+renderLista('lista1',dl.lista1,'');
+renderLista('lista2',dl.lista2,'b2');
+
+document.getElementById('foot').innerHTML=`
+ <b>Metodologia &amp; observacoes:</b>
+ <ul class="note">
+  <li>Criterio de inclusao: <b>Fecha de Emision</b> entre <b>01 e 30/06/2026</b>. Validado tambem pelo <b>numero da Factura</b> (identificador unico) para evitar duplicatas. Foram identificadas ${dj.notas_maio} notas de <b>maio</b> nas fotos (Gs ${dj.total_maio_gs.toLocaleString('es-PY')}) &mdash; excluidas do total de junho.</li>
+  <li><b>Correcao aplicada:</b> a nota Luisito de <b>Gs 1.109.523</b> [foto 19(8)] tinha Fecha de Emision de <b>maio</b> &mdash; reclassificada e removida de junho.</li>
+  <li><b>Sobreposicoes tratadas:</b> varias fotos mostravam 2-3 notas juntas ou pedacos de outra nota na borda. As fotos 19(8) e 19(9) mostram a <b>mesma</b> dupla de notas &mdash; contadas uma unica vez. O courier Fixo Cargo aparece na borda de outra foto &mdash; nao duplicado.</li>
+  <li>Valores originais mantidos em <b>Guaranies</b>; conversao para Real pela cotacao aproximada da data (jun/2026: ~0,00084 a ~0,00086 BRL/Gs).</li>
+  <li>Duas notas grandes do Luisito estavam com a data ilegivel (rotacionadas); foram alocadas em junho com data aproximada &mdash; nao afeta a conversao (cotacao quase estavel no mes).</li>
+  <li>As listas usam <b>precos unitarios observados nas proprias notas de junho</b>. Cada lista cobre ~metade do consumo recorrente do mes; itens pontuais de junho (inflaveis, brinquedos, papelaria) nao entram.</li>
+ </ul>`;
+</script>
+</body>
+</html>
